@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+            xmlns:notify="clr-namespace:INVApp.ContentViews"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            xmlns:local="clr-namespace:INVApp.ViewModels"
+            x:Class="INVApp.Views.POSPage"
+            BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+            <notify:NotificationBanner x:Name="NotificationBanner"/>
+            <notify:ConfirmBanner x:Name="ConfirmBanner"/>
+        </Grid>
+    </Shell.TitleView>
+
+    <ContentPage.Content>
+        <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
+            <!-- Define columns based on platform -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{OnIdiom Phone=*, Tablet=*, Desktop=*}" />
+                <ColumnDefinition Width="{OnIdiom Phone=0, Tablet=0, Desktop=Auto}" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ScrollView Grid.Column="0" Padding="10">
+        <StackLayout Grid.Row="1" Padding="10">
+            
+            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                    BorderColor="{StaticResource FrameBackgroundColor}" 
+                    CornerRadius="10" Padding="5" Margin="0,0,0,5" 
+                    MaximumWidthRequest="{OnIdiom Phone=315, Tablet=400, Desktop=600}"
+                    IsVisible="{Binding IsCameraVisible}">
+                <zxing:CameraBarcodeReaderView
+                    x:Name="cameraBarcodeReaderView"
+                    HeightRequest="200"
+                    WidthRequest="300"
+                    BarcodesDetected="BarcodesDetected"/>
+            </Frame>
+
+                    <Grid ColumnDefinitions="Auto, Auto" HorizontalOptions="Center" >
+                        <!-- Barcode Entry -->
+                        <Entry x:Name="BarcodeEntry"
+                        Placeholder="Scan or enter barcode"
+                        BackgroundColor="Transparent"
+                        FontSize="16"
+                        Keyboard="Numeric"
+                        Margin="0,0,5,10"
+                        Text="{Binding ScannedBarcode, Mode=TwoWay}"
+                        MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=600}"
+                        HeightRequest="{OnIdiom Phone=40, Tablet=40, Desktop=40}"/>
+
+                        <Button Text="Add"
+                        Command="{Binding AddProductCommand}" 
+                        Grid.Column="1" HeightRequest="35"/>
+                    </Grid>
+
+
+                    <!-- Cart CollectionView -->
+
+            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="Transparent" Padding="0" 
+                    MaximumWidthRequest="650">
+
+            <CollectionView x:Name="CartCollectionView"
+                ItemsSource="{Binding CartReversed}"
+                SelectionMode="None"
+                VerticalOptions="Center" Margin="10"
+                MaximumHeightRequest="{OnIdiom Phone=350, Tablet=350, Desktop=580}">
+                
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="2" />
+                </CollectionView.ItemsLayout>
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="5" Margin="5" BackgroundColor="{StaticResource EntryBackgroundColor}" BorderColor="Black"
+                                CornerRadius="10" MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=550}">
+
+                            <!-- Define Grid with three columns -->
+                            <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto" Padding="10">
+
+                                <!-- Product Info in the first column -->
+                                <StackLayout Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center">
+                                    <Label Text="{Binding Product.ProductName}" 
+                                            FontAttributes="Bold" 
+                                            FontSize="17" />
+                                    <Label Text="{Binding Product.EAN13Barcode}" 
+                                            FontSize="13" />
+                                    <Stepper Minimum="1" 
+                                            Maximum="100" 
+                                            Increment="1"
+                                            Value="{Binding Quantity, Mode=TwoWay}" 
+                                            WidthRequest="80"
+                                            HeightRequest="35"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="StartAndExpand"
+                                            BackgroundColor="{OnIdiom Phone=Transparent, Desktop={StaticResource PrimaryColor}}"
+                                            Margin="25,0,0,0"/>
+                                </StackLayout>
+
+                                <StackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center">
+                                    <Label Text="{Binding Quantity, StringFormat='Qty: {0}'}" FontSize="15" />
+
+                                    <Label Text="{Binding Product.Price, StringFormat='Price: {0:C}'}" FontSize="15" />
+                                    <Label Text="{Binding TotalPrice, StringFormat='Total: {0:C}'}" 
+                                            FontAttributes="Bold" FontSize="16" />
+                                </StackLayout>
+
+                                <Button Text="Remove"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:POSViewModel}}, Path=RemoveProductFromCartCommand}" 
+                                    CommandParameter="{Binding .}" 
+                                    Grid.Column="2"
+                                    HorizontalOptions="End" VerticalOptions="Center" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+                    </Frame>
+                </StackLayout>
+    </ScrollView>
+
+    <!-- Checkout Section -->
+
+            <toolkit:Expander Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" IsExpanded="True" HorizontalOptions="StartAndExpand" Margin="0,0,100,10">
+                <toolkit:Expander.Header>
+                    <Button Text="Checkout"  FontSize="17" Margin="0,20,0,0" MaximumWidthRequest="{OnIdiom Phone=150, Tablet=350, Desktop=600}"/>
+                </toolkit:Expander.Header>
+
+                <toolkit:Expander.Content>
+                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                        BorderColor="{StaticResource FrameBackgroundColor}" 
+                        Margin="10" Padding="5" 
+                        MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
+                        <StackLayout Padding="10">
+                            <Frame BackgroundColor="{StaticResource PrimaryColor}"
+                                HeightRequest="{OnIdiom Phone=200, Tablet=250, Desktop=180}" 
+                                WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
+                                <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+                                    <!-- Payment method label and picker -->
+                                    <Label Text="Payment Method:" FontSize="16" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,5,0"/>
+                                    <Picker x:Name="PaymentMethodPicker" 
+                                        ItemsSource="{Binding PaymentMethods}" 
+                                        SelectedItem="{Binding SelectedPaymentMethod}" 
+                                        Grid.Row="0" Grid.Column="1" HorizontalOptions="EndAndExpand" 
+                                        MaximumWidthRequest="{OnIdiom Phone=60, Tablet=80, Desktop=100}"/>
+
+                                    <Label Text="Total:" FontSize="16" FontAttributes="Bold" Margin="0,10,5,0" Grid.Row="1"/>
+                                    <Label Text="{Binding TotalAmount, StringFormat='{0:C}'}" FontSize="17" Grid.Row="1" Grid.Column="1"
+                                        Margin="0,10,5,0" HorizontalOptions="EndAndExpand" />
+
+                                    <!-- Cash given and change calculator -->
+                                    <Label Text="Given:" FontSize="16" FontAttributes="Bold" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" Margin="0,0,0,0"
+                                            IsVisible="{Binding IsCashGivenVisible}"/>
+                                    <Entry x:Name="CashGivenEntry" 
+                                        Grid.Row="2" Grid.Column="1" Margin="0,10,0,0"
+                                        Keyboard="Numeric" HorizontalOptions="EndAndExpand" WidthRequest="60"
+                                        IsVisible="{Binding IsCashGivenVisible}" Text="{Binding CashGiven, Mode=TwoWay}"/>
+
+                                    <Label Text="Change:" FontSize="16" FontAttributes="Bold" Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Margin="0,0,0,0"
+                                            IsVisible="{Binding IsCashGivenVisible}"/>
+                                    <Label x:Name="ChangeLabel" 
+                                        Text="{Binding ChangeAmount, StringFormat='{0:F2}'}" 
+                                        FontSize="16" Margin="0,10,0,0" FontAttributes="Bold"
+                                        Grid.Row="3" Grid.Column="1" HorizontalOptions="EndAndExpand" IsVisible="{Binding IsCashGivenVisible}"/>
+
+                                </Grid>
+                            </Frame>
+
+                            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,10,0,0"
+                                HeightRequest="{OnIdiom Phone=150, Tablet=150, Desktop=120}" 
+                                WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
+                                <Grid>
+                                    <Label Text="Customer Account:" FontSize="16" FontAttributes="Bold" Grid.Column="0" Margin="0,10,5,0"/>
+                                    <StackLayout Grid.Row="2" Grid.Column="1">
+                                        <SearchBar Placeholder="Search customer..." 
+                                            Text="{Binding SearchQuery}" 
+                                            HeightRequest="40"/>
+                                        <Picker x:Name="CustomerAccountPicker" Margin="0,5,0,0" 
+                                            ItemsSource="{Binding Customers}" 
+                                            SelectedItem="{Binding SelectedCustomer}"
+                                            ItemDisplayBinding="{Binding CustomerName}"/>
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+
+                            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                                MaximumWidthRequest="{OnIdiom Phone=150, Tablet=350, Desktop=600}"
+                                MaximumHeightRequest="300"
+                                Margin="0,10,0,0">
+                                <StackLayout>
+                                    <Label Text="{Binding SelectedCustomer.CustomerName, StringFormat='Selected Customer: {0}'}"
+                                            FontSize="16" 
+                                            FontAttributes="Bold"
+                                            HorizontalOptions="Center" 
+                                            Margin="0,10,0,0"/>
+                                    <Label Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontSize="17" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
+                                </StackLayout>
+                            </Frame>
+
+                            <!-- Final checkout button to finalize payment -->
+                            <Button Text="Close Transaction" Command="{Binding CheckoutCommand}" 
+                                WidthRequest="200" Margin="0,10,0,0"/>
+                        </StackLayout>
+                    </Frame>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

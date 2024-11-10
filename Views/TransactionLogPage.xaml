@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            x:Class="INVApp.Views.TransactionLogPage"
+            BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+            <Label Text="INVENTAR : TRANSACTION LOGS"
+                FontSize="15"
+                TextColor="{StaticResource TextColor}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+        </Grid>
+    </Shell.TitleView>
+
+    <ScrollView>
+        <StackLayout Padding="5">
+            <toolkit:Expander>
+                <toolkit:Expander.Header>
+                    <Button Text="Filters" FontSize="20" FontAttributes="Bold" MaximumWidthRequest="350" Margin="0,5,0,5"/>
+                </toolkit:Expander.Header>
+
+                <toolkit:Expander.Content>
+                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" MaximumWidthRequest="600">
+                        <StackLayout Padding="10">
+                            <!-- Date Range Filter -->
+                            <Frame BackgroundColor="{StaticResource PrimaryColor}" Padding="10">
+                                <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
+                                    <Label Text="Date From:" VerticalOptions="Center" />
+                                    <DatePicker Date="{Binding DateFrom}" Grid.Column="1" />
+
+                                    <Label Text="Date To:" VerticalOptions="Center" Grid.Row="1" />
+                                    <DatePicker Date="{Binding DateTo}" Grid.Column="1" Grid.Row="1" />
+
+                                    <!-- Results Count -->
+                                    <Label Text="Results to Show:" VerticalOptions="Center" Grid.Row="2" />
+                                    <Picker SelectedItem="{Binding LogsToShow}" Grid.ColumnSpan="2" Grid.Row="2">
+                                        <Picker.ItemsSource>
+                                            <x:Array Type="{x:Type x:Int32}">
+                                                <x:Int32>5</x:Int32>
+                                                <x:Int32>10</x:Int32>
+                                                <x:Int32>25</x:Int32>
+                                            </x:Array>
+                                        </Picker.ItemsSource>
+                                    </Picker>
+                                </Grid>
+                            </Frame>
+
+                            <!-- Apply and Clear Filters -->
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="0,10,0,0">
+                                <Button Text="Apply Filters" Command="{Binding ApplyFilterCommand}" />
+                                <Button Text="Clear Filters" Command="{Binding ClearFilterCommand}" Margin="10,0,0,0"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+
+            <!-- CollectionView for Transaction Logs -->
+            <CollectionView ItemsSource="{Binding TransactionLogs}" Margin="10">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="3"/>
+                </CollectionView.ItemsLayout>
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <toolkit:Expander>
+                            <toolkit:Expander.Header>
+                                <Frame BackgroundColor="{StaticResource PrimaryColor}"  Margin="0,10,0,5"
+                                        MaximumWidthRequest="450">
+                                    <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto" Padding="0">
+                                        <Label Text="{Binding DateTime, StringFormat='{0:MMM/dd/yyyy HH:mm}'}" FontSize="18" FontAttributes="Bold" 
+                                            Grid.Column="0" HorizontalOptions="Start" Margin="0,5,5,10"/>
+                                        <Label Text="{Binding PaymentMethod}" FontSize="15" 
+                                            Grid.Column="1" HorizontalOptions="End" Margin="0,5,20,20"/>
+                                        <Label Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontSize="15" 
+                                            Grid.Column="2" HorizontalOptions="End" Margin="0,5,20,20"/>
+                                    </Grid>
+                                </Frame>
+                            </toolkit:Expander.Header>
+
+                            <toolkit:Expander.Content>
+                                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                                    BorderColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" Margin="0,0,0,0"
+                                    MaximumWidthRequest="450">
+                                    <Frame BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent" Margin="0,0,0,0">
+                                        <StackLayout Padding="5">
+
+                                            <!-- Transaction Summary -->
+                                            <Label Text="Discount:" FontAttributes="Bold"/>
+                                            <Label Text="{Binding Discount, StringFormat='{}{0:C}'}" />
+
+                                            <Label Text="Service Tax:" FontAttributes="Bold"/>
+                                            <Label Text="{Binding GServiceTax, StringFormat='{}{0:C}'}" />
+
+                                            <Label Text="Customer:" FontAttributes="Bold"/>
+                                            <Label Text="{Binding CustomerId}"/>
+
+                                            <!-- Transaction Items -->
+                                            <Label Text="Transaction Items:" FontAttributes="Bold" Margin="0,10,0,0"/>
+
+                                            <CollectionView ItemsSource="{Binding TransactionItems}">
+                                                <CollectionView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnDefinitions="Auto, *, *, Auto" RowDefinitions="Auto, Auto">
+                                                            <Label Text="{Binding ProductName}" FontAttributes="Bold" Grid.Column="0"/>
+                                                            <Label Text="x" FontAttributes="Bold" Grid.Column="1"/>
+                                                            <Label Text="{Binding Quantity}" Margin="10,0,0,0" Grid.Column="2"/>
+                                                            <Label Text="{Binding TotalePrice, StringFormat='{}{0:C}'}" Margin="10,0,0,0" Grid.Column="3"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </CollectionView.ItemTemplate>
+                                            </CollectionView>
+
+                                            <Button Text="Receipt" FontAttributes="Bold" Margin="0,10,0,5" Command="{Binding ShowReceiptCommand}"/>
+                                        </StackLayout>
+                                    </Frame>
+                                </Frame>
+                            </toolkit:Expander.Content>
+
+                        </toolkit:Expander>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

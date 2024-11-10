@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+            xmlns:notify="clr-namespace:INVApp.ContentViews"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            x:Class="INVApp.Views.StockIntakePage"
+            BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+            <Label Text="INVENTAR : STOCK INTAKE"
+                    FontSize="15" 
+                    TextColor="{StaticResource TextColor}" 
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Center" />
+        </Grid>
+    </Shell.TitleView>
+
+
+    <ScrollView Padding="10">
+        <StackLayout>
+
+            <!-- Barcode Scanner Frame -->
+            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                    BorderColor="{StaticResource FrameBackgroundColor}" 
+                    CornerRadius="10" Padding="5" Margin="0,0,0,5" 
+                    IsVisible="{Binding IsCameraOn}"
+                    MaximumWidthRequest="{OnIdiom Phone=315, Tablet=400, Desktop=600}">
+                <zxing:CameraBarcodeReaderView 
+                    x:Name="cameraBarcodeReaderView"
+                    HeightRequest="200"
+                    WidthRequest="300"
+                    BarcodesDetected="BarcodesDetected"/>
+            </Frame>
+
+            <!-- Control Panel Frame -->
+            <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="CenterAndExpand">
+                <Button Text="Reset" Command="{Binding ResetCommand}" BackgroundColor="{StaticResource WarningColor}" />
+                <Button Text="{Binding IsCameraOn, StringFormat='{0}'}" Command="{Binding ToggleCameraCommand}" />
+            </StackLayout>
+
+            <!-- Notification banner -->
+            <notify:NotificationBanner x:Name="NotificationBanner" Margin="0,5,0,5"/>
+            <!-- Media player -->
+            <toolkit:MediaElement x:Name="AudioPlayer" IsVisible="False" />
+
+
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="40,40,40,40,40,40" RowSpacing="4" ColumnSpacing="10">
+
+                        <!-- Display Barcode after scan -->
+                        <Label Text="Barcode" Grid.Column="0" Grid.Row="0"/>
+                        <Entry Text="{Binding ScannedBarcode, Mode=TwoWay}" Grid.Column="1" Grid.Row="0"/>
+
+                        <!-- Product details are automatically populated if found -->
+                        <Label Text="Product" Grid.Column="0" Grid.Row="1"/>
+                        <Entry Text="{Binding ProductName}" Grid.Column="1" Grid.Row="1"/>
+
+                        <!-- Brand details -->
+                        <Label Text="Brand" Grid.Column="0" Grid.Row="2"/>
+                        <Entry Text="{Binding BrandName}" Grid.Column="1" Grid.Row="2"/>
+
+                        <!-- Category selection -->
+                        <Label Text="Category" Grid.Column="0" Grid.Row="3"/>
+                        <Picker Grid.Column="1" Grid.Row="3"
+                                    ItemsSource="{Binding Categories}"
+                                    SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
+
+                        <!-- Weight details -->
+                        <Label Text="Weight" Grid.Column="0" Grid.Row="4"/>
+                        <Entry Text="{Binding ProductWeight}" Grid.Column="1" Grid.Row="4"/>
+
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="40">
+                        <Label Text="Cost" Grid.Column="0" Grid.Row="0" Margin="0,5,10,0"/>
+                        <Entry Text="{Binding WholesalePrice, Mode=TwoWay}" Grid.Row="0" Grid.Column="1"/>
+
+                        <Label Text="Price" Grid.Column="2" Grid.Row="0" Margin="10,5,10,0"/>
+                        <Entry Text="{Binding Price, Mode=TwoWay}" Grid.Row="0" Grid.Column="3"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Stock Quantity Frame -->
+
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="30,40" RowSpacing="2" ColumnSpacing="10">
+                        <!-- Current Stock Level -->
+                        <Label Text="Current Stock Level" FontAttributes="Bold" Grid.Column="0" />
+                        <Label Text="{Binding CurrentStockLevel}" FontAttributes="Bold" Grid.Column="1" Grid.Row="0"/>
+
+                        <!-- Stock Adjustment Input -->
+                        <Label Text="Adjustment" FontAttributes="Bold" Grid.Column="0" Grid.Row="1"/>
+                        <Entry Placeholder="0" 
+                                    Keyboard="Numeric" 
+                                    Text="{Binding StockAdjustment, Mode=TwoWay}" 
+                                    Grid.Column="1" Grid.Row="1"/>
+                    </Grid>
+
+                    <!-- Reason Input Field -->
+                    <Label Text="Reason for Stock Reduction:" 
+                                IsVisible="{Binding IsStockReduction}" 
+                                FontAttributes="Bold" 
+                                Margin="10,10,0,0"/>
+                    <Entry IsVisible="{Binding IsStockReduction}" Text="{Binding StockReductionReason, Mode=TwoWay}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button Text="Update" Command="{Binding AddStockCommand}" MaximumWidthRequest="600"/>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

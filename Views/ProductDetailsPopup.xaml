@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:notify="clr-namespace:INVApp.ContentViews"
+             x:Class="INVApp.Views.ProductDetailsPopup"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+
+        <!-- Notification banner -->
+        <notify:NotificationBanner x:Name="NotificationBanner" Margin="0,5,0,5"/>
+
+        <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="10,0,10,5">
+            
+            <StackLayout>
+
+                <Grid ColumnDefinitions="*" RowDefinitions="*,*,*,*,*,*,*,*,*,*,*,*,*,*">
+
+                    <!-- Barcode -->
+                    <Label Text="Barcode:" FontSize="18" FontAttributes="Bold" Grid.Column="0" Grid.Row="0" HorizontalTextAlignment="Center"/>
+                    <Label Text="{Binding Product.EAN13Barcode}" FontSize="18" Grid.Column="0" Grid.Row="1" HorizontalTextAlignment="Center"/>
+
+                    <!-- Product Name -->
+                    <Label Text="Product:" FontSize="18" FontAttributes="Bold" Grid.Column="0" Grid.Row="2" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding Product.ProductName}" FontSize="18" Grid.Column="0" Grid.Row="3" HorizontalTextAlignment="Center"/>
+
+                    <!-- Brand Name -->
+                    <Label Text="Brand:" FontSize="18" FontAttributes="Bold" Grid.Column="0" Grid.Row="4" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding Product.BrandName}" FontSize="18" Grid.Column="0" Grid.Row="5" HorizontalTextAlignment="Center"/>
+
+                    <!-- Current Stock Level -->
+                    <Label Text="Current Stock:" FontSize="18" FontAttributes="Bold" Grid.Column="0" Grid.Row="6" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding Product.CurrentStockLevel}" FontSize="18" Grid.Column="0" Grid.Row="7" HorizontalTextAlignment="Center"/>
+
+                    <!-- Category -->
+                    <Label Text="Category:" FontSize="18" FontAttributes="Bold" Grid.Column="0" Grid.Row="8" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding Product.Category}" FontSize="18" Grid.Column="0" Grid.Row="9" HorizontalTextAlignment="Center"/>
+
+                    <!-- Weight / Quantity -->
+                    <Label Text="Weight / Quantity:" FontSize="18" FontAttributes="Bold" Grid.Column="0" Grid.Row="10" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding Product.ProductWeight}" FontSize="18" Grid.Column="0" Grid.Row="11" HorizontalTextAlignment="Center"/>
+
+                </Grid>
+                
+                <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                    <Label Text="Cost:" FontSize="18" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding Product.WholesalePrice}" FontSize="18" Grid.Row="1" HorizontalTextAlignment="Center"/>
+
+                    <Label Text="Price:" FontSize="18" FontAttributes="Bold" Grid.Row="0" Grid.Column="1" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding Product.Price}" FontSize="18" Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="Center"/>
+
+                </Grid>
+
+            </StackLayout>
+        </Frame>
+
+        <!-- Add more product details as needed -->
+        <Frame Margin="10,0,10,0" BackgroundColor="{StaticResource FrameBackgroundColor}">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="*">
+                <Button Text="Update" Command="{Binding UpdateCommand}" Margin="5,5,5,5" Grid.Column="0"/>
+
+                <Button Text="Delete" Command="{Binding DeleteCommand}" BackgroundColor="{StaticResource WarningColor}" Margin="0,5,5,5" Grid.Column="1" />
+            </Grid>
+        </Frame>
+
+        <Button Text="Close" Command="{Binding CloseCommand}" Margin="10,5,10,5" BorderColor="{StaticResource FrameBackgroundColor}"/>
+    </StackLayout>
+</ContentPage>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            x:Class="INVApp.Views.StockOverviewPage"
+            xmlns:vm="clr-namespace:INVApp.ViewModels"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+            <Label Text="INVENTAR : STOCK OVERVIEW"
+                FontSize="15" 
+                TextColor="{StaticResource TextColor}" 
+                HorizontalOptions="Center" 
+                VerticalOptions="Center" />
+        </Grid>
+    </Shell.TitleView>
+
+    <ScrollView>
+        <StackLayout>
+            <toolkit:Expander>
+                <toolkit:Expander.Header>
+                    <Button Text="Filters" FontSize="20" FontAttributes="Bold" Margin="0,10,0,0"
+                            MaximumWidthRequest="{OnIdiom Phone=320, Tablet=320, Desktop=400}"/>
+                </toolkit:Expander.Header>
+
+                <toolkit:Expander.Content>
+                    <Frame Margin="5,5,5,0" Padding="5" BackgroundColor="{StaticResource FrameBackgroundColor}"
+                            BorderColor="{StaticResource BackgroundColor}"
+                            MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
+                        <StackLayout Padding="5">
+                            <!-- Search Bar -->
+                            <SearchBar
+                            Placeholder="Search by Product Name"
+                            Text="{Binding SearchQuery}"
+                            SearchCommand="{Binding SearchCommand}"
+                            SearchCommandParameter="{Binding SearchQuery}"/>
+
+                            <Grid ColumnDefinitions="*,*">
+                                <!-- Filters -->
+                                <StackLayout Padding="0,10,0,0">
+                                    <Picker
+                                    ItemsSource="{Binding Categories}"
+                                    SelectedItem="{Binding SelectedCategory}"
+                                    Title="Select Category" Grid.Column="0"
+                                    BackgroundColor="{StaticResource EntryBackgroundColor}"/>
+                                </StackLayout>
+
+                                <Button
+                                Text="Clear + Reload"
+                                Command="{Binding ClearFiltersCommand}"
+                                BackgroundColor="{StaticResource WarningColor}"
+                                Margin="10,10,0,0" Grid.Column="1"
+                                HeightRequest="40"
+                                />
+                            </Grid>
+                        </StackLayout>
+                    </Frame>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+
+
+            <Frame BackgroundColor="Transparent" 
+                    BorderColor="Transparent"
+                    WidthRequest="{OnIdiom Phone=420, Tablet=500, Desktop=1350}">
+                <CollectionView x:Name="ProductsCollectionView"
+                                ItemsSource="{Binding Products}" 
+                                Margin="0">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Span="{OnIdiom Phone=2, Tablet=3, Desktop=4}" Orientation="Vertical"
+                                            HorizontalItemSpacing="10" VerticalItemSpacing="5"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BorderColor="Transparent" 
+                                    BackgroundColor="{StaticResource FrameBackgroundColor}"
+                                    CornerRadius="10" Margin="0,5,0,5" Padding="10"
+                                    MaximumWidthRequest="{OnIdiom Phone=400, Tablet=300, Desktop=300}">
+                                <StackLayout WidthRequest="{OnIdiom Phone=160, Tablet=100, Desktop=280}">
+
+                                    <Button Text="{Binding ProductName}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,5"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StockOverviewViewModel}}, Path=OpenProductDetailCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BorderColor="{StaticResource FrameBackgroundColor}"
+                                            FontSize="17" FontAttributes="Bold"/>
+
+                                    <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                                            BorderColor="{StaticResource FrameBackgroundColor}" Margin="0,0,0,5" Padding="10">
+                                        <Grid RowDefinitions="*,*">
+                                            <Label Text="{Binding BrandName}" Grid.Row="0" FontSize="14"/>
+                                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="*" Grid.Row="1">
+                                                <Label Text="Units:" Grid.Column="0" FontSize="14"/>
+                                                <Label Text="{Binding CurrentStockLevel}" Grid.Column="1" FontSize="15"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Frame>
+                                    <Grid ColumnDefinitions="*, *" RowDefinitions="Auto">
+                                        <Button Text="Details" Grid.Column="1" Grid.Row="0"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StockOverviewViewModel}}, Path=OpenProductDetailCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BorderColor="{StaticResource FrameBackgroundColor}"
+                                                WidthRequest="{OnIdiom Phone=70, Tablet=100, Desktop=100}"/>
+                                        <Button Text="Log" Grid.Column="0" Grid.Row="0"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StockOverviewViewModel}}, Path=OpenChangelogCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BorderColor="{StaticResource FrameBackgroundColor}"
+                                                WidthRequest="{OnIdiom Phone=70, Tablet=100, Desktop=100}"/>
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Frame>
+            <Grid ColumnDefinitions="*,*">
+                <Button Text="Load More" Grid.Column="0"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StockOverviewViewModel}}, Path=LoadMoreCommand}"
+                    Margin="0,10,0,25" MaximumWidthRequest="500"/>
+                <Button Text="To Top (non-working)" Grid.Column="1"
+                    Margin="0,10,0,25" MaximumWidthRequest="150"/>
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

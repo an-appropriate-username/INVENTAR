@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            xmlns:local="clr-namespace:INVApp.ViewModels"
+            x:Class="INVApp.Views.HomePage"
+            x:Name="thisPage"
+            BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+            <Label Text="INVENTAR : HOME"
+            FontSize="15"
+            TextColor="{StaticResource TextColor}"
+            HorizontalOptions="Center"
+            VerticalOptions="Center" />
+        </Grid>
+    </Shell.TitleView>
+    
+    <Grid ColumnDefinitions="{OnIdiom Phone='*', Desktop='*,*,*'}" Padding="10">
+
+        <StackLayout Grid.Column="0" Spacing="2">
+            <!-- Carousel for Navigation -->
+            <CarouselView ItemsSource="{Binding CarouselItems}" IsSwipeEnabled="True" Loop="True" Opacity="0.85" HeightRequest="200">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="5" HeightRequest="{OnIdiom Phone=200, Tablet=250}" WidthRequest="340" BackgroundColor="{StaticResource PrimaryColor}" CornerRadius="10">
+                            <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="5">
+                                <Button ImageSource="{Binding Icon}" BackgroundColor="Transparent" BorderColor="Transparent" 
+                            Clicked="OnCarouselItemClicked"
+                            WidthRequest="150" HeightRequest="{OnIdiom Phone=100, Tablet=300}" />
+                                <Label Text="{Binding Title}" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+                <CarouselView.Triggers>
+                    <DataTrigger TargetType="CarouselView" Binding="{Binding Source={x:Reference thisPage}, Path=DevicePlatform}" Value="Desktop">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </CarouselView.Triggers>
+            </CarouselView>
+
+            <CarouselView ItemsSource="{Binding SupportItems}" IsSwipeEnabled="True" Loop="True" Opacity="0.85" HeightRequest="250">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="5" HeightRequest="{OnIdiom Phone=200, Tablet=250}" WidthRequest="340" BackgroundColor="{StaticResource PrimaryColor}" CornerRadius="10">
+                            <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="5">
+                                <Button ImageSource="{Binding Icon}" BackgroundColor="Transparent" BorderColor="Transparent" 
+                                    Clicked="OnCarouselItemClicked"
+                                    WidthRequest="150" HeightRequest="{OnIdiom Phone=100, Tablet=300}" />
+                                <Label Text="{Binding Title}" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+                <CarouselView.Triggers>
+                    <DataTrigger TargetType="CarouselView" Binding="{Binding Source={x:Reference thisPage}, Path=DevicePlatform}" Value="Desktop">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </CarouselView.Triggers>
+            </CarouselView>
+
+            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" 
+                WidthRequest="300" HeightRequest="50" VerticalOptions="Start" HorizontalOptions="Center"
+                Margin="0,0,0,5" IsVisible="{OnIdiom Phone=True, Desktop=False}">
+                <Label x:Name="DateTimeLabelPhone" TextColor="{StaticResource EntryBackgroundColor}" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Frame>
+        </StackLayout>
+
+        <!-- Grid for Desktop -->
+        <StackLayout Grid.Column="1" VerticalOptions="EndAndExpand" IsVisible="{OnIdiom Desktop=True, Phone=False}">
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                CornerRadius="10" Padding="10" HasShadow="True" 
+                Margin="20,10,20,20" WidthRequest="600"
+                VerticalOptions="EndAndExpand">
+                <Grid Margin="20,0,0,0" HorizontalOptions="Center" VerticalOptions="End"
+                    RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *, *">
+
+                    <!-- square buttons -->
+                    <Button Text="Point Of Sale" Command="{Binding NavigateCommand}" ImageSource="pos_icon.png" CommandParameter="POSPage"
+                        WidthRequest="100" HeightRequest="100" Grid.Row="0" Grid.Column="0" BorderColor="Transparent"/>
+                    <Button Text="Transaction Logs" Command="{Binding NavigateCommand}" ImageSource="log_icon.png" CommandParameter="TransactionLogPage"
+                        WidthRequest="100" HeightRequest="100" Grid.Row="0" Grid.Column="1" BorderColor="Transparent"/>
+                    <Button Text="Stock Adjustment" Command="{Binding NavigateCommand}" ImageSource="stock_take_icon.png" CommandParameter="StockIntakePage"
+                        WidthRequest="100" HeightRequest="100" Grid.Row="0" Grid.Column="2" BorderColor="Transparent"/>
+                    <Button Text="Inventory" Command="{Binding NavigateCommand}" ImageSource="overview_icon.png" CommandParameter="StockOverviewPage"
+                        WidthRequest="100" HeightRequest="100" Grid.Row="0" Grid.Column="3" BorderColor="Transparent"/>
+                </Grid>
+            </Frame>
+        </StackLayout>
+
+        <!-- To-Do List Section and Date Label for Desktop Right, Phone Below Carousel -->
+        <StackLayout Grid.Column="{OnIdiom Phone=0, Desktop=2}" VerticalOptions="StartAndExpand" Margin="0, 25, 0, 0">
+            <!-- To-Do List Frame -->
+            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" IsVisible="{OnIdiom Phone=False, Desktop=True}">
+                <StackLayout>
+                    <Button Text="Add Task" FontSize="15" Margin="5" Command="{Binding AddNewTodoCommand}" 
+                                MaximumHeightRequest="35" MaximumWidthRequest="200" BorderColor="Transparent"/>
+
+                    <!-- To-Do List Items -->
+                    <CollectionView ItemsSource="{Binding TodoItems}" VerticalOptions="FillAndExpand" HorizontalOptions="Center">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*, Auto, Auto">
+                                    <Entry Text="{Binding Task, Mode=TwoWay}" Placeholder="Enter task" FontSize="12" Grid.Column="0" Margin="1"/>
+                                    <Button Text="Save" WidthRequest="45" BackgroundColor="Transparent" BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomePageViewModel}}, Path=SaveTodoCommand}" 
+                                                CommandParameter="{Binding}" Grid.Column="1" Margin="1" ImageSource="save_icon.png"/>
+                                    <Button Text="X" WidthRequest="45" BackgroundColor="Transparent" BorderColor="Transparent"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:HomePageViewModel}}, Path=DeleteTodoCommand}" 
+                                                CommandParameter="{Binding}" Grid.Column="2" Margin="1" ImageSource="delete_icon.png"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+
+        <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" 
+            WidthRequest="300" HeightRequest="80" VerticalOptions="EndAndExpand" HorizontalOptions="Center"
+            Grid.Column="2" Margin="0,0,0,25" IsVisible="{OnIdiom Desktop=True, Phone=False}">
+            <Label x:Name="DateTimeLabel" TextColor="{StaticResource EntryBackgroundColor}" FontSize="15" Text="TEST"
+                HorizontalOptions="Center" VerticalOptions="Center" />
+        </Frame>
+
+    </Grid>
+</ContentPage>

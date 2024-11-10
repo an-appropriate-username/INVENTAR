@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="INVApp.Views.AuditTrailPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}" >
+            <Label Text="INVENTAR : AUDIT TRAIL"
+            FontSize="15" 
+            TextColor="{StaticResource TextColor}" 
+            HorizontalOptions="Center"
+            VerticalOptions="Center" />
+        </Grid>
+    </Shell.TitleView>
+
+    <ScrollView>
+        <StackLayout Padding="5">
+            <!-- Header -->
+            <Label Text="{Binding ProductName}" FontSize="15" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <toolkit:Expander>
+                    <toolkit:Expander.Header>
+                        <Button Text="Filters" FontSize="20" FontAttributes="Bold" MaximumWidthRequest="350" Margin="0,5,0,5"/>
+                    </toolkit:Expander.Header>
+
+                    <toolkit:Expander.Content>
+                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" MaximumWidthRequest="600">
+                        <StackLayout>
+                            <!-- Date Range Filter -->
+                            <Frame BackgroundColor="{StaticResource PrimaryColor}">
+                                <Grid ColumnDefinitions="*, Auto" RowDefinitions="*, *, *, *">
+                                    <Label Text="Date From:" VerticalOptions="Center" Grid.Row="0"/>
+                                    <DatePicker x:Name="DateFromPicker" Date="{Binding DateFrom}"
+                                                Grid.Row="0" Grid.Column="1" 
+                                                Margin="0,0,10,0" BackgroundColor="{StaticResource EntryBackgroundColor}"
+                                                TextColor="{StaticResource TextColor}"/>
+                                    <Label Text="To:" VerticalOptions="Center" Grid.Row="1"/>
+                                    <DatePicker x:Name="DateToPicker" Date="{Binding DateTo}" 
+                                                Grid.Row="1" Grid.Column="1"
+                                                Margin="0,0,10,0" BackgroundColor="{StaticResource EntryBackgroundColor}"
+                                                TextColor="{StaticResource TextColor}"/>
+
+                                    <!-- Change Type Filter -->
+                                    <Label Text="Change Type:" Grid.Row="2"/>
+                                    <Picker ItemsSource="{Binding ChangeTypes}" SelectedItem="{Binding SelectedChangeType}"
+                                            Grid.Row="2" Grid.Column="1" Margin="0,0,10,0">
+                                        <Picker.Items>
+                                            <x:String>All</x:String>
+                                            <x:String>Stock</x:String>
+                                            <x:String>Cost</x:String>
+                                            <x:String>Price</x:String>
+                                        </Picker.Items>
+                                    </Picker>
+
+                                    <!-- Result Count Entry -->
+                                    <Label Text="Results to show (default 5):" VerticalOptions="Center" 
+                                            Grid.Row="3"/>
+                                    <Picker SelectedItem="{Binding LogsToShow}" Grid.Row="3" Grid.Column="1" Margin="0,0,10,0">
+                                        <Picker.ItemsSource>
+                                            <x:Array Type="{x:Type x:Int32}">
+                                                <x:Int32>5</x:Int32>
+                                                <x:Int32>10</x:Int32>
+                                                <x:Int32>25</x:Int32>
+                                                <x:Int32>50</x:Int32>
+                                                <x:Int32>100</x:Int32>
+                                                <x:Int32>200</x:Int32>
+                                                <x:Int32>500</x:Int32>
+                                            </x:Array>
+                                        </Picker.ItemsSource>
+                                    </Picker>
+                                    <Label Text="{Binding TotalResultsMessage}" HorizontalOptions="Center" Margin="0,10,0,0" Grid.Row="4"/>
+                                </Grid>
+                            </Frame>
+
+                            <!-- Apply and Clear Filters Buttons -->
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="10, 0, 0, 0">
+                                <Button Text="Apply Filters" Command="{Binding ApplyFilterCommand}" Margin="10"/>
+                                <Button Text="Clear Filters" Command="{Binding ClearFilterCommand}" Margin="10"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+                </toolkit:Expander.Content>
+                </toolkit:Expander>
+            
+
+            <!-- CollectionView to display inventory logs -->
+            <CollectionView ItemsSource="{Binding InventoryLogs}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="3"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <!-- Expander for each log entry -->
+                            <toolkit:Expander>
+                                <toolkit:Expander.Header>
+                                    <Frame BackgroundColor="{StaticResource PrimaryColor}"  Margin="0,10,0,5"
+                                           MaximumWidthRequest="450">
+                                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto" Padding="0">
+                                            <Label Text="{Binding ChangeTypeFormatted, StringFormat='{0}'}" FontSize="18" FontAttributes="Bold" 
+                                                    Grid.Column="0" HorizontalOptions="Start" Margin="0,5,5,10"/>
+                                            <Label Text="{Binding Timestamp, StringFormat='{0:MM/dd/yyyy HH:mm}'}" FontSize="15" 
+                                                    Grid.Column="1" HorizontalOptions="End" Margin="0,5,20,20"/>
+                                        </Grid>
+                                    </Frame>
+                                </toolkit:Expander.Header>
+
+                                <toolkit:Expander.Content>
+                                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                                       BorderColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" Margin="0,0,0,0"
+                                       MaximumWidthRequest="450">
+                                    <Frame BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent" Margin="0,0,0,0">
+                                        <Grid ColumnDefinitions="*, *, *, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto" RowSpacing="1" Padding="5">
+                                            <Label Text="Stock:" FontAttributes="Bold" Grid.Row="0" Grid.Column="0"/>
+                                            <Label Text="{Binding StockOldValue}" Grid.Row="0" Grid.Column="1"/>
+                                            <Label Text="=>" FontAttributes="Bold" Grid.Row="0" Grid.Column="2"/>
+                                            <Label Text="{Binding StockNewValue}" Grid.Row="0" Grid.Column="3"/>
+
+                                            <Label Text="Cost:" FontAttributes="Bold" Grid.Row="1" Grid.Column="0"/>
+                                            <Label Text="{Binding WholesalePriceOldValue}" Grid.Row="1" Grid.Column="1"/>
+                                            <Label Text="=>" FontAttributes="Bold" Grid.Row="1" Grid.Column="2"/>
+                                            <Label Text="{Binding WholesalePriceNewValue}" Grid.Row="1" Grid.Column="3"/>
+
+                                            <Label Text="Price:" FontAttributes="Bold" Grid.Row="2" Grid.Column="0"/>
+                                            <Label Text="{Binding PriceOldValue}" Grid.Row="2" Grid.Column="1"/>
+                                            <Label Text="=>" FontAttributes="Bold" Grid.Row="2" Grid.Column="2"/>
+                                            <Label Text="{Binding PriceNewValue}" Grid.Row="2" Grid.Column="3"/>
+
+                                            <Label Text="Name:" FontAttributes="Bold" Grid.Row="3" Grid.Column="0"/>
+                                            <Label Text="{Binding NameOldValue}" Grid.Row="3" Grid.Column="1"/>
+                                            <Label Text="=>" FontAttributes="Bold" Grid.Row="3" Grid.Column="2"/>
+                                            <Label Text="{Binding NameNewValue}" Grid.Row="3" Grid.Column="3"/>
+
+                                            <Label Text="User:" FontAttributes="Bold" Grid.Row="4" Grid.Column="0"/>
+                                            <Label Text="Admin" Grid.Row="4" Grid.Column="1"/>
+
+                                        </Grid>
+                                    </Frame>
+                                </Frame>
+                            </toolkit:Expander.Content>
+                            </toolkit:Expander>
+                        
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Exit Button -->
+            <Button Text="Exit" Command="{Binding ExitCommand}" Margin="10" MaximumWidthRequest="360"/>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

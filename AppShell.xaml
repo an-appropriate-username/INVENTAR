@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="INVApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:INVApp.Views"
+    xmlns:notify="clr-namespace:INVApp.ContentViews"
+    Shell.FlyoutBehavior="Flyout"
+    Shell.BackgroundColor="{StaticResource FrameBackgroundColor}"
+    Shell.TitleColor="{StaticResource EntryBackgroundColor}"
+    Shell.FlyoutBackgroundColor="{StaticResource PrimaryColor}"
+    Shell.ForegroundColor="{StaticResource FrameBackgroundColor}"
+    Title="INVApp">
+
+    <!-- Flyout Header -->
+    <Shell.FlyoutHeader>
+        <StackLayout BackgroundColor="{StaticResource FrameBackgroundColor}" Padding="10">
+            <Grid ColumnDefinitions="Auto, Auto">
+                <Image Source="main_icon.png" WidthRequest="100" Grid.Column="0" MaximumHeightRequest="60"></Image>
+                <Label Text="INVENTAR" Grid.Column="1" VerticalOptions="Center"
+                    FontSize="20"
+                    TextColor="{StaticResource EntryBackgroundColor}"
+                    FontAttributes="Bold" 
+                    HorizontalOptions="CenterAndExpand"/>
+            </Grid>
+        </StackLayout>
+    </Shell.FlyoutHeader>
+
+    <!-- FlyoutItem: Home Page -->
+    <FlyoutItem Title="Home Page"
+        Icon="home_icon.png"
+        FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Home Page"
+            ContentTemplate="{DataTemplate local:HomePage}" />
+    </FlyoutItem>
+
+    <!-- FlyoutItem: Point Of Sale -->
+    <FlyoutItem Title="Point Of Sale"
+            Icon="pos_icon.png"
+            FlyoutDisplayOptions="AsSingleItem" >
+        <ShellContent Title="Point Of Sale"
+                ContentTemplate="{DataTemplate local:POSPage}" />
+    </FlyoutItem>
+
+    <!-- FlyoutItem: Transaction Log -->
+    <FlyoutItem Title="Transaction Log"
+                Icon="log_icon.png"
+                FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Transaction Log"
+                    ContentTemplate="{DataTemplate local:TransactionLogPage}" />
+    </FlyoutItem>
+
+    <!-- FlyoutItem: Stock Take -->
+    <FlyoutItem Title="Stock Take"
+            Icon="stock_take_icon.png"
+            FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Stock Take"
+                ContentTemplate="{DataTemplate local:StockIntakePage}" />
+    </FlyoutItem>
+    
+    <!-- FlyoutItem: Stock Overview -->
+    <FlyoutItem Title="Stock Overview"
+                Icon="overview_icon.png"
+                FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Overview"
+                    ContentTemplate="{DataTemplate local:StockOverviewPage}" />
+    </FlyoutItem>
+
+    <!-- FlyoutItem: Customer Page -->
+    <FlyoutItem Title="Customer Accounts"
+            Icon="customer_icon.png"
+            FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Customer Accounts"
+                ContentTemplate="{DataTemplate local:CustomerPage}" />
+    </FlyoutItem>
+
+    <!-- FlyoutItem: Settings -->
+    <FlyoutItem Title="Account"
+            Icon="account_icon.png"
+            FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Account"
+                ContentTemplate="{DataTemplate local:AccountPage}" />
+    </FlyoutItem>
+
+    <!-- FlyoutItem: Settings -->
+    <FlyoutItem Title="Settings"
+                Icon="settings_icon.png"
+                FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Settings"
+                    ContentTemplate="{DataTemplate local:SettingsPage}" />
+    </FlyoutItem>
+
+</Shell>

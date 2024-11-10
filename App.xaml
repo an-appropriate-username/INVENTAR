@@ -1,0 +1,99 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:local="clr-namespace:INVApp"
+            x:Class="INVApp.App">
+
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <!-- Define Colors -->
+            <Color x:Key="PrimaryColor">#90a4ae</Color>
+            <Color x:Key="SecondaryColor">#eaf2f8</Color>
+            <Color x:Key="WarningColor">#d98880</Color>
+            <Color x:Key="ConfirmColor">#4caf50</Color>
+            <Color x:Key="BackgroundColor">#607d8b</Color>
+            <Color x:Key="EntryBackgroundColor">#cfd8dc</Color>
+            <Color x:Key="FrameBackgroundColor">#37474f</Color>
+            <Color x:Key="TextColor">#263238</Color> 
+
+            <!-- Define Styles -->
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource TextColor}" />
+                <Setter Property="FontSize">
+                    <Setter.Value>
+                        <OnIdiom Phone="15" Tablet="16" Desktop="18" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="FontFamily" Value="LatoRegular"/>
+                <Setter Property="Margin">
+                    <Setter.Value>
+                        <OnIdiom Phone="5,2,5,2" Tablet="10,5,10,5" Desktop="15,5,15,5" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource PrimaryColor}" />
+                <Setter Property="BorderColor" Value="{StaticResource FrameBackgroundColor}"/>
+                <Setter Property="TextColor" Value="{StaticResource TextColor}"/>
+                <Setter Property="CornerRadius" Value="11"/>
+                <Setter Property="HeightRequest">
+                    <Setter.Value>
+                        <OnIdiom Phone="45" Tablet="45" Desktop="50" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Margin">
+                    <Setter.Value>
+                        <OnIdiom Phone="5,0,5,0" Tablet="10,0,10,0" Desktop="15,0,15,0" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="FontFamily" Value="LatoRegular"/>
+                <Setter Property="FontSize">
+                    <Setter.Value>
+                        <OnIdiom Phone="12" Tablet="14" Desktop="16" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="{StaticResource TextColor}" />
+                <Setter Property="BackgroundColor" Value="{StaticResource EntryBackgroundColor}"/>
+                <Setter Property="FontSize">
+                    <Setter.Value>
+                        <OnIdiom Phone="16" Tablet="16" Desktop="18" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="FontFamily" Value="LatoRegular"/>
+            </Style>
+
+            <Style TargetType="Picker">
+                <Setter Property="TextColor" Value="{StaticResource TextColor}" />
+                <Setter Property="BackgroundColor" Value="{StaticResource EntryBackgroundColor}"/>
+                <Setter Property="FontSize">
+                    <Setter.Value>
+                        <OnIdiom Phone="16" Tablet="16" Desktop="18" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="FontFamily" Value="LatoRegular"/>
+            </Style>
+
+            <Style TargetType="SearchBar">
+                <Setter Property="TextColor" Value="{StaticResource TextColor}" />
+                <Setter Property="BackgroundColor" Value="{StaticResource EntryBackgroundColor}"/>
+                <Setter Property="FontSize">
+                    <Setter.Value>
+                        <OnIdiom Phone="16" Tablet="16" Desktop="18" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="FontFamily" Value="LatoRegular"/>
+            </Style>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
