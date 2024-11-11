@@ -17,6 +17,7 @@ namespace INVApp.ViewModels
     {
         // Databse
         private readonly DatabaseService _databaseService;
+        private readonly APIService _apiService;
 
         private CancellationTokenSource _searchCancellationTokenSource;
         private const int SearchDelayMilliseconds = 300;
@@ -59,9 +60,10 @@ namespace INVApp.ViewModels
         public ICommand LoadMoreCommand { get; }
 
 
-        public StockOverviewViewModel(DatabaseService databaseService, StockIntakeViewModel intakeViewModel)
+        public StockOverviewViewModel(DatabaseService databaseService, StockIntakeViewModel intakeViewModel, APIService apiService)
         {
             _databaseService = databaseService;
+            _apiService = apiService;
             Products = new ObservableCollection<Product>();
             Categories = new ObservableCollection<string>();
 
@@ -78,22 +80,29 @@ namespace INVApp.ViewModels
         // Products
         public async Task LoadProductsPage(int page)
         {
-            var offset = (page - 1) * _pageSize;
-            var productsPage = await _databaseService.GetProductsPagedAsync(offset, _pageSize);
+            var productsPage = await _apiService.GetProductsFromApiAsync(page, _pageSize);
 
-            Products.Clear();
+            if (page == 1) Products.Clear(); // Only clear on first page to avoid losing loaded items
+
             foreach (var product in productsPage)
             {
-                Products.Add(product);
+                // Avoid duplicates by checking for existing ProductID
+                if (!Products.Any(p => p.ProductID == product.ProductID))
+                {
+                    Products.Add(product);
+                }
             }
+
             _currentPage = page;
         }
+
+
 
         public async Task LoadNextPage()
         {
             _currentPage++;
             var offset = (_currentPage - 1) * _pageSize;
-            var productsPage = await _databaseService.GetProductsPagedAsync(offset, _pageSize);
+            var productsPage = await _apiService.GetProductsFromApiAsync(offset, _pageSize);
 
             if (!productsPage.Any())
             {
@@ -117,7 +126,7 @@ namespace INVApp.ViewModels
         // Categories
         public async Task LoadCategories()
         {
-            var categoriesFromDb = await _databaseService.GetCategoriesAsync();
+            var categoriesFromDb = await _apiService.GetCategoriesAsync();
 
             await MainThread.InvokeOnMainThreadAsync(() => 
             {
@@ -159,33 +168,27 @@ namespace INVApp.ViewModels
         // Filters
         public async void SearchProducts()
         {
-            _searchCancellationTokenSource?.Cancel();
-            _searchCancellationTokenSource = new CancellationTokenSource();
-            var token = _searchCancellationTokenSource.Token;
-
-            await Task.Delay(SearchDelayMilliseconds);
-
-            if (token.IsCancellationRequested)
-                return;
-
-            var productsFromDb = await _databaseService.GetProductsAsync();
-
-            var filteredProducts = productsFromDb
-                .Where(p =>
-                    (string.IsNullOrEmpty(SearchQuery) ||
-                    p.ProductName.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
-                    p.BrandName.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)) &&
-                    (string.IsNullOrEmpty(SelectedCategory) || p.Category == SelectedCategory)
-                );
-
-            var limitedProducts = filteredProducts.Take(100).ToList();
-
-            Products.Clear();
-            foreach (var product in limitedProducts)
+            try
             {
-                Products.Add(product);
+                // Call the new search method with the search query and category filter
+                var productsFromDb = await _apiService.SearchProductsAsync(SearchQuery, SelectedCategory);
+
+                var limitedProducts = productsFromDb.Take(100).ToList();
+
+                Products.Clear();
+                foreach (var product in limitedProducts)
+                {
+                    Products.Add(product);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle or log the error
             }
         }
+
+
+
         public async void ClearFilters()
         {
             SearchQuery = string.Empty;

@@ -37,6 +37,7 @@ namespace INVApp
 
             // Register services
             builder.Services.AddSingleton<DatabaseService>();
+            builder.Services.AddSingleton<APIService>();
             builder.Services.AddSingleton<SoundService>();
             builder.Services.AddSingleton<DatabaseConfigService>();
 
