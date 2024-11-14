@@ -8,6 +8,7 @@
             x:Class="INVApp.Views.POSPage"
             BackgroundColor="{StaticResource BackgroundColor}">
 
+    <!-- Notify and Confirm Banners -->
     <Shell.TitleView>
         <Grid BackgroundColor="{StaticResource BackgroundColor}">
             <notify:NotificationBanner x:Name="NotificationBanner"/>
@@ -16,9 +17,11 @@
     </Shell.TitleView>
 
     <ContentPage.Content>
-        <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
-            <!-- Define columns based on platform -->
-            <Grid.ColumnDefinitions>
+        <ScrollView Padding="10">
+
+            <!-- Main Grid -->
+            <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
+                <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{OnIdiom Phone=*, Tablet=*, Desktop=*}" />
                 <ColumnDefinition Width="{OnIdiom Phone=0, Tablet=0, Desktop=Auto}" />
             </Grid.ColumnDefinitions>
@@ -30,9 +33,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <ScrollView Grid.Column="0" Padding="10">
-        <StackLayout Grid.Row="1" Padding="10">
+            <StackLayout Grid.Row="0" Padding="10">
             
+            <!-- Camera Barcode Scanner -->
             <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
                     BorderColor="{StaticResource FrameBackgroundColor}" 
                     CornerRadius="10" Padding="5" Margin="0,0,0,5" 
@@ -45,28 +48,25 @@
                     BarcodesDetected="BarcodesDetected"/>
             </Frame>
 
-                    <Grid ColumnDefinitions="Auto, Auto" HorizontalOptions="Center" >
-                        <!-- Barcode Entry -->
-                        <Entry x:Name="BarcodeEntry"
-                        Placeholder="Scan or enter barcode"
-                        BackgroundColor="Transparent"
-                        FontSize="16"
-                        Keyboard="Numeric"
-                        Margin="0,0,5,10"
-                        Text="{Binding ScannedBarcode, Mode=TwoWay}"
-                        MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=600}"
-                        HeightRequest="{OnIdiom Phone=40, Tablet=40, Desktop=40}"/>
-
-                        <Button Text="Add"
-                        Command="{Binding AddProductCommand}" 
-                        Grid.Column="1" HeightRequest="35"/>
-                    </Grid>
-
-
-                    <!-- Cart CollectionView -->
+            <!-- Barcode Entry -->
+            <Grid ColumnDefinitions="Auto, Auto" HorizontalOptions="Center" >
+                <Entry x:Name="BarcodeEntry"
+                    Placeholder="Scan or enter barcode"
+                    BackgroundColor="Transparent"
+                    FontSize="16"
+                    Keyboard="Numeric"
+                    Margin="0,0,5,10"
+                    Text="{Binding ScannedBarcode, Mode=TwoWay}"
+                    MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=600}"
+                    HeightRequest="{OnIdiom Phone=40, Tablet=40, Desktop=40}"/>
+                
+                <Button Text="Add"
+                    Command="{Binding AddProductCommand}" 
+                    Grid.Column="1" HeightRequest="35"/>
+            </Grid>
 
             <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="Transparent" Padding="0" 
-                    MaximumWidthRequest="650">
+                MaximumWidthRequest="650">
 
             <CollectionView x:Name="CartCollectionView"
                 ItemsSource="{Binding CartReversed}"
@@ -83,10 +83,7 @@
                         <Frame Padding="5" Margin="5" BackgroundColor="{StaticResource EntryBackgroundColor}" BorderColor="Black"
                                 CornerRadius="10" MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=550}">
 
-                            <!-- Define Grid with three columns -->
                             <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto" Padding="10">
-
-                                <!-- Product Info in the first column -->
                                 <StackLayout Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center">
                                     <Label Text="{Binding Product.ProductName}" 
                                             FontAttributes="Bold" 
@@ -125,25 +122,35 @@
             </CollectionView>
                     </Frame>
                 </StackLayout>
-    </ScrollView>
 
-    <!-- Checkout Section -->
+                <!-- Checkout Section -->
 
-            <toolkit:Expander Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" IsExpanded="True" HorizontalOptions="StartAndExpand" Margin="0,0,100,10">
-                <toolkit:Expander.Header>
-                    <Button Text="Checkout"  FontSize="17" Margin="0,20,0,0" MaximumWidthRequest="{OnIdiom Phone=150, Tablet=350, Desktop=600}"/>
+                <toolkit:Expander Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" 
+                                Grid.Row="{OnIdiom Phone=1, Tablet=1}" 
+                                IsExpanded="True" 
+                                HorizontalOptions="StartAndExpand">
+                    <toolkit:Expander.Margin>
+                        <OnPlatform x:TypeArguments="Thickness">
+                            <On Platform="iOS" Value="0,0,10,10" />
+                            <On Platform="Android" Value="0,0,10,10" />
+                            <On Platform="Windows" Value="0,0,100,10" />
+                        </OnPlatform>
+                    </toolkit:Expander.Margin>
+                    <toolkit:Expander.Header>
+                    <Button Text="Checkout"  FontSize="17" Margin="0,20,0,0" MaximumWidthRequest="{OnIdiom Phone=250, Tablet=350, Desktop=600}"/>
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
                     <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
                         BorderColor="{StaticResource FrameBackgroundColor}" 
                         Margin="10" Padding="5" 
-                        MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
+                        MaximumWidthRequest="{OnIdiom Phone=550, Tablet=400, Desktop=600}">
                         <StackLayout Padding="10">
                             <Frame BackgroundColor="{StaticResource PrimaryColor}"
                                 HeightRequest="{OnIdiom Phone=200, Tablet=250, Desktop=180}" 
                                 WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
                                 <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+                                    
                                     <!-- Payment method label and picker -->
                                     <Label Text="Payment Method:" FontSize="16" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,5,0"/>
                                     <Picker x:Name="PaymentMethodPicker" 
@@ -151,7 +158,6 @@
                                         SelectedItem="{Binding SelectedPaymentMethod}" 
                                         Grid.Row="0" Grid.Column="1" HorizontalOptions="EndAndExpand" 
                                         MaximumWidthRequest="{OnIdiom Phone=60, Tablet=80, Desktop=100}"/>
-
                                     <Label Text="Total:" FontSize="16" FontAttributes="Bold" Margin="0,10,5,0" Grid.Row="1"/>
                                     <Label Text="{Binding TotalAmount, StringFormat='{0:C}'}" FontSize="17" Grid.Row="1" Grid.Column="1"
                                         Margin="0,10,5,0" HorizontalOptions="EndAndExpand" />
@@ -213,5 +219,7 @@
                 </toolkit:Expander.Content>
             </toolkit:Expander>
         </Grid>
+        </ScrollView>
+
     </ContentPage.Content>
 </ContentPage>

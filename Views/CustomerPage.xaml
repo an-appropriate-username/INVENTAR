@@ -16,6 +16,8 @@
         </Grid>
     </Shell.TitleView>
 
+    <ScrollView>
+        
     <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
         <!-- Define columns based on platform -->
         <Grid.ColumnDefinitions>
@@ -24,12 +26,12 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <StackLayout Grid.Column="0" VerticalOptions="StartAndExpand">
-            <toolkit:Expander IsExpanded="False">
+                <toolkit:Expander IsExpanded="{Binding IsExpandedBasedOnPlatform}">
                 <toolkit:Expander.Header>
                     <Button Text="New Customer" 
                             FontSize="Small"
@@ -167,4 +169,6 @@
                     MaximumWidthRequest="600"/>
         </StackLayout>
     </Grid>
+    </ScrollView>
+
 </ContentPage>
