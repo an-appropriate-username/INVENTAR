@@ -9,6 +9,7 @@
             BackgroundColor="{StaticResource BackgroundColor}">
 
     <!-- Notify and Confirm Banners -->
+    
     <Shell.TitleView>
         <Grid BackgroundColor="{StaticResource BackgroundColor}">
             <notify:NotificationBanner x:Name="NotificationBanner"/>
