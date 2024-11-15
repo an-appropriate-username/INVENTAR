@@ -54,7 +54,6 @@ namespace INVApp
             builder.Services.AddTransient<AccountPage>();
 
 
-
             // Register view models
             builder.Services.AddTransient<StockOverviewViewModel>();
             builder.Services.AddTransient<StockIntakeViewModel>();

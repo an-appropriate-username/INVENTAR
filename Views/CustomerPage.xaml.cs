@@ -11,4 +11,5 @@ public partial class CustomerPage : ContentPage
 		InitializeComponent();
         BindingContext = new CustomerPageViewModel(App.DatabaseService);
     }
+
 }

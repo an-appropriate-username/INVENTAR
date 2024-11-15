@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             x:Class="INVApp.Views.CustomerPage"
             BackgroundColor="{StaticResource BackgroundColor}">
 
@@ -15,87 +16,148 @@
         </Grid>
     </Shell.TitleView>
 
-    <ScrollView Padding="10">
-        <StackLayout>
+    <ScrollView>
+        
+    <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
+        <!-- Define columns based on platform -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{OnIdiom Phone=*, Tablet=*, Desktop=*}" />
+            <ColumnDefinition Width="{OnIdiom Phone=0, Tablet=0, Desktop=*}" />
+        </Grid.ColumnDefinitions>
 
-            <!-- Customer Details Frame -->
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
-                    BorderColor="{StaticResource FrameBackgroundColor}" 
-                    CornerRadius="10" 
-                    Padding="10" 
-                    Margin="0,10,0,10"
-                    MaximumWidthRequest="600">
-                <Grid ColumnDefinitions="Auto,*" RowDefinitions="40,40,40,40,40,40" RowSpacing="4" ColumnSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-                    <Label Text="Name" Grid.Column="0" Grid.Row="0" />
-                    <Entry Text="{Binding CustomerName}" Grid.Column="1" Grid.Row="0" Placeholder="First Name" />
+        <StackLayout Grid.Column="0" VerticalOptions="StartAndExpand">
+                <toolkit:Expander IsExpanded="{Binding IsExpandedBasedOnPlatform}">
+                <toolkit:Expander.Header>
+                    <Button Text="New Customer" 
+                            FontSize="Small"
+                            FontAttributes="Bold"
+                            TextColor="{StaticResource TextColor}" 
+                            HorizontalOptions="Center" />
 
-                    <Label Text="Surname" Grid.Column="0" Grid.Row="1" />
-                    <Entry Text="{Binding Surname}" Grid.Column="1" Grid.Row="1" Placeholder="Last Name" />
+                </toolkit:Expander.Header>
 
-                    <Label Text="Email" Grid.Column="0" Grid.Row="2" />
-                    <Entry Text="{Binding Email}" Grid.Column="1" Grid.Row="2" Keyboard="Email" Placeholder="Email" />
+                <toolkit:Expander.Content>
+                    <StackLayout>
+                        <Label Text="" />
 
-                    <Label Text="Phone" Grid.Column="0" Grid.Row="3" />
-                    <Entry Text="{Binding Phone}" Grid.Column="1" Grid.Row="3" Keyboard="Telephone" Placeholder="Phone" />
+                        <!-- Customer Details Frame -->
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                                BorderColor="{StaticResource FrameBackgroundColor}" 
+                                CornerRadius="10" 
+                                Padding="10" 
+                                Margin="0,10,0,10"
+                                MaximumWidthRequest="600">
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="40,40,40,40,40,40" RowSpacing="4" ColumnSpacing="10">
 
-                    <Label Text="Member" Grid.Column="0" Grid.Row="4" />
-                    <Switch IsToggled="{Binding IsMember}" Grid.Column="1" Grid.Row="4" />
+                                <Label Text="Name" Grid.Column="0" Grid.Row="0" />
+                                <Entry Text="{Binding CustomerName}" Grid.Column="1" Grid.Row="0" Placeholder="First Name" />
 
-                    <Label Text="Barcode Image" Grid.Column="0" Grid.Row="5" />
-                    <Switch IsToggled="{Binding GenerateBarcodeImage}" Grid.Column="1" Grid.Row="5" />
-                </Grid>
-            </Frame>
+                                <Label Text="Surname" Grid.Column="0" Grid.Row="1" />
+                                <Entry Text="{Binding Surname}" Grid.Column="1" Grid.Row="1" Placeholder="Last Name" />
 
-            <!-- Add Customer Button -->
-            <Button Text="Add Customer" 
-                    Command="{Binding AddCustomerCommand}" 
-                    BackgroundColor="{StaticResource PrimaryColor}" 
-                    TextColor="White" 
-                    CornerRadius="10" 
-                    Margin="0,10,0,10" 
-                    MaximumWidthRequest="600"/>
+                                <Label Text="Email" Grid.Column="0" Grid.Row="2" />
+                                <Entry Text="{Binding Email}" Grid.Column="1" Grid.Row="2" Keyboard="Email" Placeholder="Email" />
+
+                                <Label Text="Phone" Grid.Column="0" Grid.Row="3" />
+                                <Entry Text="{Binding Phone}" Grid.Column="1" Grid.Row="3" Keyboard="Telephone" Placeholder="Phone" />
+
+                                <Label Text="Member" Grid.Column="0" Grid.Row="4" />
+                                <Switch IsToggled="{Binding IsMember}" Grid.Column="1" Grid.Row="4" />
+
+                                <Label Text="Barcode Image" Grid.Column="0" Grid.Row="5" />
+                                <Switch IsToggled="{Binding GenerateBarcodeImage}" Grid.Column="1" Grid.Row="5" />
+                            </Grid>
+                        </Frame>
+
+                        <Button Text="Add Customer" 
+                                Command="{Binding AddCustomerCommand}" 
+                                BackgroundColor="{StaticResource PrimaryColor}" 
+                                TextColor="White" 
+                                CornerRadius="10" 
+                                Margin="0,10,0,10" 
+                                MaximumWidthRequest="600"/>
+                    </StackLayout>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+        </StackLayout>
+
+        <StackLayout Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" Grid.Row="{OnIdiom Phone=1, Tablet=1}" Padding="10">
+
+            <Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *" Padding="5" MaximumWidthRequest="600">
+                <Label Text="Name / Email" 
+                    Grid.Column="0"
+                    FontSize="Small"
+                    FontAttributes="Bold"
+                    TextColor="{StaticResource TextColor}" 
+                    HorizontalOptions="Start" />
+                <Label Text="Barcode" 
+                    Grid.Column="1"
+                    FontSize="Small"
+                    FontAttributes="Bold"
+                    TextColor="{StaticResource TextColor}" 
+                    HorizontalOptions="Center" />
+                <Label Text="ID / Phone" 
+                    Grid.Column="2"
+                    FontSize="Small"
+                    FontAttributes="Bold"
+                    TextColor="{StaticResource TextColor}" 
+                    HorizontalOptions="End" />
+            </Grid>
 
             <!-- Customers List -->
             <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
-                   CornerRadius="10" 
-                   Padding="5" 
-                   Margin="0,10,0,10"
-                   MaximumWidthRequest="600"
-                   MinimumHeightRequest="150">
+                    CornerRadius="10" 
+                    Padding="5" 
+                    Margin="0,10,0,10"
+                    MaximumWidthRequest="600">
+
                 <CollectionView ItemsSource="{Binding Customers}" 
                                 SelectionMode="Single" 
-                                SelectedItem="{Binding SelectedCustomer}">
+                                SelectedItem="{Binding SelectedCustomer}"
+                                MaximumHeightRequest="{OnIdiom Phone=500, Tablet=500, Desktop=700}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame BackgroundColor="{StaticResource PrimaryColor}" 
-                                    Padding="10" 
-                                    Margin="5" 
+                                    Padding="5" 
+                                    Margin="2" 
                                     BorderColor="Gray" 
-                                    CornerRadius="5">
-                                <VerticalStackLayout Spacing="1">
-                                    <Label Text="{Binding CustomerName}" 
+                                    CornerRadius="5"
+                                    MaximumHeightRequest="100">
+
+                                <Grid ColumnDefinitions="*, *, *" RowDefinitions="Auto, Auto">
+                                    <Label Text="{Binding CustomerName}" Grid.Column="0"
                                             FontSize="Medium" 
                                             FontAttributes="Bold" 
                                             TextColor="{StaticResource TextColor}" />
-                                    <Label Text="{Binding CustomerId}" 
+                                    <Label Text="{Binding CustomerId}" Grid.Column="2"
                                             FontSize="Small" 
                                             TextColor="{StaticResource TextColor}" />
-                                    <Label Text="{Binding Email}" 
+                                    <Label Text="{Binding Email}" Grid.Column="0" Grid.Row="1"
                                             FontSize="Small" 
                                             TextColor="{StaticResource TextColor}" />
-                                    <Label Text="{Binding Phone}" 
+                                    <Label Text="{Binding Phone}" Grid.Column="2" Grid.Row="1"
                                             FontSize="Small" 
                                             TextColor="{StaticResource TextColor}" />
-                                    <Label Text="{Binding Barcode}" 
+                                    <Label Text="{Binding Barcode}" Grid.Column="1" 
                                             FontSize="Small" 
                                             TextColor="{StaticResource TextColor}" />
-                                </VerticalStackLayout>
+                                </Grid>
                             </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </Frame>
+
+            <Label Text="{Binding SelectedCustomer.CustomerName, StringFormat='Selected Customer: {0}'}"
+                FontSize="16" 
+                FontAttributes="Bold"
+                HorizontalOptions="Center" 
+                Margin="0,10,0,0"/>
 
             <!-- Delete Customer Button -->
             <Button Text="Delete Customer" 
@@ -105,7 +167,8 @@
                     CornerRadius="10" 
                     Margin="0,10,0,10" 
                     MaximumWidthRequest="600"/>
-
         </StackLayout>
+    </Grid>
     </ScrollView>
+
 </ContentPage>

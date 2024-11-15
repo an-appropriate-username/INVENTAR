@@ -73,6 +73,20 @@ namespace INVApp.ViewModels
             set { _selectedCustomer = value; OnPropertyChanged(); }
         }
 
+        public bool IsExpandedBasedOnPlatform
+        {
+            get
+            {
+                #if WINDOWS
+                    return true;
+                #elif ANDROID
+                    return false;
+                #else
+                    return false;
+                #endif
+            }
+        }
+
         // Commands for add and delete actions
         public ICommand AddCustomerCommand { get; }
         public ICommand DeleteCustomerCommand { get; }
