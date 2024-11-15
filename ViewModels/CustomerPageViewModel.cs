@@ -13,6 +13,8 @@ namespace INVApp.ViewModels
     public class CustomerPageViewModel : BaseViewModel
     {
         private readonly DatabaseService _databaseService;
+        private readonly APIService _apiService;
+
         public ObservableCollection<Customer>? Customers { get; set; } = new ObservableCollection<Customer>();
 
         // Properties for new customer fields
@@ -77,9 +79,10 @@ namespace INVApp.ViewModels
         public ICommand AddCustomerCommand { get; }
         public ICommand DeleteCustomerCommand { get; }
 
-        public CustomerPageViewModel(DatabaseService databaseService)
+        public CustomerPageViewModel(DatabaseService databaseService, APIService apiService)
         {
             _databaseService = databaseService;
+            _apiService = apiService;
             AddCustomerCommand = new Command(async () => await AddCustomerAsync());
             DeleteCustomerCommand = new Command(async () => await DeleteCustomerAsync());
 
@@ -89,7 +92,7 @@ namespace INVApp.ViewModels
         // Load existing customers
         private async Task LoadCustomersAsync()
         {
-            var customers = await _databaseService.GetCustomersAsync();
+            var customers = await _apiService.GetCustomersAsync();
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 Customers.Clear();

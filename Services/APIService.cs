@@ -158,9 +158,10 @@ namespace INVApp.Services
         // Retrieve transactions within a date range
         public async Task<List<Transaction>> GetTransactionsAsync(DateTime dateFrom, DateTime dateTo, int count)
         {
-            var response = await _httpClient.GetAsync($"{_baseUri}Transaction?dateFrom={dateFrom:O}&dateTo={dateTo:O}&count={count}");
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<Transaction>>() ?? new List<Transaction>();
+            var response = await _httpClient.GetAsync($"{_baseUri}/Transaction/api/maui/transactions?dateFrom={dateFrom:O}&dateTo={dateTo:O}&count={count}");
+            var content = await response.Content.ReadAsStringAsync();
+            // Deserialize the JSON content to a list of Product objects
+            return JsonConvert.DeserializeObject<List<Transaction>>(content);
         }
 
         // Retrieve transaction items by transaction ID
@@ -178,9 +179,12 @@ namespace INVApp.Services
         // Retrieve all customers
         public async Task<List<Customer>> GetCustomersAsync()
         {
-            var response = await _httpClient.GetAsync($"{_baseUri}Customer");
+            var response = await _httpClient.GetAsync($"{_baseUri}Customer/api/maui/customers");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<Customer>>() ?? new List<Customer>();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<Customer>>(content);
+            //return await response.Content.ReadFromJsonAsync<List<Customer>>();
         }
 
         // Add a new customer
