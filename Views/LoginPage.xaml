@@ -2,12 +2,71 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             x:Class="INVApp.Views.LoginPage"
-            Title="LoginPage">
-    
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+            <Label Text="INVENTAR : LOGIN"
+                FontSize="15" 
+                TextColor="{StaticResource TextColor}" 
+                HorizontalOptions="Center" 
+                VerticalOptions="Center" />
+        </Grid>
+    </Shell.TitleView>
+
+    <ScrollView Padding="10">
+        <StackLayout>
+            <Label Text="Welcome to INVENTAR." Grid.Column="0" Grid.Row="0" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" Margin="0,100,0,0"/>
+            <Image Source="main_icon.png" WidthRequest="200" Margin="0,30,0,50" VerticalOptions="Start"/>
+            
+
+            <!-- Login Frame -->
+            <Label Text="LOGIN" Grid.Column="0" Grid.Row="0" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
+
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="40,40,40" RowSpacing="4" ColumnSpacing="10">
+
+                        <!-- First Name -->
+                        <Label Text="First Name" Grid.Column="0" Grid.Row="0"/>
+                        <Entry Placeholder="Enter First Name" Text="{Binding FirstName}" Grid.Column="1" Grid.Row="0"/>
+
+                        <!-- Last Name -->
+                        <Label Text="Last Name" Grid.Column="0" Grid.Row="1"/>
+                        <Entry Placeholder="Enter Last Name" Text="{Binding LastName}" Grid.Column="1" Grid.Row="1"/>
+
+                        <!-- Email -->
+                        <Label Text="Email" Grid.Column="0" Grid.Row="2"/>
+                        <Entry Placeholder="Enter Email" Text="{Binding Email}" Grid.Column="1" Grid.Row="2"/>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="40" Margin="0,30,0,0">
+                        <!-- Password -->
+                        <Label Text="Password" Grid.Column="0" Grid.Row="0"/>
+                        <Entry Placeholder="Enter Password" Text="{Binding Password}" IsPassword="True" Grid.Row="0" Grid.Column="1" />
+
+                        <!-- Passcode -->
+                        <Label Text="Passcode" Grid.Column="2" Grid.Row="0"/>
+                        <Entry Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" Grid.Row="0" Grid.Column="3"/>
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Admin Option -->
+            <Label x:Name="CreateAdminLabel" Text="No Admin user found. Please create an Admin!" 
+                   IsVisible="False" FontAttributes="Bold" TextColor="{StaticResource WarningColor}" 
+                   HorizontalOptions="Center" />
+
+            <!-- Login and Create Admin Buttons -->
+            <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="CenterAndExpand">
+                <Button x:Name="loginButton" Text="Login" Command="{Binding LoginCommand}"
+                        IsVisible="{Binding CanLogin}" />
+                <Button Text="Create Profile" Command="{Binding CreateAdminCommand}"
+                        IsVisible="{Binding CanCreateAdmin}" />
+            </StackLayout>
+
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
