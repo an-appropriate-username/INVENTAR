@@ -16,6 +16,8 @@ namespace INVApp
             Routing.RegisterRoute(nameof(TransactionLogPage), typeof(TransactionLogPage));
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
             Routing.RegisterRoute(nameof(CustomerPage), typeof(CustomerPage));
+            Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+
         }
     }
 }

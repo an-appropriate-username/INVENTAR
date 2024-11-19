@@ -1,4 +1,5 @@
 ﻿using INVApp.Services;
+using INVApp.Views;
 
 namespace INVApp
 {
@@ -38,7 +39,7 @@ namespace INVApp
             });
 
             // Set the main page of the application
-            MainPage = new AppShell();
+            MainPage = new LoginPage();
         }
 
         #endregion
