@@ -17,56 +17,77 @@
 
     <ScrollView Padding="10">
         <StackLayout>
-            <Label Text="Welcome to INVENTAR." Grid.Column="0" Grid.Row="0" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" Margin="0,100,0,0"/>
-            <Image Source="main_icon.png" WidthRequest="200" Margin="0,30,0,50" VerticalOptions="Start"/>
-            
+            <Label Text="Welcome to INVENTAR."
+               FontAttributes="Bold" 
+               HorizontalOptions="CenterAndExpand" 
+               Margin="0,25,0,0" IsVisible="{Binding CanCreateAdmin}"/>
 
-            <!-- Login Frame -->
-            <Label Text="LOGIN" Grid.Column="0" Grid.Row="0" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
+            <Image Source="main_icon.png" 
+               WidthRequest="150" 
+               Margin="0,30,0,50" 
+               VerticalOptions="Start" IsVisible="{Binding CanCreateAdmin}"/>
 
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
+            <!-- Conditional UI for Login -->
+            <Label Text="LOGIN" 
+               FontAttributes="Bold" 
+               HorizontalOptions="CenterAndExpand"
+               IsVisible="{Binding CanLogin}" />
+
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+               Margin="0,0,0,5" 
+               MaximumWidthRequest="600"
+               IsVisible="{Binding CanLogin}">
                 <VerticalStackLayout>
-                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="40,40,40" RowSpacing="4" ColumnSpacing="10">
+                    <!-- User ID -->
+                    <Label Text="User ID" />
+                    <Entry Placeholder="Enter User ID (Digits)" Text="{Binding UserId}" Keyboard="Numeric" />
 
-                        <!-- First Name -->
-                        <Label Text="First Name" Grid.Column="0" Grid.Row="0"/>
-                        <Entry Placeholder="Enter First Name" Text="{Binding FirstName}" Grid.Column="1" Grid.Row="0"/>
-
-                        <!-- Last Name -->
-                        <Label Text="Last Name" Grid.Column="0" Grid.Row="1"/>
-                        <Entry Placeholder="Enter Last Name" Text="{Binding LastName}" Grid.Column="1" Grid.Row="1"/>
-
-                        <!-- Email -->
-                        <Label Text="Email" Grid.Column="0" Grid.Row="2"/>
-                        <Entry Placeholder="Enter Email" Text="{Binding Email}" Grid.Column="1" Grid.Row="2"/>
-                    </Grid>
-
-                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="40" Margin="0,30,0,0">
-                        <!-- Password -->
-                        <Label Text="Password" Grid.Column="0" Grid.Row="0"/>
-                        <Entry Placeholder="Enter Password" Text="{Binding Password}" IsPassword="True" Grid.Row="0" Grid.Column="1" />
-
-                        <!-- Passcode -->
-                        <Label Text="Passcode" Grid.Column="2" Grid.Row="0"/>
-                        <Entry Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" Grid.Row="0" Grid.Column="3"/>
-                    </Grid>
-
+                    <!-- Password -->
+                    <Label Text="Passcode" />
+                    <Entry Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" Keyboard="Numeric" />
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Admin Option -->
-            <Label x:Name="CreateAdminLabel" Text="No Admin user found. Please create an Admin!" 
-                   IsVisible="False" FontAttributes="Bold" TextColor="{StaticResource WarningColor}" 
-                   HorizontalOptions="Center" />
+            <!-- Conditional UI for Admin Creation -->
+            <Label Text="CREATE ADMIN PROFILE"
+               FontAttributes="Bold" 
+               HorizontalOptions="CenterAndExpand"
+               IsVisible="{Binding CanCreateAdmin}" />
 
-            <!-- Login and Create Admin Buttons -->
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+               Margin="0,0,0,5" 
+               MaximumWidthRequest="600"
+               IsVisible="{Binding CanCreateAdmin}">
+                <VerticalStackLayout>
+                    <!-- First Name -->
+                    <Label Text="First Name" />
+                    <Entry Placeholder="Enter First Name" Text="{Binding FirstName}" />
+
+                    <!-- Last Name -->
+                    <Label Text="Last Name (Optional)" />
+                    <Entry Placeholder="Enter Last Name" Text="{Binding LastName}" />
+
+                    <!-- Email -->
+                    <Label Text="Email" />
+                    <Entry Placeholder="Enter Email" Text="{Binding Email}" />
+
+                    <!-- Password -->
+                    <Label Text="Password" />
+                    <Entry Placeholder="Enter Password" Text="{Binding Password}" IsPassword="True" />
+
+                    <!-- Passcode -->
+                    <Label Text="Passcode" />
+                    <Entry Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Buttons -->
             <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="CenterAndExpand">
-                <Button x:Name="loginButton" Text="Login" Command="{Binding LoginCommand}"
-                        IsVisible="{Binding CanLogin}" />
-                <Button Text="Create Profile" Command="{Binding CreateAdminCommand}"
-                        IsVisible="{Binding CanCreateAdmin}" />
+                <Button Text="Login" Command="{Binding LoginCommand}" 
+                    IsVisible="{Binding CanLogin}" />
+                <Button Text="Create Admin" Command="{Binding CreateAdminCommand}" 
+                    IsVisible="{Binding CanCreateAdmin}" />
             </StackLayout>
-
         </StackLayout>
     </ScrollView>
 </ContentPage>

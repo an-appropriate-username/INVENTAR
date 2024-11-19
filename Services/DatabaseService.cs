@@ -325,6 +325,7 @@ namespace INVApp.Services
         public Task<List<User>> GetUsersAsync() => _database.Table<User>().ToListAsync();
 
         public Task<int> AddUserAsync(User user) => _database.InsertAsync(user);
+        public Task<int> UpdateUserAsync(User user) => _database.UpdateAsync(user);
 
         public Task<int> DeleteUserAsync(User user) => _database.DeleteAsync(user);
 
