@@ -25,20 +25,39 @@ namespace INVApp.Services
         {
             int offset = (pageNumber - 1) * pageSize;
 
-
-            var response = await _httpClient.GetAsync($"{_baseUri}Product/maui/products?offset={offset}&limit={pageSize}");
+            var response = await _httpClient.GetAsync($"{_baseUri}maui/products?offset={offset}&limit={pageSize}");
 
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                // Deserialize the JSON content to a list of Product objects
-                return JsonConvert.DeserializeObject<List<Product>>(content);
+
+                // Deserialize directly to an anonymous object matching the API structure
+                var apiProducts = JsonConvert.DeserializeObject<List<dynamic>>(content);
+
+                // Map anonymous object to your Product model
+                var products = apiProducts.Select(p => new Product
+                {
+                    ProductID = (int)p.id,
+                    ProductName = (string)p.name,
+                    BrandName = (string)p.brandName,
+                    ProductWeight = (string)p.weight,
+                    Category = (string)p.categoryName, // Use categoryName from the API
+                    CurrentStockLevel = (int)p.currentStockLevel,
+                    MinimumStockLevel = (int)p.minimumStockLevel,
+                    Price = (decimal)p.price,
+                    WholesalePrice = (decimal)p.wholesalePrice,
+                    EAN13Barcode = (string)p.ean13Barcode
+                }).ToList();
+
+                return products;
             }
             else
             {
                 throw new Exception("Error fetching products from the API.");
             }
         }
+
+
 
         // Retrieve a product by ID
         public async Task<Product?> GetProductByIdAsync(int id)
@@ -100,7 +119,7 @@ namespace INVApp.Services
         public async Task<List<Product>> SearchProductsAsync(string searchQuery, string selectedCategory = null)
         {
             // Build the query string with optional category and search query parameters
-            var query = $"{_baseUri}Product/maui/product/search?query={Uri.EscapeDataString(searchQuery)}";
+            var query = $"{_baseUri}maui/product/search?query={Uri.EscapeDataString(searchQuery)}";
 
             if (!string.IsNullOrEmpty(selectedCategory))
             {
@@ -112,7 +131,27 @@ namespace INVApp.Services
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<List<Product>>(content);
+
+                // Deserialize directly to an anonymous object matching the API structure
+                var apiProducts = JsonConvert.DeserializeObject<List<dynamic>>(content);
+
+                // Map anonymous object to your Product model
+                var products = apiProducts.Select(p => new Product
+                {
+                    ProductID = (int)p.id,
+                    ProductName = (string)p.name,
+                    BrandName = (string)p.brandName,
+                    ProductWeight = (string)p.weight,
+                    Category = (string)p.categoryName, // Use categoryName from the API
+                    CurrentStockLevel = (int)p.currentStockLevel,
+                    MinimumStockLevel = (int)p.minimumStockLevel,
+                    Price = (decimal)p.price,
+                    WholesalePrice = (decimal)p.wholesalePrice,
+                    EAN13Barcode = (string)p.ean13Barcode
+                }).ToList();
+
+                return products;
+
             }
             else
             {
@@ -151,18 +190,28 @@ namespace INVApp.Services
         // Save a transaction and associated items
         public async Task<bool> SaveTransactionAsync(Transaction transaction)
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Transaction", transaction);
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Transactions", transaction);
             return response.IsSuccessStatusCode;
         }
 
         // Retrieve transactions within a date range
         public async Task<List<Transaction>> GetTransactionsAsync(DateTime dateFrom, DateTime dateTo, int count)
         {
-            var response = await _httpClient.GetAsync($"{_baseUri}/Transaction/api/maui/transactions?dateFrom={dateFrom:O}&dateTo={dateTo:O}&count={count}");
+            string url = $"{_baseUri}Maui/Transactions?dateFrom={dateFrom:O}&dateTo={dateTo:O}&count={count}";
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Error fetching transactions: {response.ReasonPhrase}");
+            }
+
             var content = await response.Content.ReadAsStringAsync();
-            // Deserialize the JSON content to a list of Product objects
+
+            // Deserialize the JSON content to a list of Transaction objects
             return JsonConvert.DeserializeObject<List<Transaction>>(content);
         }
+
 
         // Retrieve transaction items by transaction ID
         public async Task<List<TransactionItem>> GetTransactionItemsAsync(int transactionId)
@@ -179,12 +228,12 @@ namespace INVApp.Services
         // Retrieve all customers
         public async Task<List<Customer>> GetCustomersAsync()
         {
-            var response = await _httpClient.GetAsync($"{_baseUri}Customer/api/maui/customers");
+            var response = await _httpClient.GetAsync($"{_baseUri}Maui/Customers");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<Customer>>(content);
-            //return await response.Content.ReadFromJsonAsync<List<Customer>>();
+            //return JsonConvert.DeserializeObject<List<Customer>>(content);
+            return await response.Content.ReadFromJsonAsync<List<Customer>>();
         }
 
         // Add a new customer
