@@ -42,7 +42,8 @@ namespace INVApp
             });
 
             // Set the main page of the application
-            MainPage = new LoginPage();
+            MainPage = new AppShell();
+
         }
 
         #endregion

@@ -1,7 +1,9 @@
 ﻿using INVApp.Models;
 using INVApp.Services;
+using INVApp.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ namespace INVApp.ViewModels
     public class LoginPageViewModel : BaseViewModel
     {
         private readonly DatabaseService _databaseService;
+        public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
 
         private string? _userId;
         private string? _firstName;
@@ -85,11 +88,9 @@ namespace INVApp.ViewModels
             }
         }
 
-        // Command to handle login logic
         public ICommand LoginCommand { get; }
-
-        // Command to handle admin creation logic
         public ICommand CreateAdminCommand { get; }
+        public ICommand SelectUserCommand { get; }
 
         public LoginPageViewModel(DatabaseService databaseService)
         {
@@ -99,9 +100,11 @@ namespace INVApp.ViewModels
             // Initialize commands
             LoginCommand = new Command(async () => await OnLogin());
             CreateAdminCommand = new Command(async () => await OnCreateAdmin());
+            SelectUserCommand = new Command<int>(OnSelectUser);
 
             InitializePage();
 
+            LoadUsers();
         }
 
         private async void InitializePage()
@@ -148,8 +151,7 @@ namespace INVApp.ViewModels
 
             ClearFields();
 
-            await App.Current.MainPage.DisplayAlert("Success", "Login successful.", "OK");
-            Application.Current.MainPage = new AppShell();
+            await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
         private async Task OnCreateAdmin()
@@ -184,11 +186,26 @@ namespace INVApp.ViewModels
 
             App.CurrentUser = adminUser;
 
-            // Clear fields
             ClearFields();
 
-            await App.Current.MainPage.DisplayAlert("Success", "Admin user created and logged in successfully.", "OK");
-            Application.Current.MainPage = new AppShell();
+            await Application.Current.MainPage.Navigation.PopModalAsync();
+        }
+
+        private async void LoadUsers()
+        {
+            var usersFromDb = await _databaseService.GetUsersAsync(); 
+            Users.Clear();
+
+            foreach (var user in usersFromDb)
+            {
+                Users.Add(user);
+            }
+        }
+
+        private async void OnSelectUser(int userId)
+        {
+            await App.Current.MainPage.DisplayAlert("Selected User", $"UserId: {userId}", "OK");
+            UserId = userId.ToString();
         }
 
         public async Task<int> GenerateUniqueUserIdAsync()

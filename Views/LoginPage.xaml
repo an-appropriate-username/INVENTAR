@@ -28,6 +28,32 @@
                VerticalOptions="Start" IsVisible="{Binding CanCreateAdmin}"/>
 
             <!-- Conditional UI for Login -->
+            <CollectionView ItemsSource="{Binding Users}" 
+                        ItemsLayout="HorizontalList"
+                        SelectionMode="Single"
+                        HorizontalOptions="CenterAndExpand"
+                        Margin="0,25,0,25"
+                        HeightRequest="150">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="0" Margin="0" BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent">
+                            <Frame BackgroundColor="{StaticResource BackgroundColor}" BorderColor="Transparent" Padding="0" Margin="2">
+                                <StackLayout>
+                                    <Label Text="{Binding FirstName}" HorizontalOptions="Center" />
+                                    <Label Text="{Binding LastName}" HorizontalOptions="Center" />
+                                    <Label Text="{Binding UserId}" HorizontalOptions="Center" VerticalOptions="EndAndExpand"/>
+                                    <Button Text="Select" 
+                                        
+                                        HeightRequest="50" WidthRequest="80"
+                                        Margin="5,2,5,2"
+                                        Clicked="OnSelectButtonClicked"/>
+                                </StackLayout>
+                            </Frame>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            
             <Label Text="LOGIN" 
                FontAttributes="Bold" 
                HorizontalOptions="CenterAndExpand"
@@ -40,11 +66,11 @@
                 <VerticalStackLayout>
                     <!-- User ID -->
                     <Label Text="User ID" />
-                    <Entry Placeholder="Enter User ID (Digits)" Text="{Binding UserId}" Keyboard="Numeric" />
+                    <Entry x:Name="UserIdEntry" Placeholder="Enter User ID (Digits)" Text="{Binding UserId, Mode=TwoWay}" Keyboard="Numeric" />
 
                     <!-- Password -->
                     <Label Text="Passcode" />
-                    <Entry Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" Keyboard="Numeric" />
+                    <Entry x:Name="PasscodeEntry" Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" Keyboard="Numeric" />
                 </VerticalStackLayout>
             </Frame>
 

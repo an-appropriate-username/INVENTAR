@@ -16,7 +16,6 @@ namespace INVApp.ViewModels
         private readonly DatabaseService _databaseService;
         public ObservableCollection<CarouselItem> CarouselItems { get; set; }
         public ObservableCollection<CarouselItem> SupportItems { get; set; }
-
         public ObservableCollection<ToDoItem> TodoItems { get; set; }
 
         public ICommand AddNewTodoCommand { get; }
@@ -49,6 +48,17 @@ namespace INVApp.ViewModels
             };
 
             LoadTodoItems();
+
+            CheckUserAndNavigate();
+        }
+
+        private async void CheckUserAndNavigate()
+        {
+            if (App.CurrentUser == null)
+            {
+                var loginPage = new LoginPage();
+                await Application.Current.MainPage.Navigation.PushModalAsync(loginPage);
+            }
         }
 
         public class CarouselItem
