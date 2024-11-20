@@ -1,5 +1,6 @@
 using INVApp.Models;
 using INVApp.ViewModels;
+using INVApp.Services;
 
 namespace INVApp.Views;
 
@@ -8,7 +9,12 @@ public partial class LoginPage : ContentPage
 	public LoginPage()
 	{
 		InitializeComponent();
-        BindingContext = new LoginPageViewModel(App.DatabaseService);
+        var databaseService = new DatabaseService();
+
+        BindingContext = new LoginPageViewModel(databaseService);
+
+        App.NotificationService.OnNotify += message => NotificationBanner.Show(message);
+        App.NotificationService.OnConfirm += message => ConfirmBanner.Show(message);
     }
 
     private void OnSelectButtonClicked(object sender, EventArgs e)

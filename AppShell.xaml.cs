@@ -1,14 +1,26 @@
 ﻿using INVApp.ViewModels;
 using INVApp.Services;
 using INVApp.Views;
+using System.Windows.Input;
 
 namespace INVApp
 {
     public partial class AppShell : Shell
     {
+        public ICommand LogOutCommand { get; }
+
         public AppShell()
         {
             InitializeComponent();
+            LogOutCommand = new Command(async () =>
+            {
+                App.CurrentUser = null;
+
+                var loginPage = new LoginPage();
+                await Application.Current.MainPage.Navigation.PushModalAsync(loginPage);
+            });
+
+            BindingContext = this;
 
             Routing.RegisterRoute(nameof(POSPage), typeof(POSPage));
             Routing.RegisterRoute(nameof(StockOverviewPage), typeof(StockOverviewPage));
@@ -17,18 +29,16 @@ namespace INVApp
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
             Routing.RegisterRoute(nameof(CustomerPage), typeof(CustomerPage));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
-
+            Routing.RegisterRoute(nameof(HomePage), typeof(HomePage));
         }
 
         private async Task ShowLoginPageAsync()
         {
-            // Ensure navigation is modal to lock user into LoginPage until successful login
             await GoToAsync($"//{nameof(LoginPage)}");
         }
 
         public async Task NavigateToHomePageAsync()
         {
-            // Transition to HomePage after successful login
             await GoToAsync($"//{nameof(HomePage)}");
         }
 

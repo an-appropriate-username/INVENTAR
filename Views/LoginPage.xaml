@@ -2,21 +2,21 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             x:Class="INVApp.Views.LoginPage"
+            xmlns:notify="clr-namespace:INVApp.ContentViews"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             BackgroundColor="{StaticResource BackgroundColor}">
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
-            <Label Text="INVENTAR : LOGIN"
-                FontSize="15" 
-                TextColor="{StaticResource TextColor}" 
-                HorizontalOptions="Center" 
-                VerticalOptions="Center" />
+        <Grid BackgroundColor="{StaticResource BackgroundColor}" >
+            <Label Text="LOCKED" FontSize="16" FontAttributes="Bold" Grid.Row="2"/>
         </Grid>
     </Shell.TitleView>
 
     <ScrollView Padding="10">
         <StackLayout>
+            <notify:NotificationBanner x:Name="NotificationBanner"/>
+            <notify:ConfirmBanner x:Name="ConfirmBanner"/>
+            
             <Label Text="Welcome to INVENTAR."
                FontAttributes="Bold" 
                HorizontalOptions="CenterAndExpand" 

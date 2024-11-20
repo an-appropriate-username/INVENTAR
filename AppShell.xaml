@@ -90,4 +90,10 @@
                     ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
 
+    <!-- FlyoutItem: Settings -->
+    <MenuItem Text="Log Out"
+            IconImageSource="log_out_icon.png"
+            Command="{Binding LogOutCommand}">
+    </MenuItem>
+
 </Shell>

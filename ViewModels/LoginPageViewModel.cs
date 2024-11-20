@@ -97,7 +97,6 @@ namespace INVApp.ViewModels
 
             _databaseService = databaseService;
 
-            // Initialize commands
             LoginCommand = new Command(async () => await OnLogin());
             CreateAdminCommand = new Command(async () => await OnCreateAdmin());
             SelectUserCommand = new Command<int>(OnSelectUser);
@@ -118,14 +117,14 @@ namespace INVApp.ViewModels
         {
             if (string.IsNullOrWhiteSpace(UserId) || string.IsNullOrWhiteSpace(Passcode))
             {
-                await App.Current.MainPage.DisplayAlert("Error", "User ID and Passcode are required.", "OK");
+                App.NotificationService.Notify("Error: User ID and Passcode are required.");
                 return;
             }
 
             // Validate User ID as integer
             if (!int.TryParse(UserId, out int userId))
             {
-                await App.Current.MainPage.DisplayAlert("Error", "Invalid User ID.", "OK");
+                App.NotificationService.Notify("Error: Invalid User ID");
                 return;
             }
 
@@ -133,14 +132,14 @@ namespace INVApp.ViewModels
             var user = await _databaseService.GetUserByDigitsAsync(userId);
             if (user == null)
             {
-                await App.Current.MainPage.DisplayAlert("Error", "User not found.", "OK");
+                App.NotificationService.Notify("Error: User not found.");
                 return;
             }
 
             // Compare passcode (no hashing for simplicity)
             if (Passcode != user.Passcode)
             {
-                await App.Current.MainPage.DisplayAlert("Error", "Incorrect passcode.", "OK");
+                App.NotificationService.Notify("Error: Incorrect passcode.");
                 return;
             }
 
@@ -162,7 +161,7 @@ namespace INVApp.ViewModels
             if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(Password) ||
                 string.IsNullOrWhiteSpace(Passcode) || string.IsNullOrWhiteSpace(Email) || !Email.Contains("@"))
             {
-                await App.Current.MainPage.DisplayAlert("Error", "Please fill all required fields correctly.", "OK");
+                App.NotificationService.Notify("Error: Please fill all required fields correctly.");
                 return;
             }
 
@@ -202,9 +201,8 @@ namespace INVApp.ViewModels
             }
         }
 
-        private async void OnSelectUser(int userId)
+        private void OnSelectUser(int userId)
         {
-            await App.Current.MainPage.DisplayAlert("Selected User", $"UserId: {userId}", "OK");
             UserId = userId.ToString();
         }
 
