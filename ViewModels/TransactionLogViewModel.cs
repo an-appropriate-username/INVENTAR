@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using INVApp.Services;
-using INVApp.Models;
 using System.Windows.Input;
+using INVApp.Models;
+using INVApp.Services;
+using Microsoft.Maui.Dispatching;
 
 namespace INVApp.ViewModels
 {
     public class TransactionLogViewModel : BaseViewModel
     {
         private readonly DatabaseService _databaseService;
+        private readonly APIService _apiService;
 
         public ObservableCollection<Transaction> TransactionLogs { get; } = new ObservableCollection<Transaction>();
 
@@ -40,53 +39,50 @@ namespace INVApp.ViewModels
         public ICommand ApplyFilterCommand { get; }
         public ICommand ClearFilterCommand { get; }
 
-        public TransactionLogViewModel(DatabaseService databaseService)
+        public TransactionLogViewModel(DatabaseService databaseService, APIService apiService)
         {
             _databaseService = databaseService;
+            _apiService = apiService;
 
+            // Initialize commands
             ApplyFilterCommand = new Command(async () => await LoadTransactionsAsync());
-            ClearFilterCommand = new Command(ClearFilters);
-            
+            ClearFilterCommand = new Command(async () => await ClearFiltersAsync());
 
-            DateFrom = DateTime.Now.AddDays(-3);
+            // Set default filter values
+            DateFrom = DateTime.Now.AddDays(-30);
             DateTo = DateTime.Now;
-            LogsToShow = 10;
-            Task.Run(async () => await LoadTransactionsAsync());
+
+            // Load initial transactions
+            Task.Run(LoadTransactionsAsync);
         }
 
         private async Task LoadTransactionsAsync()
         {
-            var transactions = await _databaseService.GetTransactionsAsync(DateFrom, DateTo, LogsToShow);
-
-            MainThread.BeginInvokeOnMainThread(() =>
+            try
             {
-                TransactionLogs.Clear();
-            });
-
-            foreach (var transaction in transactions)
-            {
-                var items = await _databaseService.GetTransactionItemsAsync(transaction.Id);
-
-                // Debugging
-                if (items == null || !items.Any())
-                {
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
-                    {
-                        await Application.Current.MainPage.DisplayAlert("Debug Info", $"No items found for Transaction ID: {transaction.Id}.", "OK");
-                    });
-                }
-                else { transaction.TransactionItems = items; }
-
+                var transactions = await _apiService.GetTransactionsAsync(DateFrom.ToUniversalTime(), DateTo.ToUniversalTime(), LogsToShow);
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    TransactionLogs.Add(transaction);
+                    TransactionLogs.Clear();
+                    if (transactions != null)
+                    {
+                        foreach (var transaction in transactions)
+                        {
+                            TransactionLogs.Add(transaction);
+                        }
+                    }
                 });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading transactions: {ex.Message}");
             }
         }
 
-        private async void ClearFilters()
+
+        private async Task ClearFiltersAsync()
         {
-            DateFrom = DateTime.Now.AddDays(-3);
+            DateFrom = DateTime.Now.AddDays(-30);
             DateTo = DateTime.Now;
             LogsToShow = 10;
 

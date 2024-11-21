@@ -19,6 +19,8 @@ namespace INVApp
 
         public static User? CurrentUser { get; set; }
 
+        public static APIService? APIService { get; private set; }
+
         #endregion
 
         #region Constructor
@@ -31,6 +33,7 @@ namespace INVApp
             DatabaseService = new DatabaseService();
             NotificationService = new NotificationService();
             DatabaseConfigService = new DatabaseConfigService(DatabaseService);
+            APIService = new APIService();
 
             DatabaseService.InitializeAsync().ContinueWith(task =>
             {
@@ -49,3 +52,4 @@ namespace INVApp
         #endregion
     }
 }
+    

@@ -19,6 +19,7 @@ namespace INVApp.ViewModels
         #region Fields
 
         private readonly DatabaseService _databaseService;
+        private readonly APIService _apiService;
         private string? _scannedBarcode;
 
         #endregion
@@ -33,9 +34,10 @@ namespace INVApp.ViewModels
 
         #region Constructor
 
-        public POSViewModel(DatabaseService databaseService)
+        public POSViewModel(DatabaseService databaseService, APIService apiService)
         {
             _databaseService = databaseService;
+            _apiService = apiService;
             Cart = new ObservableCollection<CartItem>();
 
             AddProductCommand = new Command(async () => await AddProduct());
@@ -47,6 +49,7 @@ namespace INVApp.ViewModels
             IsCameraVisible = DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android;
 
             LoadCustomersAsync();
+            _apiService = apiService;
         }
 
         #endregion
@@ -71,7 +74,11 @@ namespace INVApp.ViewModels
         public ObservableCollection<string> PaymentMethods { get; } = new ObservableCollection<string>
         {
             "Cash",
-            "Eftpos",
+            "CreditCard",
+            "DebitCard",
+            "MobilePayment", // e.g., Apple Pay, Google Pay
+            "GiftCard",
+            "BankTransfer"
         };
 
         private bool _isCameraVisible;
@@ -198,7 +205,7 @@ namespace INVApp.ViewModels
             if (barcode.Length >= 2 && barcode.Substring(0, 2) == "99")
             {
                 // Check for customer account in the database
-                var customer = await _databaseService.GetCustomerByBarcodeAsync(barcode);
+                var customer = await _apiService.GetCustomerByBarcodeAsync(barcode);
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     if (customer != null)
@@ -216,7 +223,7 @@ namespace INVApp.ViewModels
             else
             {
                 // Continue processing the scanned barcode as a product
-                var product = await _databaseService.GetProductByBarcodeAsync(barcode);
+                var product = await _apiService.GetProductByBarcodeAsync(barcode);
                 if (product != null)
                 {
                     SetProductDetails(product);
@@ -239,7 +246,7 @@ namespace INVApp.ViewModels
             if (ScannedBarcode.Length >= 2 && ScannedBarcode.Substring(0, 2) == "99")
             {
                 // Check for customer account in the database
-                var customer = await _databaseService.GetCustomerByBarcodeAsync(ScannedBarcode);
+                var customer = await _apiService.GetCustomerByBarcodeAsync(ScannedBarcode);
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     if (customer != null)
@@ -255,7 +262,7 @@ namespace INVApp.ViewModels
             }
             else if (!string.IsNullOrEmpty(ScannedBarcode))
             {
-                var product = await _databaseService.GetProductByBarcodeAsync(ScannedBarcode);
+                var product = await _apiService.GetProductByBarcodeAsync(ScannedBarcode);
                 if (product != null)
                 {
                     AddProductToCart(product);
@@ -382,7 +389,7 @@ namespace INVApp.ViewModels
 
             await Application.Current.MainPage.DisplayAlert("Transaction Receipt", transaction.Receipt, "OK");
 
-            await _databaseService.SaveTransactionAsync(transaction);
+            await _apiService.SaveTransactionAsync(transaction);
 
             ClearCartAndFields();
             OnPropertyChanged(nameof(TotalAmount));
@@ -441,7 +448,7 @@ namespace INVApp.ViewModels
 
         private async void LoadCustomersAsync()
         {
-            var customers = await _databaseService.GetCustomersAsync();
+            var customers = await _apiService.GetCustomersAsync();
             Customers.Clear();
 
             Customers.Add(new Customer { Id = 0, CustomerId = 0, CustomerName = "Guest" });
