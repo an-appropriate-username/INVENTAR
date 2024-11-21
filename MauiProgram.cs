@@ -51,6 +51,7 @@ namespace INVApp
             builder.Services.AddTransient<TransactionLogPage>();
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<CustomerPage>();
+            builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<AccountPage>();
 
 
@@ -64,7 +65,7 @@ namespace INVApp
             builder.Services.AddTransient<HomePageViewModel>();
             builder.Services.AddTransient<CustomerPageViewModel>();
             builder.Services.AddTransient<AccountViewModel>();
-
+            builder.Services.AddTransient<LoginPageViewModel>();
 
 
             #endregion

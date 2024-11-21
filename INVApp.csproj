@@ -68,15 +68,18 @@
 	<ItemGroup>
 	  <None Remove="Resources\Fonts\Lato-Regular.ttf" />
 	  <None Remove="Resources\Images\account_icon.png" />
+	  <None Remove="Resources\Images\add_icon.png" />
 	  <None Remove="Resources\Images\customer_icon.png" />
 	  <None Remove="Resources\Images\delete_icon.png" />
 	  <None Remove="Resources\Images\home_icon.png" />
 	  <None Remove="Resources\Images\large_crate_icon.png" />
 	  <None Remove="Resources\Images\log_icon.png" />
+	  <None Remove="Resources\Images\log_out_icon.png" />
 	  <None Remove="Resources\Images\main_icon.png" />
 	  <None Remove="Resources\Images\overview_icon.png" />
 	  <None Remove="Resources\Images\pos_icon.png" />
 	  <None Remove="Resources\Images\save_icon.png" />
+	  <None Remove="Resources\Images\search_icon.png" />
 	  <None Remove="Resources\Images\settings_icon.png" />
 	  <None Remove="Resources\Images\stock_take_icon.png" />
 	  <None Remove="Resources\Raw\notify_sound.mp3" />
@@ -114,6 +117,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\HomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\POSPage.xaml">

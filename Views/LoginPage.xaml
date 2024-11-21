@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            x:Class="INVApp.Views.LoginPage"
+            xmlns:notify="clr-namespace:INVApp.ContentViews"
+            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+            BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Shell.TitleView>
+        <Grid BackgroundColor="{StaticResource BackgroundColor}" >
+            <Label Text="LOCKED" FontSize="16" FontAttributes="Bold" Grid.Row="2"/>
+        </Grid>
+    </Shell.TitleView>
+
+    <ScrollView Padding="10">
+        <StackLayout>
+            <notify:NotificationBanner x:Name="NotificationBanner"/>
+            <notify:ConfirmBanner x:Name="ConfirmBanner"/>
+            
+            <Label Text="Welcome to INVENTAR."
+               FontAttributes="Bold" 
+               HorizontalOptions="CenterAndExpand" 
+               Margin="0,25,0,0" IsVisible="{Binding CanCreateAdmin}"/>
+
+            <Image Source="main_icon.png" 
+               WidthRequest="150" 
+               Margin="0,30,0,50" 
+               VerticalOptions="Start" IsVisible="{Binding CanCreateAdmin}"/>
+
+            <!-- Conditional UI for Login -->
+            <CollectionView ItemsSource="{Binding Users}" 
+                        ItemsLayout="HorizontalList"
+                        SelectionMode="Single"
+                        HorizontalOptions="CenterAndExpand"
+                        Margin="0,25,0,25"
+                        HeightRequest="150">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="0" Margin="0" BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent">
+                            <Frame BackgroundColor="{StaticResource BackgroundColor}" BorderColor="Transparent" Padding="0" Margin="2">
+                                <StackLayout>
+                                    <Label Text="{Binding FirstName}" HorizontalOptions="Center" />
+                                    <Label Text="{Binding LastName}" HorizontalOptions="Center" />
+                                    <Label Text="{Binding UserId}" HorizontalOptions="Center" VerticalOptions="EndAndExpand"/>
+                                    <Button Text="Select" 
+                                        
+                                        HeightRequest="50" WidthRequest="80"
+                                        Margin="5,2,5,2"
+                                        Clicked="OnSelectButtonClicked"/>
+                                </StackLayout>
+                            </Frame>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            
+            <Label Text="LOGIN" 
+               FontAttributes="Bold" 
+               HorizontalOptions="CenterAndExpand"
+               IsVisible="{Binding CanLogin}" />
+
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+               Margin="0,0,0,5" 
+               MaximumWidthRequest="600"
+               IsVisible="{Binding CanLogin}">
+                <VerticalStackLayout>
+                    <!-- User ID -->
+                    <Label Text="User ID" />
+                    <Entry x:Name="UserIdEntry" Placeholder="Enter User ID (Digits)" Text="{Binding UserId, Mode=TwoWay}" Keyboard="Numeric" />
+
+                    <!-- Password -->
+                    <Label Text="Passcode" />
+                    <Entry x:Name="PasscodeEntry" Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" Keyboard="Numeric" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Conditional UI for Admin Creation -->
+            <Label Text="CREATE ADMIN PROFILE"
+               FontAttributes="Bold" 
+               HorizontalOptions="CenterAndExpand"
+               IsVisible="{Binding CanCreateAdmin}" />
+
+            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+               Margin="0,0,0,5" 
+               MaximumWidthRequest="600"
+               IsVisible="{Binding CanCreateAdmin}">
+                <VerticalStackLayout>
+                    <!-- First Name -->
+                    <Label Text="First Name" />
+                    <Entry Placeholder="Enter First Name" Text="{Binding FirstName}" />
+
+                    <!-- Last Name -->
+                    <Label Text="Last Name (Optional)" />
+                    <Entry Placeholder="Enter Last Name" Text="{Binding LastName}" />
+
+                    <!-- Email -->
+                    <Label Text="Email" />
+                    <Entry Placeholder="Enter Email" Text="{Binding Email}" />
+
+                    <!-- Password -->
+                    <Label Text="Password" />
+                    <Entry Placeholder="Enter Password" Text="{Binding Password}" IsPassword="True" />
+
+                    <!-- Passcode -->
+                    <Label Text="Passcode" />
+                    <Entry Placeholder="Enter Passcode" Text="{Binding Passcode}" IsPassword="True" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Buttons -->
+            <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="CenterAndExpand">
+                <Button Text="Login" Command="{Binding LoginCommand}" 
+                    IsVisible="{Binding CanLogin}" />
+                <Button Text="Create Admin" Command="{Binding CreateAdminCommand}" 
+                    IsVisible="{Binding CanCreateAdmin}" />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

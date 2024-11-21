@@ -75,7 +75,7 @@
     </FlyoutItem>
 
     <!-- FlyoutItem: Settings -->
-    <FlyoutItem Title="Account"
+    <FlyoutItem Title="User Account"
             Icon="account_icon.png"
             FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Account"
@@ -89,5 +89,11 @@
         <ShellContent Title="Settings"
                     ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
+
+    <!-- FlyoutItem: Settings -->
+    <MenuItem Text="Log Out"
+            IconImageSource="log_out_icon.png"
+            Command="{Binding LogOutCommand}">
+    </MenuItem>
 
 </Shell>

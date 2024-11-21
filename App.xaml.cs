@@ -1,4 +1,6 @@
 ﻿using INVApp.Services;
+using INVApp.Views;
+using INVApp.Models;
 
 namespace INVApp
 {
@@ -14,6 +16,8 @@ namespace INVApp
         public static NotificationService? NotificationService { get; private set; }
 
         public static DatabaseConfigService? DatabaseConfigService { get; private set; }
+
+        public static User? CurrentUser { get; set; }
 
         #endregion
 
@@ -39,6 +43,7 @@ namespace INVApp
 
             // Set the main page of the application
             MainPage = new AppShell();
+
         }
 
         #endregion

@@ -18,6 +18,7 @@
     </Shell.TitleView>
     
     <Grid ColumnDefinitions="{OnIdiom Phone='*', Desktop='*,*,*'}" Padding="10">
+        <Label Text="{Binding CurrentUserWelcomeMessage}"  FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" Grid.Column="1"/>
 
         <StackLayout Grid.Column="0" Spacing="2">
             <!-- Carousel for Navigation -->

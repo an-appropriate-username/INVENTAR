@@ -22,11 +22,17 @@ namespace INVApp.Services
 
             _database.CreateTableAsync<Product>().Wait();
             _database.CreateTableAsync<Category>().Wait();
-            _database.CreateTableAsync<AudioSettings>().Wait();
-            _database.CreateTableAsync<InventoryLog>().Wait();
+
             _database.CreateTableAsync<Transaction>().Wait();
             _database.CreateTableAsync<TransactionItem>().Wait();
+
+            _database.CreateTableAsync<InventoryLog>().Wait();
+
             _database.CreateTableAsync<Customer>().Wait();
+            _database.CreateTableAsync<User>().Wait();
+
+            _database.CreateTableAsync<AudioSettings>().Wait();
+
             _database.CreateTableAsync<ToDoItem>().Wait();
 
         }
@@ -58,12 +64,12 @@ namespace INVApp.Services
             {
             new Product { EAN13Barcode = "2001569676635", ProductName = "Custom Product 1", Price = 1.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0 },
             new Product { EAN13Barcode = "2084699741176", ProductName = "Custom Product 2", Price = 2.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0 },
-            new Product {EAN13Barcode = "2030310108705", ProductName = "Custom Product 3", Price = 3.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
-            new Product {EAN13Barcode = "2074563495403", ProductName = "Custom Product 4", Price = 4.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
-            new Product {EAN13Barcode = "2062420397267", ProductName = "Custom Product 5", Price = 5.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
-            new Product {EAN13Barcode = "2094092383736", ProductName = "Custom Product 6", Price = 6.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
-            new Product {EAN13Barcode = "2058996473313", ProductName = "Custom Product 7", Price = 7.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
-            new Product {EAN13Barcode = "2064877694982", ProductName = "Custom Product 8", Price = 8.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0}
+            new Product { EAN13Barcode = "2030310108705", ProductName = "Custom Product 3", Price = 3.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
+            new Product { EAN13Barcode = "2074563495403", ProductName = "Custom Product 4", Price = 4.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
+            new Product { EAN13Barcode = "2062420397267", ProductName = "Custom Product 5", Price = 5.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
+            new Product { EAN13Barcode = "2094092383736", ProductName = "Custom Product 6", Price = 6.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
+            new Product { EAN13Barcode = "2058996473313", ProductName = "Custom Product 7", Price = 7.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0},
+            new Product { EAN13Barcode = "2064877694982", ProductName = "Custom Product 8", Price = 8.00m, BrandName = "Default", Category = "Default", ProductWeight = "0", CurrentStockLevel = 0, MinimumStockLevel = 0, WholesalePrice = 0}
             };
 
             foreach (var product in defaultProducts)
@@ -311,6 +317,29 @@ namespace INVApp.Services
                                         .ToListAsync();
 
             return new ObservableCollection<TransactionItem>(items);
+        }
+
+        #endregion
+
+        #region User Methods
+        public Task<List<User>> GetUsersAsync() => _database.Table<User>().ToListAsync();
+
+        public Task<int> AddUserAsync(User user) => _database.InsertAsync(user);
+        public Task<int> UpdateUserAsync(User user) => _database.UpdateAsync(user);
+
+        public Task<int> DeleteUserAsync(User user) => _database.DeleteAsync(user);
+
+        public Task<User> GetUserByDigitsAsync(int digits)
+        {
+            return _database.Table<User>().Where(c => c.UserId == digits).FirstOrDefaultAsync();
+        }
+        public async Task<bool> IsAdminUserExistsAsync()
+        {
+            int count = await _database.Table<User>()
+                                .Where(u => u.Privilege == User.UserPrivilege.Admin)
+                                .CountAsync();
+
+            return count > 0; // If count > 0, at least one admin exists
         }
 
         #endregion
