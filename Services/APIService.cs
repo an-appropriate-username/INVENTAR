@@ -25,7 +25,7 @@ namespace INVApp.Services
         {
             int offset = (pageNumber - 1) * pageSize;
 
-            var response = await _httpClient.GetAsync($"{_baseUri}maui/products?offset={offset}&limit={pageSize}");
+            var response = await _httpClient.GetAsync($"{_baseUri}Maui/products?offset={offset}&limit={pageSize}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -54,6 +54,49 @@ namespace INVApp.Services
             else
             {
                 throw new Exception("Error fetching products from the API.");
+            }
+        }
+
+
+        public async Task<Product> GetProductByBarcodeAsync(string barcode)
+        {
+            try
+            {
+                // Make the HTTP GET request
+                var response = await _httpClient.GetAsync($"{_baseUri}Maui/Product/barcode/{barcode}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read and deserialize the response content
+                    var content = await response.Content.ReadAsStringAsync();
+                    var productJson = JsonConvert.DeserializeObject<dynamic>(content); // Use dynamic for JSON properties
+
+                    // Transform the product
+                    var product = new Product
+                    {
+                        ProductID = (int)productJson.id,
+                        ProductName = (string)productJson.name,
+                        BrandName = (string)productJson.brandName,
+                        ProductWeight = (string)productJson.weight,
+                        Category = (string)productJson.categoryName, // Set the correct category property
+                        CurrentStockLevel = (int)productJson.currentStockLevel,
+                        MinimumStockLevel = (int)productJson.minimumStockLevel,
+                        Price = (decimal)productJson.price,
+                        WholesalePrice = (decimal)productJson.wholesalePrice,
+                        EAN13Barcode = (string)productJson.ean13Barcode
+                    };
+
+                    return product; // Return the transformed product
+                }
+                else
+                {
+                    throw new Exception($"Error fetching product: {response.ReasonPhrase}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle/log exceptions as needed
+                throw new Exception($"Failed to retrieve product: {ex.Message}");
             }
         }
 
@@ -239,7 +282,7 @@ namespace INVApp.Services
         // Add a new customer
         public async Task<bool> AddCustomerAsync(Customer customer)
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Customer", customer);
+            var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Customers", customer);
             return response.IsSuccessStatusCode;
         }
 

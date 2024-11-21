@@ -7,6 +7,7 @@ namespace INVApp.Views;
 public partial class POSPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
+    private readonly APIService _apiSrervice;
 
     private DateTime _lastScanTime;
     private readonly TimeSpan _scanInterval = TimeSpan.FromMilliseconds(1000);
@@ -16,8 +17,9 @@ public partial class POSPage : ContentPage
 		InitializeComponent();
 
         _databaseService = new DatabaseService();
+        _apiSrervice = new APIService();
 
-        BindingContext = new POSViewModel(_databaseService);
+        BindingContext = new POSViewModel(_databaseService, _apiSrervice);
 
         App.NotificationService.OnNotify += message => NotificationBanner.Show(message);
         App.NotificationService.OnConfirm += message => ConfirmBanner.Show(message);
@@ -35,22 +37,18 @@ public partial class POSPage : ContentPage
     }
     private async void BarcodesDetected(object sender, BarcodeDetectionEventArgs e)
     {
-        var viewModel = BindingContext as POSViewModel;
-        if (viewModel != null && e.Results.Any())
+        if (e.Results.Any() && DateTime.UtcNow - _lastScanTime >= _scanInterval)
         {
+            _lastScanTime = DateTime.UtcNow;
 
-            var now = DateTime.Now;
-            if (now - _lastScanTime < _scanInterval)
+            var barcode = e.Results.FirstOrDefault();
+            if (barcode != null && BindingContext is POSViewModel viewModel)
             {
-                return;
+                await viewModel.ProcessScannedBarcode(barcode.Value);
             }
-
-            _lastScanTime = now;
-
-            var barcode = e.Results.First();
-            await viewModel.ProcessScannedBarcode(barcode.Value);
         }
     }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();

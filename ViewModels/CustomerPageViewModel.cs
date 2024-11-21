@@ -115,7 +115,7 @@ namespace INVApp.ViewModels
             var newCustomer = new Customer
             {
                 CustomerName = CustomerName,
-                CustomerId = uniqueCustomerId,
+                //CustomerId = uniqueCustomerId,
                 Barcode = customerBarcode,
                 Surname = Surname,
                 Email = Email,
@@ -130,7 +130,7 @@ namespace INVApp.ViewModels
                 #endif
             }
 
-            await _databaseService.AddCustomerAsync(newCustomer);
+            await _apiService.AddCustomerAsync(newCustomer);
 
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
@@ -154,7 +154,7 @@ namespace INVApp.ViewModels
 
                 if (deleteCustomerData)
                 {
-                    await _databaseService.DeleteCustomerAsync(SelectedCustomer);
+                    await _apiService.DeleteCustomerAsync(SelectedCustomer.Id);
 
                     #if WINDOWS || MACCATALYST
                     await DeleteCustomerFilesAsync(SelectedCustomer);
