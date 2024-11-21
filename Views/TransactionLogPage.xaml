@@ -105,7 +105,8 @@
                                                 <CollectionView.ItemTemplate>
                                                     <DataTemplate>
                                                         <Grid ColumnDefinitions="Auto, *, *, Auto" RowDefinitions="Auto, Auto">
-                                                            <Label Text="{Binding ProductName}" FontAttributes="Bold" Grid.Column="0"/>
+                                                           <Label Text="{Binding ProductName}" FontAttributes="Bold" Grid.Column="0" IsVisible="{Binding ProductName, Converter={StaticResource NullToVisibilityConverter}}"/>
+
                                                             <Label Text="x" FontAttributes="Bold" Grid.Column="1"/>
                                                             <Label Text="{Binding Quantity}" Margin="10,0,0,0" Grid.Column="2"/>
                                                             <Label Text="{Binding TotalePrice, StringFormat='{}{0:C}'}" Margin="10,0,0,0" Grid.Column="3"/>

@@ -7,7 +7,7 @@ public partial class TransactionLogPage : ContentPage
 	public TransactionLogPage()
 	{
 		InitializeComponent();
-        BindingContext = new TransactionLogViewModel(App.DatabaseService);
+        BindingContext = new TransactionLogViewModel(App.DatabaseService, App.APIService);
     }
 
 }

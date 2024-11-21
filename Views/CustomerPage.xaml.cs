@@ -9,7 +9,7 @@ public partial class CustomerPage : ContentPage
     public CustomerPage()
 	{
 		InitializeComponent();
-        BindingContext = new CustomerPageViewModel(App.DatabaseService);
+        BindingContext = new CustomerPageViewModel(App.DatabaseService, App.APIService);
     }
 
 }
