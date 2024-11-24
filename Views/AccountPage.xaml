@@ -54,7 +54,17 @@
                     TextColor="White" 
                     CornerRadius="10" WidthRequest="600"
                     Command="{Binding LogoutCommand}" />
+
+            <StackLayout>
+                <Button Text="Create New User Account" 
+                    BackgroundColor="{StaticResource PrimaryColor}" 
+                    TextColor="White" 
+                    CornerRadius="10" WidthRequest="600"
+                    Command="{Binding OpenCreateUserPageCommand}" />
+            </StackLayout>
         </StackLayout>
+
+        
     </ScrollView>
 
 

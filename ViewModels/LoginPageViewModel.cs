@@ -148,6 +148,11 @@ namespace INVApp.ViewModels
             user.LastLogin = DateTime.Now;
             await _databaseService.UpdateUserAsync(user);
 
+            if (Application.Current.MainPage.BindingContext is AccountViewModel accountViewModel)
+            {
+                accountViewModel.RefreshCurrentUser();
+            }
+
             ClearFields();
 
             await Application.Current.MainPage.Navigation.PopModalAsync();

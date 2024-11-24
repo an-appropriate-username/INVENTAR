@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using INVApp.Models;
+using INVApp.Views;
 
 namespace INVApp.ViewModels
 {
@@ -31,15 +32,27 @@ namespace INVApp.ViewModels
         public ICommand EditProfileCommand { get; }
         public ICommand LogoutCommand { get; }
 
+        public ICommand OpenCreateUserPageCommand { get; }
+
         public AccountViewModel(DatabaseService databaseService) 
         { 
             _databaseService = databaseService;
 
             CurrentUser = App.CurrentUser;
 
+            App.CurrentUserChanged += RefreshCurrentUser;
+
             // Commands
             EditProfileCommand = new Command(OnEditProfile);
             LogoutCommand = new Command(OnLogout);
+            OpenCreateUserPageCommand = new Command(OpenCreateUserPage);
+        }
+
+        public async void OpenCreateUserPage()
+        {
+            var createUserPage = new CreateUserPage();
+
+            await Application.Current.MainPage.Navigation.PushModalAsync(createUserPage);
         }
 
         private void OnEditProfile()
@@ -55,6 +68,12 @@ namespace INVApp.ViewModels
         public void RefreshCurrentUser()
         {
             CurrentUser = App.CurrentUser;
+        }
+
+        ~AccountViewModel()
+        {
+            // Unsubscribe to prevent memory leaks
+            App.CurrentUserChanged -= RefreshCurrentUser;
         }
     }
 }
