@@ -21,7 +21,7 @@ namespace INVApp
 
         // Current User properties
 
-        public static event Action CurrentUserChanged;
+        public static event Action? CurrentUserChanged;
 
         private static User? _currentUser;
         public static User? CurrentUser
@@ -36,6 +36,9 @@ namespace INVApp
                 }
             }
         }
+
+        public static event Action? UserCreated;
+        public static void OnUserCreated() => UserCreated?.Invoke();
 
         #endregion
 

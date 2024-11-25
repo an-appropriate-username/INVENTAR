@@ -53,35 +53,35 @@ namespace INVApp.ViewModels
             // Validate FirstName
             if (string.IsNullOrWhiteSpace(FirstName))
             {
-                await Application.Current.MainPage.DisplayAlert("Validation Failed", "First Name cannot be empty.", "OK");
+                App.NotificationService.Notify("Validation Failed: First Name cannot be empty.");
                 return;
             }
 
             // Validate Email
             if (string.IsNullOrWhiteSpace(Email) || !Email.Contains("@"))
             {
-                await Application.Current.MainPage.DisplayAlert("Validation Failed", "Please enter a valid Email address.", "OK");
+                App.NotificationService.Notify("Validation Failed: Please enter a valid Email address.");
                 return;
             }
 
             // Validate Password
             if (string.IsNullOrWhiteSpace(Password) || Password.Length < 6)
             {
-                await Application.Current.MainPage.DisplayAlert("Validation Failed", "Password must be at least 6 characters long.", "OK");
+                App.NotificationService.Notify("Validation Failed: Password must be at least 6 characters long.");
                 return;
             }
 
             // Validate Passcode
             if (string.IsNullOrWhiteSpace(Passcode) || Passcode.Length < 4)
             {
-                await Application.Current.MainPage.DisplayAlert("Validation Failed", "Passcode must be 4 or more digits long.", "OK");
+                App.NotificationService.Notify("Validation Failed: Passcode must be 4 or more digits long.");
                 return;
             }
 
             // Validate Privilege selection
             if (SelectedPrivilegeIndex < 0)
             {
-                await Application.Current.MainPage.DisplayAlert("Validation Failed", "Please select a Privilege level.", "OK");
+                App.NotificationService.Notify("Validation Failed: Please select a Privilege level.");
                 return;
             }
 
@@ -105,8 +105,10 @@ namespace INVApp.ViewModels
             // Save the user to the database
             await _databaseService.AddUserAsync(newUser);
 
+            App.OnUserCreated();
+
             // Notify success and close the modal
-            await Application.Current.MainPage.DisplayAlert("Success", "New user created successfully!", "OK");
+            App.NotificationService.Confirm("Success: New user created successfully!");
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
