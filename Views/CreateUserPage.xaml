@@ -18,8 +18,7 @@
                 <Entry Placeholder="Last Name" Text="{Binding LastName}" FontSize="18"/>
                 <Entry Placeholder="Email" Text="{Binding Email}" FontSize="18"/>
                 <Entry Placeholder="Password" Text="{Binding Password}" FontSize="18" IsPassword="True"/>
-                <Entry Placeholder="Passcode (minimum 5-digits)" Text="{Binding Passcode}" FontSize="18" Keyboard="Numeric"/>
-
+                <Entry Placeholder="Passcode (minimum 4-digits)" Text="{Binding Passcode}" FontSize="18" Keyboard="Numeric"/>
                 <Picker Title="Privilege" SelectedIndex="{Binding SelectedPrivilegeIndex}">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">

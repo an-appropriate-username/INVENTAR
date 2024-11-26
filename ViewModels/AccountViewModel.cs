@@ -29,6 +29,9 @@ namespace INVApp.ViewModels
                     _currentUser = value;
                     OnPropertyChanged(nameof(CurrentUser));
                     OnPropertyChanged(nameof(IsAdmin));
+                    OnPropertyChanged(nameof(IsManager));
+                    OnPropertyChanged(nameof(IsColleague));
+                    OnPropertyChanged(nameof(CanViewUsers));
                 }
             }
         }
@@ -48,6 +51,9 @@ namespace INVApp.ViewModels
         }
 
         public bool IsAdmin => CurrentUser?.Privilege == User.UserPrivilege.Admin;
+        public bool IsManager => CurrentUser?.Privilege == User.UserPrivilege.Manager;
+        public bool IsColleague => CurrentUser?.Privilege == User.UserPrivilege.Basic;
+        public bool CanViewUsers => IsAdmin || IsManager;
 
         public ICommand EditProfileCommand { get; }
         public ICommand LogoutCommand { get; }
@@ -79,25 +85,45 @@ namespace INVApp.ViewModels
             await Application.Current.MainPage.Navigation.PushModalAsync(createUserPage);
         }
 
-        private void OnDeleteUser()
+        private async void OnDeleteUser()
         {
+
+            
+
             if (SelectedUser != null)
             {
-                //Users.Remove(SelectedUser);
-                //_databaseService.DeleteUser(SelectedUser.Id);
-                //SelectedUser = null;
+                bool deleteUserData = await App.Current.MainPage.DisplayAlert(
+                    "Delete User",
+                    "Are you sure you want to delete this user?",
+                    "Yes",
+                    "No");
+                if (deleteUserData)
+                {
+                    await _databaseService.DeleteUserAsync(SelectedUser);
+                    
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        Users.Remove(SelectedUser);
+                        SelectedUser = null;
+                    });
+
+                }
             }
         }
 
         public async void LoadUsers()
         {
             var usersFromDb = await _databaseService.GetUsersAsync();
+
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
             Users.Clear();
 
             foreach (var user in usersFromDb)
             {
                 Users.Add(user);
             }
+            });
         }
 
         private void OnEditProfile()
@@ -105,9 +131,12 @@ namespace INVApp.ViewModels
             // Navigate to Edit Profile Page
         }
 
-        private void OnLogout()
+        private async void OnLogout()
         {
-            // Handle Logout
+            App.CurrentUser = null;
+
+            var loginPage = new LoginPage();
+            await Application.Current.MainPage.Navigation.PushModalAsync(loginPage);
         }
 
         public void RefreshCurrentUser()

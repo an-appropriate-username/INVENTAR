@@ -144,12 +144,13 @@ namespace INVApp.ViewModels
                 #endif
             }
 
+            App.CurrentUser.CustomersAdded += 1;
+
             await _apiService.AddCustomerAsync(newCustomer);
 
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 Customers.Add(newCustomer);
-
                 ClearFields();
             });
         }
