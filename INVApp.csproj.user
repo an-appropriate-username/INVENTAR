@@ -26,6 +26,9 @@
     <MauiXaml Update="Views\CreateUserPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
+    <MauiXaml Update="Views\CustomerDetailsPopup.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
     <MauiXaml Update="Views\CustomerPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
