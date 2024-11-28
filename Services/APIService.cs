@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using INVApp.DTO;
 using INVApp.Models;
+using INVApp.NewFolder;
 using Newtonsoft.Json;
 
 namespace INVApp.Services
@@ -31,17 +34,17 @@ namespace INVApp.Services
             {
                 var content = await response.Content.ReadAsStringAsync();
 
-                // Deserialize directly to an anonymous object matching the API structure
-                var apiProducts = JsonConvert.DeserializeObject<List<dynamic>>(content);
+                // Deserialize to a wrapper object that matches the API structure
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
-                // Map anonymous object to your Product model
-                var products = apiProducts.Select(p => new Product
+                // Map the products from the API response to your Product model
+                var products = apiResponse.Products.Select(p => new Product
                 {
                     ProductID = (int)p.id,
                     ProductName = (string)p.name,
                     BrandName = (string)p.brandName,
                     ProductWeight = (string)p.weight,
-                    Category = (string)p.categoryName, // Use categoryName from the API
+                    Category = (string)p.categoryName,
                     CurrentStockLevel = (int)p.currentStockLevel,
                     MinimumStockLevel = (int)p.minimumStockLevel,
                     Price = (decimal)p.price,
@@ -56,6 +59,13 @@ namespace INVApp.Services
                 throw new Exception("Error fetching products from the API.");
             }
         }
+
+        public class ApiResponse
+        {
+            public int TotalCount { get; set; }
+            public List<dynamic> Products { get; set; }
+        }
+
 
 
         public async Task<Product> GetProductByBarcodeAsync(string barcode)
@@ -112,6 +122,9 @@ namespace INVApp.Services
             }
             return null;
         }
+
+
+
 
         // Insert or update a product
         public async Task<bool> SaveProductAsync(Product product)
@@ -230,12 +243,49 @@ namespace INVApp.Services
 
         #region Transaction Methods
 
-        // Save a transaction and associated items
-        public async Task<bool> SaveTransactionAsync(Transaction transaction)
+
+        public async Task<HttpResponseMessage> SaveTransactionAsync(TransactionDto transactionDto)
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Transactions", transaction);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                Debug.WriteLine($"Starting transaction save for customer: {transactionDto.CustomerId}");
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Transactions", transactionDto);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Response status: {response.StatusCode}");
+                Debug.WriteLine($"Response content: {responseContent}");
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SaveTransactionAsync error: {ex.Message}");
+                throw;
+            }
         }
+
+        public async Task<HttpResponseMessage> SaveTransactionItemsAsync(int transactionId, List<TransactionItemDto> items)
+        {
+            try
+            {
+                Debug.WriteLine($"Saving {items.Count} items for transaction {transactionId}");
+                var response = await _httpClient.PostAsJsonAsync(
+                    $"{_baseUri}Maui/Transactions/{transactionId}/Items",
+                    items);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Items save response status: {response.StatusCode}");
+                Debug.WriteLine($"Items save response content: {responseContent}");
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SaveTransactionItemsAsync error: {ex.Message}");
+                throw;
+            }
+        }
+
 
         // Retrieve transactions within a date range
         public async Task<List<Transaction>> GetTransactionsAsync(DateTime dateFrom, DateTime dateTo, int count)

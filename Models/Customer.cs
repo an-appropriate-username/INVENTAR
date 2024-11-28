@@ -9,6 +9,11 @@ namespace INVApp.Models
 { 
     public class Customer
     {
+        internal string FirstName;
+        internal string LastName;
+        internal string PhoneNumber;
+        internal bool IsLoyaltyMember;
+
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public int? CustomerId { get; set; }

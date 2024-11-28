@@ -213,7 +213,7 @@
                             </Frame>
 
                             <!-- Final checkout button to finalize payment -->
-                            <Button Text="Close Transaction" Command="{Binding CheckoutCommand}" 
+                            <Button Text="Proccess Transaction" Command="{Binding CheckoutCommand}" 
                                 WidthRequest="200" Margin="0,10,0,0"/>
                         </StackLayout>
                     </Frame>

@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BarcodeStandard;
+using INVApp.DTO;
 using INVApp.Models;
+using INVApp.NewFolder;
 using INVApp.Services;
 using ZXing.QrCode.Internal;
 
@@ -17,11 +21,12 @@ namespace INVApp.ViewModels
     public class POSViewModel : BaseViewModel
     {
         #region Fields
-
         private readonly DatabaseService _databaseService;
         private readonly APIService _apiService;
+        private readonly TransactionService _transactionService;
+        private readonly StockService _stockService;
+        private readonly ReceiptService _receiptService;
         private string? _scannedBarcode;
-
         #endregion
 
         #region Commands
@@ -33,11 +38,19 @@ namespace INVApp.ViewModels
         #endregion
 
         #region Constructor
-
-        public POSViewModel(DatabaseService databaseService, APIService apiService)
+        public POSViewModel(
+            DatabaseService databaseService,
+            APIService apiService,
+            TransactionService transactionService,
+            StockService stockService,
+            ReceiptService receiptService)
         {
             _databaseService = databaseService;
             _apiService = apiService;
+            _transactionService = transactionService;
+            _stockService = stockService;
+            _receiptService = receiptService;
+
             Cart = new ObservableCollection<CartItem>();
 
             AddProductCommand = new Command(async () => await AddProduct());
@@ -49,9 +62,7 @@ namespace INVApp.ViewModels
             IsCameraVisible = DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android;
 
             LoadCustomersAsync();
-            _apiService = apiService;
         }
-
         #endregion
 
         #region Properties
@@ -186,6 +197,10 @@ namespace INVApp.ViewModels
         }
 
         private decimal _totalCashAmount;
+        private decimal DiscountAmount;
+        private decimal TaxAmount;
+        private int CurrentUserId;
+
         public decimal TotalCashAmount
         {
             get => _totalCashAmount;
@@ -354,66 +369,100 @@ namespace INVApp.ViewModels
             OnPropertyChanged(nameof(TotalAmount));
         }
 
-        private async void Checkout()
+        private async Task<(TransactionDto transaction, List<TransactionItemDto> items)> CreateTransactionDto()
         {
-            if (string.IsNullOrEmpty(SelectedPaymentMethod))
+            if (SelectedCustomer == null || SelectedCustomer.Id <= 0)
+                throw new InvalidOperationException("Invalid customer selected.");
+
+            var currentUserId = App.CurrentUser?.Id ?? throw new InvalidOperationException("No user is currently signed in");
+
+            var transactionDto = new TransactionDto
             {
-                App.NotificationService.Notify("Please select a payment method.");
-                return;
-            }
-
-            var customerName = SelectedCustomer?.CustomerName ?? "Guest"; 
-            var customerId = SelectedCustomer?.Id ?? 0;
-
-            var transaction = new Transaction();
-
-            await DecrementStock();
-
-            var receipt = GenerateReceipt(customerName, customerId);
-
-            SetTransactionDetails(transaction, customerId, receipt);
-
-            foreach (var item in Cart)
-            {
-                var transactionItem = new TransactionItem
+                TransactionDate = DateTime.UtcNow,
+                TotalAmount = TotalAmount,
+                Discount = DiscountAmount,
+                PaymentMethod = SelectedPaymentMethod ?? throw new ArgumentNullException(nameof(SelectedPaymentMethod)),
+                TaxAmount = TaxAmount,
+                UserId = App.CurrentUser.Id,
+                CustomerId = SelectedCustomer.Id,
+                Customer = new CustomerDto
                 {
-                    ProductId = item.Product.ProductID,
-                    ProductName = item.Product.ProductName,
-                    ProductBarcode = item.Product.EAN13Barcode,
-                    TransactionId = transaction.Id,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.Price,
-                    TotalPrice = item.TotalPrice,
-                    DateTime = DateTime.Now
-                };
-                transaction.TransactionItems.Add(transactionItem);
-            }
+                    CustomerId = SelectedCustomer.Id,
+                    FirstName = SelectedCustomer.CustomerName,
+                    LastName = SelectedCustomer.Surname,
+                    Email = SelectedCustomer.Email,
+                    PhoneNumber = SelectedCustomer.PhoneNumber,
+                    IsLoyaltyMember = SelectedCustomer.IsLoyaltyMember,
+                    Barcode = SelectedCustomer.Barcode
+                }
+            };
 
-            await Application.Current.MainPage.DisplayAlert("Transaction Receipt", transaction.Receipt, "OK");
-
-            await _apiService.SaveTransactionAsync(transaction);
-
-            ClearCartAndFields();
-            OnPropertyChanged(nameof(TotalAmount));
-        }
-
-        private string GenerateReceipt(string customerName, int customerId)
-        {
-            var receipt = new StringBuilder();
-            receipt.AppendLine("Receipt");
-            receipt.AppendLine("--------------------");
-            foreach (var item in Cart)
+            var transactionItems = Cart.Select(item => new TransactionItemDto
             {
-                receipt.AppendLine($"{item.ProductName} x {item.Quantity} @ {item.Price:C} = {item.TotalPrice:C}");
-            }
-            receipt.AppendLine("--------------------");
-            receipt.AppendLine($"Total: {TotalAmount:C}");
-            receipt.AppendLine($"Payment Method: {SelectedPaymentMethod}");
-            receipt.AppendLine($"Customer: {customerName} (ID: {customerId})"); 
-            receipt.AppendLine("Thank you for your purchase!");
+                ProductId = item.Product.ProductID,
+                ProductName = item.ProductName,  // Include the product name
+                Quantity = item.Quantity,
+                UnitPrice = item.Price,
+                TotalPrice = item.TotalPrice
+            }).ToList();
 
-            return receipt.ToString();
+            return (transactionDto, transactionItems);
         }
+
+        public async void Checkout()
+        {
+            try
+            {
+                Debug.WriteLine($"SelectedCustomer ID: {SelectedCustomer?.Id}");
+
+                var (transactionDto, transactionItems) = await CreateTransactionDto();
+
+                var isSuccess = await _transactionService.ProcessCheckout(
+                    transactionDto,
+                    transactionItems,
+                    SelectedCustomer,
+                    SelectedPaymentMethod);
+
+                if (isSuccess)
+                {
+                    App.NotificationService.Notify("Transaction completed successfully.");
+                    ClearCartAndFields();
+                }
+                else
+                {
+                    App.NotificationService.Notify("Transaction failed. Please try again.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Checkout error: {ex.Message}");
+                App.NotificationService.Notify("An error occurred during checkout.");
+            }
+            finally
+            {
+                OnPropertyChanged(nameof(TotalAmount));
+            }
+        }
+
+
+
+        //private string GenerateReceipt(string customerName, int customerId)
+        //{
+        //    var receipt = new StringBuilder();
+        //    receipt.AppendLine("Receipt");
+        //    receipt.AppendLine("--------------------");
+        //    foreach (var item in Cart)
+        //    {
+        //        receipt.AppendLine($"{item.ProductName} x {item.Quantity} @ {item.Price:C} = {item.TotalPrice:C}");
+        //    }
+        //    receipt.AppendLine("--------------------");
+        //    receipt.AppendLine($"Total: {TotalAmount:C}");
+        //    receipt.AppendLine($"Payment Method: {SelectedPaymentMethod}");
+        //    receipt.AppendLine($"Customer: {customerName} (ID: {customerId})"); 
+        //    receipt.AppendLine("Thank you for your purchase!");
+
+        //    return receipt.ToString();
+        //}
 
         private decimal GetTotalAmount()
         {
@@ -433,20 +482,20 @@ namespace INVApp.ViewModels
             }
         }
 
-        private async Task DecrementStock()
-        {
-            foreach (var item in Cart)
-            {
-                var product = item.Product;
+        //private async Task DecrementStock()
+        //{
+        //    foreach (var item in Cart)
+        //    {
+        //        var product = item.Product;
 
-                if (product != null)
-                {
-                    product.CurrentStockLevel -= item.Quantity;
-                    if (product.CurrentStockLevel < 0) { product.CurrentStockLevel = 0; }
-                    await _databaseService.DecrementProductAsync(product);
-                }
-            }
-        }
+        //        if (product != null)
+        //        {
+        //            product.CurrentStockLevel -= item.Quantity;
+        //            if (product.CurrentStockLevel < 0) { product.CurrentStockLevel = 0; }
+        //            await _databaseService.DecrementProductAsync(product);
+        //        }
+        //    }
+        //}
 
         private async void LoadCustomersAsync()
         {
