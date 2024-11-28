@@ -9,6 +9,10 @@ namespace INVApp.Models
 {
     public class Product
     {
+        internal int StockLevel;
+        internal string ImagePath;
+        internal int CategoryId;
+
         [PrimaryKey, AutoIncrement]
         public int ProductID { get; set; }
 

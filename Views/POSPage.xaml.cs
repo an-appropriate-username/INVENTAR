@@ -7,31 +7,39 @@ namespace INVApp.Views;
 public partial class POSPage : ContentPage
 {
     private readonly DatabaseService _databaseService;
-    private readonly APIService _apiSrervice;
+    private readonly APIService _apiService;
 
     private DateTime _lastScanTime;
     private readonly TimeSpan _scanInterval = TimeSpan.FromMilliseconds(1000);
 
     public POSPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
 
+        // Create service instances
         _databaseService = new DatabaseService();
-        _apiSrervice = new APIService();
+        _apiService = new APIService();
 
-        BindingContext = new POSViewModel(_databaseService, _apiSrervice);
+        // Create the additional required services
+        var stockService = new StockService(_databaseService);
+        var receiptService = new ReceiptService();
+        var transactionService = new TransactionService(
+            _apiService,
+            stockService,
+            receiptService,
+            App.NotificationService);
 
+        // Create view model with all required services
+        BindingContext = new POSViewModel(
+            _databaseService,
+            _apiService,
+            transactionService,
+            stockService,
+            receiptService);
+
+        // Set up notifications
         App.NotificationService.OnNotify += message => NotificationBanner.Show(message);
         App.NotificationService.OnConfirm += message => ConfirmBanner.Show(message);
-
-        /*
-        cameraBarcodeReaderView.Options = new BarcodeReaderOptions
-        {
-            Formats = BarcodeFormats.OneDimensional,
-            AutoRotate = true,
-            Multiple = true
-        };
-        */
 
         _lastScanTime = DateTime.Now;
     }

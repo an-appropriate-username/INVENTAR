@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using INVApp.DTO;
 using INVApp.Models;
+using INVApp.NewFolder;
 using Newtonsoft.Json;
 
 namespace INVApp.Services
@@ -31,17 +34,17 @@ namespace INVApp.Services
             {
                 var content = await response.Content.ReadAsStringAsync();
 
-                // Deserialize directly to an anonymous object matching the API structure
-                var apiProducts = JsonConvert.DeserializeObject<List<dynamic>>(content);
+                // Deserialize to a wrapper object that matches the API structure
+                var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(content);
 
-                // Map anonymous object to your Product model
-                var products = apiProducts.Select(p => new Product
+                // Map the products from the API response to your Product model
+                var products = apiResponse.Products.Select(p => new Product
                 {
                     ProductID = (int)p.id,
                     ProductName = (string)p.name,
                     BrandName = (string)p.brandName,
                     ProductWeight = (string)p.weight,
-                    Category = (string)p.categoryName, // Use categoryName from the API
+                    Category = (string)p.categoryName,
                     CurrentStockLevel = (int)p.currentStockLevel,
                     MinimumStockLevel = (int)p.minimumStockLevel,
                     Price = (decimal)p.price,
@@ -56,6 +59,13 @@ namespace INVApp.Services
                 throw new Exception("Error fetching products from the API.");
             }
         }
+
+        public class ApiResponse
+        {
+            public int TotalCount { get; set; }
+            public List<dynamic> Products { get; set; }
+        }
+
 
 
         public async Task<Product> GetProductByBarcodeAsync(string barcode)
@@ -112,6 +122,9 @@ namespace INVApp.Services
             }
             return null;
         }
+
+
+
 
         // Insert or update a product
         public async Task<bool> SaveProductAsync(Product product)
@@ -230,12 +243,63 @@ namespace INVApp.Services
 
         #region Transaction Methods
 
-        // Save a transaction and associated items
-        public async Task<bool> SaveTransactionAsync(Transaction transaction)
+
+        public async Task<bool> SaveTransactionAsync(TransactionDto transactionDto, List<TransactionItemDto> transactionItems)
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Transactions", transaction);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                Debug.WriteLine($"Starting transaction save for customer: {transactionDto.CustomerId}");
+
+                // Log the full request data
+                var jsonRequest = System.Text.Json.JsonSerializer.Serialize(transactionDto, new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                Debug.WriteLine($"Request data:\n{jsonRequest}");
+
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Transactions", transactionDto);
+
+                // Get the complete response content regardless of success
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Response status: {response.StatusCode}");
+                Debug.WriteLine($"Response content: {responseContent}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"Transaction creation failed with status code: {response.StatusCode}");
+                    Debug.WriteLine($"Error details: {responseContent}");
+                    return false;
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<TransactionResponseDto>();
+                if (result?.TransactionId == null)
+                {
+                    Debug.WriteLine("Failed to get transaction ID from response");
+                    return false;
+                }
+
+                Debug.WriteLine($"Successfully created transaction with ID: {result.TransactionId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in SaveTransactionAsync: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                return false;
+            }
         }
+
+        // Add a simple DTO for the transaction response
+        public class TransactionResponseDto
+        {
+            public int TransactionId { get; set; }
+        }
+
+
 
         // Retrieve transactions within a date range
         public async Task<List<Transaction>> GetTransactionsAsync(DateTime dateFrom, DateTime dateTo, int count)
