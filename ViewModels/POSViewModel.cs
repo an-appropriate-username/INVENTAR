@@ -383,7 +383,7 @@ namespace INVApp.ViewModels
                 Discount = DiscountAmount,
                 PaymentMethod = SelectedPaymentMethod ?? throw new ArgumentNullException(nameof(SelectedPaymentMethod)),
                 TaxAmount = TaxAmount,
-                UserId = CurrentUserId,
+                UserId = App.CurrentUser.Id,
                 CustomerId = SelectedCustomer.Id,
                 Customer = new CustomerDto
                 {

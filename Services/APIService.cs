@@ -244,61 +244,47 @@ namespace INVApp.Services
         #region Transaction Methods
 
 
-        public async Task<bool> SaveTransactionAsync(TransactionDto transactionDto, List<TransactionItemDto> transactionItems)
+        public async Task<HttpResponseMessage> SaveTransactionAsync(TransactionDto transactionDto)
         {
             try
             {
                 Debug.WriteLine($"Starting transaction save for customer: {transactionDto.CustomerId}");
-
-                // Log the full request data
-                var jsonRequest = System.Text.Json.JsonSerializer.Serialize(transactionDto, new System.Text.Json.JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
-                Debug.WriteLine($"Request data:\n{jsonRequest}");
-
                 var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Transactions", transactionDto);
 
-                // Get the complete response content regardless of success
                 var responseContent = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine($"Response status: {response.StatusCode}");
                 Debug.WriteLine($"Response content: {responseContent}");
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    Debug.WriteLine($"Transaction creation failed with status code: {response.StatusCode}");
-                    Debug.WriteLine($"Error details: {responseContent}");
-                    return false;
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<TransactionResponseDto>();
-                if (result?.TransactionId == null)
-                {
-                    Debug.WriteLine("Failed to get transaction ID from response");
-                    return false;
-                }
-
-                Debug.WriteLine($"Successfully created transaction with ID: {result.TransactionId}");
-                return true;
+                return response;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in SaveTransactionAsync: {ex.Message}");
-                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-                if (ex.InnerException != null)
-                {
-                    Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
-                }
-                return false;
+                Debug.WriteLine($"SaveTransactionAsync error: {ex.Message}");
+                throw;
             }
         }
 
-        // Add a simple DTO for the transaction response
-        public class TransactionResponseDto
+        public async Task<HttpResponseMessage> SaveTransactionItemsAsync(int transactionId, List<TransactionItemDto> items)
         {
-            public int TransactionId { get; set; }
-        }
+            try
+            {
+                Debug.WriteLine($"Saving {items.Count} items for transaction {transactionId}");
+                var response = await _httpClient.PostAsJsonAsync(
+                    $"{_baseUri}Maui/Transactions/{transactionId}/Items",
+                    items);
 
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Items save response status: {response.StatusCode}");
+                Debug.WriteLine($"Items save response content: {responseContent}");
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"SaveTransactionItemsAsync error: {ex.Message}");
+                throw;
+            }
+        }
 
 
         // Retrieve transactions within a date range
