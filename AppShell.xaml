@@ -75,7 +75,7 @@
     </FlyoutItem>
 
     <!-- FlyoutItem: Settings -->
-    <FlyoutItem Title="User Account"
+    <FlyoutItem Title="Your Account"
             Icon="account_icon.png"
             FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Account"

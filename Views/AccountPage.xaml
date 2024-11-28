@@ -6,55 +6,170 @@
             BackgroundColor="{StaticResource BackgroundColor}">
 
     <ScrollView>
-        <StackLayout Padding="10" Spacing="15">
-            <!-- User Details -->
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
-                   BorderColor="{StaticResource PrimaryColor}" 
-                   CornerRadius="10" 
-                   Padding="15" 
-                   Margin="0,10,0,10"
-                   MaximumWidthRequest="600">
-                <StackLayout Spacing="10">
-                    <Label Text="User Details" 
+        <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
+            <!-- Define columns based on platform -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{OnIdiom Phone=*, Tablet=*, Desktop=*}" />
+                <ColumnDefinition Width="{OnIdiom Phone=0, Tablet=0, Desktop=*}" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Left Column: User Details -->
+            <StackLayout Grid.Column="0" VerticalOptions="StartAndExpand">
+                <!-- User Details -->
+                <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                       BorderColor="{StaticResource PrimaryColor}" 
+                       CornerRadius="10" 
+                       Padding="15" 
+                       Margin="0,25,0,10"
+                       MaximumWidthRequest="600">
+                    <StackLayout Spacing="10">
+                        <Label Text="User Details" 
+                               FontSize="Medium" 
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource TextColor}" />
+
+
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="4" ColumnSpacing="10">
+                            <Label Text="First Name" Grid.Column="0" Grid.Row="0" />
+                            <Label Text="{Binding CurrentUser.FirstName}" Grid.Column="1" Grid.Row="0" />
+
+                            <Label Text="Last Name" Grid.Column="0" Grid.Row="1" />
+                            <Label Text="{Binding CurrentUser.LastName}" Grid.Column="1" Grid.Row="1" />
+
+                            <Label Text="Email" Grid.Column="0" Grid.Row="2" />
+                            <Label Text="{Binding CurrentUser.Email}" Grid.Column="1" Grid.Row="2" />
+
+                            <Label Text="Privilege" Grid.Column="0" Grid.Row="3" />
+                            <Label Text="{Binding CurrentUser.Privilege}" Grid.Column="1" Grid.Row="3" />
+
+                            <Label Text="Items Scanned" Grid.Column="0" Grid.Row="4" />
+                            <Label Text="{Binding CurrentUser.ItemsScanned}" Grid.Column="1" Grid.Row="4" />
+
+                            <Label Text="Customers Added" Grid.Column="0" Grid.Row="5" />
+                            <Label Text="{Binding CurrentUser.CustomersAdded}" Grid.Column="1" Grid.Row="5" />
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Actions -->
+                <Button Text="Edit Profile" 
+                        BackgroundColor="{StaticResource PrimaryColor}" 
+                        TextColor="{StaticResource TextColor}" 
+                        CornerRadius="10" Margin="0,5,0,5" WidthRequest="600"
+                        Command="{Binding EditProfileCommand}" />
+
+                <Button Text="Logout" 
+                        BackgroundColor="{StaticResource WarningColor}" 
+                        TextColor="{StaticResource TextColor}" 
+                        CornerRadius="10" Margin="0,5,0,5" WidthRequest="600"
+                        Command="{Binding LogoutCommand}" />
+            </StackLayout>
+
+            <!-- Right Column -->
+
+            <!-- Basic Priv Actions -->
+            <StackLayout Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" Grid.Row="{OnIdiom Phone=1, Tablet=1}" Padding="10" >
+
+                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                       BorderColor="Transparent" IsVisible="{Binding IsColleague}"
+                       CornerRadius="10" 
+                       Padding="10" 
+                       Margin="0,10,0,10"
+                       MaximumWidthRequest="600">
+                    <StackLayout>
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}" WidthRequest="400" HeightRequest="80">
+                            <Label Text="Actions" 
+                               FontSize="Medium" HorizontalOptions="Center"
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource TextColor}" />
+                        </Frame>
+                        <Button Text="Send A Note" 
+                            BackgroundColor="{StaticResource PrimaryColor}" 
+                            TextColor="{StaticResource TextColor}" 
+                            CornerRadius="10" Margin="0,10,0,5"
+                            Command="{Binding SendNoteCommand}"/>
+                    </StackLayout>
+                </Frame>
+
+                <!-- Manager and Admin -->
+
+                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                       BorderColor="Transparent" IsVisible="{Binding CanViewUsers}"
+                       CornerRadius="10" 
+                       Padding="10" 
+                       Margin="0,10,0,10"
+                       MaximumWidthRequest="600">
+                    <StackLayout>
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}" WidthRequest="400" HeightRequest="80" IsVisible="{Binding IsAdmin}">
+                            <Label Text="Admin Actions" 
+                               FontSize="Medium" HorizontalOptions="Center"
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource TextColor}" />
+                        </Frame>
+
+                        <Button Text="Create New User Account" 
+                                BackgroundColor="{StaticResource PrimaryColor}" 
+                                TextColor="{StaticResource TextColor}" 
+                                CornerRadius="10" Margin="0,10,0,5"
+                                Command="{Binding OpenCreateUserPageCommand}"
+                                IsVisible="{Binding IsAdmin}"/>
+
+                        <!-- Label -->
+                            <Label Text="User List" 
                             FontSize="Medium" 
                             FontAttributes="Bold" 
-                            TextColor="{StaticResource TextColor}" />
+                            HorizontalOptions="Center"
+                            TextColor="{StaticResource PrimaryColor}"/>
 
-                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="4" ColumnSpacing="10">
-                        <Label Text="First Name" Grid.Column="0" Grid.Row="0" />
-                        <Label Text="{Binding CurrentUser.FirstName}" Grid.Column="1" Grid.Row="0" />
+                            <!-- CollectionView -->
+                            <CollectionView ItemsSource="{Binding Users}" IsVisible="{Binding CanViewUsers}" 
+                                SelectedItem="{Binding SelectedUser}"
+                                SelectionMode="Single" BackgroundColor="{StaticResource PrimaryColor}" HeightRequest="350">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                    <Grid ColumnSpacing="5" RowDefinitions="Auto">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="130" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label Text="{Binding .}" Grid.Column="0" />
+                                        <Label Text="|" Grid.Column="1" HorizontalOptions="Center" />
+                                        <Label Text="{Binding Privilege}" Grid.Column="2" />
+                                        <Label Text="|" Grid.Column="3" HorizontalOptions="Center" />
+                                        <Label Text="{Binding UserId}" Grid.Column="4" />
+                                        <Label Text="|" Grid.Column="5" HorizontalOptions="Center" />
+                                        <Label Text="{Binding LastLogin, StringFormat='{0:dd/MM/yy}'}" Grid.Column="6" />
+                                    </Grid>
+                                </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
 
-                        <Label Text="Last Name" Grid.Column="0" Grid.Row="1" />
-                        <Label Text="{Binding CurrentUser.LastName}" Grid.Column="1" Grid.Row="1" />
+                        <!-- Selected User -->
+                        <Label Text="{Binding SelectedUser.FirstName, StringFormat='Selected User: {0}'}"
+                           TextColor="{StaticResource PrimaryColor}" Margin="0,20,0,5"
+                           HorizontalOptions="Center" />
 
-                        <Label Text="Email" Grid.Column="0" Grid.Row="2" />
-                        <Label Text="{Binding CurrentUser.Email}" Grid.Column="1" Grid.Row="2" />
-
-                        <Label Text="Privilege" Grid.Column="0" Grid.Row="3" />
-                        <Label Text="{Binding CurrentUser.Privilege}" Grid.Column="1" Grid.Row="3" />
-
-                        <Label Text="Items Scanned" Grid.Column="0" Grid.Row="4" />
-                        <Label Text="{Binding CurrentUser.ItemsScanned}" Grid.Column="1" Grid.Row="4" />
-
-                        <Label Text="Customers Added" Grid.Column="0" Grid.Row="5" />
-                        <Label Text="{Binding CurrentUser.CustomersAdded}" Grid.Column="1" Grid.Row="5" />
-                    </Grid>
-                </StackLayout>
-            </Frame>
-
-            <!-- Actions -->
-            <Button Text="Edit Profile" 
-                    BackgroundColor="{StaticResource PrimaryColor}" 
-                    TextColor="White" 
-                    CornerRadius="10" WidthRequest="600"
-                    Command="{Binding EditProfileCommand}" />
-
-            <Button Text="Logout" 
-                    BackgroundColor="{StaticResource WarningColor}" 
-                    TextColor="White" 
-                    CornerRadius="10" WidthRequest="600"
-                    Command="{Binding LogoutCommand}" />
-        </StackLayout>
+                        <!-- Delete Button -->
+                        <Button Text="Delete Selected User" 
+                        BackgroundColor="{StaticResource WarningColor}" 
+                        TextColor="{StaticResource TextColor}" 
+                        Command="{Binding DeleteUserCommand}" 
+                        IsEnabled="{Binding SelectedUser}" IsVisible="{Binding IsAdmin}" />
+                    </StackLayout>
+                    
+                </Frame>
+            </StackLayout>
+        </Grid>
     </ScrollView>
 
 

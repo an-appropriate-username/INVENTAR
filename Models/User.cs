@@ -59,7 +59,7 @@ namespace INVApp.Models
         /// <returns>A string showing the user's first name, ID, and privilege level.</returns>
         public override string ToString()
         {
-            return $"{FirstName} (ID: {UserId}, Privilege: {Privilege})";
+            return $"{FirstName} {LastName}";
         }
 
         

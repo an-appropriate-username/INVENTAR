@@ -17,9 +17,28 @@ namespace INVApp
 
         public static DatabaseConfigService? DatabaseConfigService { get; private set; }
 
-        public static User? CurrentUser { get; set; }
-
         public static APIService? APIService { get; private set; }
+
+        // Current User properties
+
+        public static event Action? CurrentUserChanged;
+
+        private static User? _currentUser;
+        public static User? CurrentUser
+        {
+            get => _currentUser;
+            set
+            {
+                if (_currentUser != value)
+                {
+                    _currentUser = value;
+                    CurrentUserChanged?.Invoke(); // Trigger the event without arguments
+                }
+            }
+        }
+
+        public static event Action? UserCreated;
+        public static void OnUserCreated() => UserCreated?.Invoke();
 
         #endregion
 
