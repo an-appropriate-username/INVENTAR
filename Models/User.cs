@@ -53,13 +53,9 @@ namespace INVApp.Models
             return Privilege >= requiredPrivilegeLevel;
         }
 
-        /// <summary>
-        /// Returns a string representation of the user.
-        /// </summary>
-        /// <returns>A string showing the user's first name, ID, and privilege level.</returns>
         public override string ToString()
         {
-            return $"{FirstName} (ID: {UserId}, Privilege: {Privilege})";
+            return $"{FirstName} {LastName}";
         }
 
         

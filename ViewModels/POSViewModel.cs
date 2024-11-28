@@ -363,6 +363,8 @@ namespace INVApp.ViewModels
                 Cart.Add(newItem);
             }
 
+            App.CurrentUser.ItemsScanned += 1;
+
             OnPropertyChanged(nameof(CartReversed));
             OnPropertyChanged(nameof(TotalAmount));
         }

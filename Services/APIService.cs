@@ -368,6 +368,13 @@ namespace INVApp.Services
             return null;
         }
 
+        // Update a customer
+        public async Task<bool> UpdateCustomerAsync(Customer customer)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"{_baseUri}Customer/{customer.Id}", customer);
+            return response.IsSuccessStatusCode;
+        }
+
         #endregion
 
         #region Inventory Log Methods

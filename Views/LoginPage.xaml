@@ -28,32 +28,40 @@
                VerticalOptions="Start" IsVisible="{Binding CanCreateAdmin}"/>
 
             <!-- Conditional UI for Login -->
-            <CollectionView ItemsSource="{Binding Users}" 
-                        ItemsLayout="HorizontalList"
-                        SelectionMode="Single"
-                        HorizontalOptions="CenterAndExpand"
-                        Margin="0,25,0,25"
-                        HeightRequest="150">
+            <CollectionView ItemsSource="{Binding Users}"
+                SelectionMode="Single"
+                HorizontalOptions="CenterAndExpand"
+                Margin="0,25,0,25"
+                WidthRequest="600">
+                <!-- Explicitly set ItemsLayout with Spacing -->
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal"
+                            ItemSpacing="5" />
+                </CollectionView.ItemsLayout>
+
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Padding="0" Margin="0" BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent">
-                            <Frame BackgroundColor="{StaticResource BackgroundColor}" BorderColor="Transparent" Padding="0" Margin="2">
-                                <StackLayout>
-                                    <Label Text="{Binding FirstName}" HorizontalOptions="Center" />
-                                    <Label Text="{Binding LastName}" HorizontalOptions="Center" />
-                                    <Label Text="{Binding UserId}" HorizontalOptions="Center" VerticalOptions="EndAndExpand"/>
-                                    <Button Text="Select" 
-                                        
-                                        HeightRequest="50" WidthRequest="80"
-                                        Margin="5,2,5,2"
-                                        Clicked="OnSelectButtonClicked"/>
-                                </StackLayout>
-                            </Frame>
+                        <Frame Padding="10" Margin="5" 
+                           BackgroundColor="{StaticResource PrimaryColor}" 
+                           CornerRadius="8" 
+                           HasShadow="True">
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="{Binding FirstName}" 
+                                   FontAttributes="Bold" 
+                                   HorizontalOptions="Center" />
+                                <Label Text="{Binding LastName}" 
+                                    HorizontalOptions="Center" />
+                                <Label Text="{Binding UserId}" 
+                                    HorizontalOptions="Center" />
+                                <Button Text="Select" 
+                                    Clicked="OnSelectButtonClicked" 
+                                    HorizontalOptions="Center" />
+                            </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            
+
             <Label Text="LOGIN" 
                FontAttributes="Bold" 
                HorizontalOptions="CenterAndExpand"

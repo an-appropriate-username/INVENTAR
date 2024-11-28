@@ -4,6 +4,12 @@ using INVApp.ViewModels;
 using INVApp.Views;
 using ZXing.Net.Maui.Controls;
 using CommunityToolkit.Maui;
+using Microsoft.Maui.LifecycleEvents;
+#if WINDOWS
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
+using WinRT.Interop; 
+#endif
 
 namespace INVApp
 {
@@ -31,6 +37,8 @@ namespace INVApp
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+
+
             #endregion
 
             #region Service Registrations
@@ -57,6 +65,8 @@ namespace INVApp
             builder.Services.AddTransient<CustomerPage>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<AccountPage>();
+            builder.Services.AddTransient<CreateUserPage>();
+            builder.Services.AddTransient<CustomerDetailsPopup>();
 
 
             // Register view models
@@ -70,6 +80,9 @@ namespace INVApp
             builder.Services.AddTransient<CustomerPageViewModel>();
             builder.Services.AddTransient<AccountViewModel>();
             builder.Services.AddTransient<LoginPageViewModel>();
+            builder.Services.AddTransient<CreateUserViewModel>();
+            builder.Services.AddTransient<CustomerDetailsViewModel>();
+
 
 
             #endregion
@@ -79,6 +92,33 @@ namespace INVApp
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
+            #endregion
+
+            #region Window Configuration
+
+            // Add lifecycle events and configure window behavior for Windows
+            builder.ConfigureLifecycleEvents(events =>
+            {
+#if WINDOWS
+                events.AddWindows(w =>
+                {
+                    w.OnWindowCreated(window =>
+                    {
+                        window.ExtendsContentIntoTitleBar = true;  // Ensure title bar is visible
+
+                        IntPtr hWnd = WindowNative.GetWindowHandle(window);
+                        WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+                        var _appWindow = AppWindow.GetFromWindowId(myWndId);
+
+                        // Set the window to the default presenter and maximize it
+                        _appWindow.SetPresenter(AppWindowPresenterKind.Default);  // Default mode keeps the title bar
+                        _appWindow.Resize(new Windows.Graphics.SizeInt32(1920, 1080));  // Resize window to max size (or to screen size)
+                        _appWindow.Move(new Windows.Graphics.PointInt32(0, 0));
+                    });
+                });
+#endif
+            });
 
             #endregion
 
