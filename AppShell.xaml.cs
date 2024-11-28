@@ -31,6 +31,8 @@ namespace INVApp
             Routing.RegisterRoute(nameof(CreateUserPage), typeof(CreateUserPage));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(HomePage), typeof(HomePage));
+            Routing.RegisterRoute(nameof(CustomerDetailsPopup), typeof(CustomerDetailsPopup));
+
         }
 
         private async Task ShowLoginPageAsync()

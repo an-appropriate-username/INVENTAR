@@ -7,6 +7,7 @@ using INVApp.Services;
 using INVApp.Models;
 using BarcodeStandard;
 using System.Transactions;
+using INVApp.Views;
 
 namespace INVApp.ViewModels
 {
@@ -92,6 +93,7 @@ namespace INVApp.ViewModels
         // Commands for add and delete actions
         public ICommand AddCustomerCommand { get; }
         public ICommand DeleteCustomerCommand { get; }
+        public ICommand ShowCustomerDetailsCommand { get; }
 
         public CustomerPageViewModel(DatabaseService databaseService, APIService apiService)
         {
@@ -99,6 +101,7 @@ namespace INVApp.ViewModels
             _apiService = apiService;
             AddCustomerCommand = new Command(async () => await AddCustomerAsync());
             DeleteCustomerCommand = new Command(async () => await DeleteCustomerAsync());
+            ShowCustomerDetailsCommand = new Command(async () => await ShowCustomerDetailsPopup());
 
             _ = LoadCustomersAsync();
         }
@@ -384,6 +387,20 @@ namespace INVApp.ViewModels
 
             int mod = sum % 10;
             return (mod == 0) ? 0 : 10 - mod;
+        }
+
+        private async Task ShowCustomerDetailsPopup()
+        {
+            if (SelectedCustomer != null)
+            {
+                var viewModel = new CustomerDetailsViewModel(SelectedCustomer, _databaseService, _apiService);
+                var detailPage = new CustomerDetailsPopup(viewModel); // Pass the ViewModel here
+                await Application.Current.MainPage.Navigation.PushModalAsync(detailPage);
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Error", "No customer selected.", "OK");
+            }
         }
 
         // Method to clear the input fields

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="INVApp.Views.CustomerDetailsPopup"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+
+        <!-- Title -->
+        <Label Text="Customer Details" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,10"/>
+
+        <!-- Customer Details Form -->
+        <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="10,0,10,5">
+            <StackLayout>
+                <Grid ColumnDefinitions="*" RowDefinitions="*,*,*,*,*,*,*,*,*,*">
+
+                    <!-- Customer Name -->
+                    <Label Text="Name:" FontSize="18" FontAttributes="Bold" Grid.Row="0" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding SelectedCustomer.CustomerName}" FontSize="18" Grid.Row="1" HorizontalTextAlignment="Center"/>
+
+                    <!-- Surname -->
+                    <Label Text="Surname:" FontSize="18" FontAttributes="Bold" Grid.Row="2" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding SelectedCustomer.Surname}" FontSize="18" Grid.Row="3" HorizontalTextAlignment="Center"/>
+
+                    <!-- Email -->
+                    <Label Text="Email:" FontSize="18" FontAttributes="Bold" Grid.Row="4" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding SelectedCustomer.Email}" FontSize="18" Grid.Row="5" HorizontalTextAlignment="Center"/>
+
+                    <!-- Phone -->
+                    <Label Text="Phone:" FontSize="18" FontAttributes="Bold" Grid.Row="6" HorizontalTextAlignment="Center"/>
+                    <Entry Text="{Binding SelectedCustomer.Phone}" FontSize="18" Grid.Row="7" HorizontalTextAlignment="Center"/>
+
+                    <!-- Is Member -->
+                    <Label Text="Member Status:" FontSize="18" FontAttributes="Bold" Grid.Row="8" HorizontalTextAlignment="Center"/>
+                    <Switch IsToggled="{Binding SelectedCustomer.IsMember}" Grid.Row="9" HorizontalOptions="Center"/>
+
+                </Grid>
+            </StackLayout>
+        </Frame>
+
+        <!-- Action Buttons -->
+        <Frame Margin="10,0,10,0" BackgroundColor="{StaticResource FrameBackgroundColor}">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="*">
+                <Button Text="Update" Command="{Binding UpdateCustomerCommand}" Margin="5,5,5,5" Grid.Column="0"/>
+                <Button Text="Delete" Command="{Binding DeleteCustomerCommand}" BackgroundColor="{StaticResource WarningColor}" Margin="0,5,5,5" Grid.Column="1" />
+            </Grid>
+        </Frame>
+
+        <!-- Close Button -->
+        <Button Text="Close" Command="{Binding CloseCommand}" Margin="10,5,10,5" BorderColor="{StaticResource FrameBackgroundColor}"/>
+    </StackLayout>
+</ContentPage>

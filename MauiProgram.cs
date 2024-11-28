@@ -63,7 +63,7 @@ namespace INVApp
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<AccountPage>();
             builder.Services.AddTransient<CreateUserPage>();
-
+            builder.Services.AddTransient<CustomerDetailsPopup>();
 
 
             // Register view models
@@ -78,6 +78,7 @@ namespace INVApp
             builder.Services.AddTransient<AccountViewModel>();
             builder.Services.AddTransient<LoginPageViewModel>();
             builder.Services.AddTransient<CreateUserViewModel>();
+            builder.Services.AddTransient<CustomerDetailsViewModel>();
 
 
 
