@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using INVApp.DTO;
 using INVApp.Models;
 using Newtonsoft.Json;
 
@@ -12,6 +14,11 @@ namespace INVApp.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUri = "https://localhost:7276/api/";
+        private string _initialProductName;
+        private string _initialBrandName;
+        private string _initialCategory;
+        private decimal _initialWholesalePrice;
+        private decimal _initialPrice;
 
         public APIService()
         {
@@ -325,5 +332,138 @@ namespace INVApp.Services
 
         #endregion
 
+
+        #region Stock Adjustment Methods
+        public async Task<bool> UpdateProductStockAsync(Product product, int stockAdjustment)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"Product details being sent:");
+                System.Diagnostics.Debug.WriteLine($"- Product ID: {product.ProductID}");
+                System.Diagnostics.Debug.WriteLine($"- Barcode: {product.EAN13Barcode}");
+                System.Diagnostics.Debug.WriteLine($"- Name: {product.ProductName}");
+                System.Diagnostics.Debug.WriteLine($"- Stock Adjustment: {stockAdjustment}");
+
+                var adjustment = new StockAdjustmentDto
+                {
+                    Ean13Barcode = product.EAN13Barcode,
+                    StockAdjustment = stockAdjustment,
+                    Name = product.ProductName,
+                    BrandName = product.BrandName,
+                    CategoryName = product.Category,
+                    Weight = product.ProductWeight,
+                    WholesalePrice = product.WholesalePrice,
+                    Price = product.Price
+                };
+
+                // Log the serialized DTO
+                var jsonContent = JsonConvert.SerializeObject(adjustment);
+                System.Diagnostics.Debug.WriteLine($"Sending JSON: {jsonContent}");
+
+                var response = await _httpClient.PutAsJsonAsync(
+                    $"{_baseUri}Maui/stock-adjustment",
+                    adjustment
+                );
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Response Status: {response.StatusCode}");
+                System.Diagnostics.Debug.WriteLine($"Response Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+
+                throw new Exception(responseContent);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in UpdateProductStockAsync: {ex}");
+                throw;
+            }
+        }
+
+
+
+
+        // Add this method to handle new products
+        public async Task<bool> CreateProductStockAsync(
+     string barcode,
+     string productName,
+     string brandName,
+     string category,
+     string weight,
+     decimal wholesalePrice,
+     decimal price,
+     int stockAdjustment)
+        {
+            try
+            {
+                var adjustment = new StockAdjustmentDto
+                {
+                    Ean13Barcode = barcode,
+                    StockAdjustment = stockAdjustment,  // Changed from NewStockValue
+                    Name = productName,                  // Changed from ProductName
+                    BrandName = brandName,
+                    CategoryName = category,             // Changed from Category
+                    Weight = weight,                     // Changed from ProductWeight
+                    WholesalePrice = wholesalePrice,
+                    Price = price
+                    // Removed UserId as it's not in the API DTO
+                    // Removed OldStockValue as it's not in the API DTO
+                    // Removed NewStockValue as we now use StockAdjustment
+                };
+
+                var jsonContent = JsonConvert.SerializeObject(adjustment);
+                System.Diagnostics.Debug.WriteLine($"Sending JSON: {jsonContent}"); // For debugging
+
+                var response = await _httpClient.PutAsJsonAsync(
+                    $"{_baseUri}Maui/stock-adjustment",
+                    adjustment
+                );
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Response Status: {response.StatusCode}");
+                System.Diagnostics.Debug.WriteLine($"Response Content: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+
+                throw new Exception($"Failed to create product: {responseContent}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in CreateProductStockAsync: {ex}");
+                throw new Exception($"Error creating product: {ex.Message}");
+            }
+        }
+
+
+        //    public async Task<bool> AddInventoryAdjustmentLogAsync(StockAdjustmentDto adjustment)
+        //{
+        //    try
+        //    {
+        //        var log = new InventoryLog
+        //        {
+        //            ProductID = adjustment.ProductId,
+        //            Barcode = adjustment.Barcode,
+        //            StockNewValue = adjustment.StockAdjustment,
+        //            Reason = adjustment.StockReductionReason ?? "Stock intake adjustment",
+        //            DateChanged = DateTime.UtcNow
+        //        };
+
+        //        return await AddInventoryLogAsync(log);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"Error logging inventory adjustment: {ex.Message}");
+        //    }
+        //}
+
+        #endregion
+
     }
+    
 }

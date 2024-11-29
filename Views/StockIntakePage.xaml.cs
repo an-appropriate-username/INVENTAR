@@ -13,6 +13,7 @@ public partial class StockIntakePage : ContentPage
     // Declare variables
 
     private readonly DatabaseService _databaseService;
+    private readonly APIService _apiService;
     private readonly SoundService _soundService;
 
     public double SoundVolume { get; private set; }
@@ -26,9 +27,10 @@ public partial class StockIntakePage : ContentPage
         InitializeComponent();
 
         _databaseService = new DatabaseService();
+        _apiService = new APIService();
         _soundService = new SoundService();
 
-        BindingContext = new StockIntakeViewModel(_databaseService);
+        BindingContext = new StockIntakeViewModel(_databaseService, _apiService);
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {
