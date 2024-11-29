@@ -273,11 +273,6 @@ namespace INVApp.ViewModels
                 System.Diagnostics.Debug.WriteLine($"ScannedBarcode: {ScannedBarcode}");
                 System.Diagnostics.Debug.WriteLine($"SelectedProduct is null: {SelectedProduct == null}");
 
-                if (SelectedProduct != null)
-                {
-                    System.Diagnostics.Debug.WriteLine($"SelectedProduct.EAN13Barcode: {SelectedProduct.EAN13Barcode}");
-                }
-
                 #region Data Validation
                 if (string.IsNullOrEmpty(ScannedBarcode) || string.IsNullOrEmpty(ProductName) ||
                     string.IsNullOrEmpty(SelectedCategory) || string.IsNullOrEmpty(ProductWeight))
@@ -285,7 +280,6 @@ namespace INVApp.ViewModels
                     App.NotificationService.Notify("Please fill in all fields before updating inventory.");
                     return;
                 }
-
                 if (StockAdjustment < 0 && string.IsNullOrEmpty(StockReductionReason))
                 {
                     App.NotificationService.Notify("Please provide a reason for stock reduction.");
@@ -293,35 +287,48 @@ namespace INVApp.ViewModels
                 }
                 #endregion
 
+                var success = false;
+
                 if (SelectedProduct != null)
                 {
                     System.Diagnostics.Debug.WriteLine("Updating existing product");
-
-                    // IMPORTANT: Make sure the barcode is set
                     SelectedProduct.EAN13Barcode = ScannedBarcode;
-
                     System.Diagnostics.Debug.WriteLine($"Product details before update:");
                     System.Diagnostics.Debug.WriteLine($"- EAN13Barcode: {SelectedProduct.EAN13Barcode}");
                     System.Diagnostics.Debug.WriteLine($"- ProductName: {SelectedProduct.ProductName}");
                     System.Diagnostics.Debug.WriteLine($"- StockAdjustment: {StockAdjustment}");
-
                     SelectedProduct.ProductName = ProductName;
                     SelectedProduct.BrandName = BrandName;
                     SelectedProduct.Category = SelectedCategory;
                     SelectedProduct.ProductWeight = ProductWeight;
                     SelectedProduct.WholesalePrice = WholesalePrice;
                     SelectedProduct.Price = Price;
-
-                    var success = await _apiService.UpdateProductStockAsync(SelectedProduct, StockAdjustment);
-
-                    if (success)
-                    {
-                        App.NotificationService.Notify("Inventory updated successfully.");
-                    }
+                    success = await _apiService.UpdateProductStockAsync(SelectedProduct, StockAdjustment);
                 }
                 else
                 {
-                    // ... rest of your new product creation code
+                    System.Diagnostics.Debug.WriteLine("Creating new product");
+                    System.Diagnostics.Debug.WriteLine($"Details for new product:");
+                    System.Diagnostics.Debug.WriteLine($"- Barcode: {ScannedBarcode}");
+                    System.Diagnostics.Debug.WriteLine($"- Name: {ProductName}");
+                    System.Diagnostics.Debug.WriteLine($"- StockAdjustment: {StockAdjustment}");
+
+                    success = await _apiService.CreateProductStockAsync(
+                        ScannedBarcode,
+                        ProductName,
+                        BrandName,
+                        SelectedCategory,
+                        ProductWeight,
+                        WholesalePrice,
+                        Price,
+                        StockAdjustment
+                    );
+                }
+
+                if (success)
+                {
+                    App.NotificationService.Notify("Inventory updated successfully.");
+                    //ResetFields();
                 }
             }
             catch (Exception ex)
