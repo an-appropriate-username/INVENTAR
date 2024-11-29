@@ -11,6 +11,7 @@ namespace INVApp.ViewModels
         #region Fields
 
         private readonly DatabaseService _databaseService;
+        private readonly APIService _apiService;
         private string _selectedCategory;
         private string _scannedBarcode;
         private string _initialProductName;
@@ -28,9 +29,10 @@ namespace INVApp.ViewModels
 
         #region Constructor
 
-        public StockIntakeViewModel(DatabaseService databaseService)
+        public StockIntakeViewModel(DatabaseService databaseService, APIService apiService)
         {
             _databaseService = databaseService;
+            _apiService = apiService;
 
             // Initialize Commands
             AddStockCommand = new Command(async () => await AddStock());
@@ -58,13 +60,35 @@ namespace INVApp.ViewModels
         public decimal Price { get; set; }
         public ObservableCollection<string> Categories { get; set; }
 
+
         public string ScannedBarcode
         {
             get => _scannedBarcode;
             set
             {
-                _scannedBarcode = value;
-                OnPropertyChanged();
+                if (_scannedBarcode != value)
+                {
+                    _scannedBarcode = value;
+                    OnPropertyChanged();
+
+                    // Only process if we have a valid barcode length and it's not empty
+                    if (!string.IsNullOrEmpty(_scannedBarcode) && _scannedBarcode.Length == 13)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"13-digit barcode entered: {_scannedBarcode}");
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            try
+                            {
+                                await ProcessScannedBarcode(_scannedBarcode);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Error processing barcode: {ex}");
+                                App.NotificationService.Notify($"Error processing barcode: {ex.Message}");
+                            }
+                        });
+                    }
+                }
             }
         }
 
@@ -137,61 +161,91 @@ namespace INVApp.ViewModels
 
         public async Task ProcessScannedBarcode(string barcode)
         {
-            var product = await _databaseService.GetProductByBarcodeAsync(barcode);
-            ToggleCamera();
-
-            if (product != null)
+            try
             {
-                // Populate fields with product data
-                SelectedProduct = product;
-                ScannedBarcode = barcode;
-                ProductName = product.ProductName;
-                BrandName = product.BrandName;
-                SelectedCategory = product.Category;
-                ProductWeight = product.ProductWeight;
-                CurrentStockLevel = product.CurrentStockLevel;
-                WholesalePrice = product.WholesalePrice;
-                Price = product.Price;
+                System.Diagnostics.Debug.WriteLine($"Starting ProcessScannedBarcode for barcode: {barcode}");
 
-                // Store initial values for change tracking
-                _initialProductName = product.ProductName;
-                _initialBrandName = product.BrandName;
-                _initialCategory = product.Category;
-                _initialProductWeight = product.ProductWeight;
-                _initialWholesalePrice = product.WholesalePrice;
-                _initialPrice = product.Price;
+                if (string.IsNullOrEmpty(barcode))
+                {
+                    System.Diagnostics.Debug.WriteLine("Barcode is null or empty");
+                    return;
+                }
 
-                // Notify user
+                System.Diagnostics.Debug.WriteLine("Calling GetProductByBarcodeAsync...");
+                var product = await _apiService.GetProductByBarcodeAsync(barcode);
+                System.Diagnostics.Debug.WriteLine($"API call completed. Product found: {(product != null)}");
+
+                // Toggle camera before processing results
+                ToggleCamera();
+
+                if (product != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Processing found product: {product.ProductName}");
+
+                    // Populate fields with product data
+                    SelectedProduct = product;
+                    ScannedBarcode = barcode;
+                    ProductName = product.ProductName;
+                    BrandName = product.BrandName;
+                    SelectedCategory = product.Category;
+                    ProductWeight = product.ProductWeight;
+                    CurrentStockLevel = product.CurrentStockLevel;
+                    WholesalePrice = product.WholesalePrice;
+                    Price = product.Price;
+
+                    // Store initial values for change tracking
+                    _initialProductName = product.ProductName;
+                    _initialBrandName = product.BrandName;
+                    _initialCategory = product.Category;
+                    _initialProductWeight = product.ProductWeight;
+                    _initialWholesalePrice = product.WholesalePrice;
+                    _initialPrice = product.Price;
+
+                    System.Diagnostics.Debug.WriteLine("Product fields populated successfully");
+
+                    // Notify user
+                    Application.Current.Dispatcher.Dispatch(() =>
+                    {
+                        App.NotificationService.Notify($"Match found: {product.ProductName}.");
+                    });
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No product found, resetting fields");
+                    ResetFields();
+                    ScannedBarcode = barcode;
+                    LoadDefaultCategory();
+
+                    Application.Current.Dispatcher.Dispatch(() =>
+                    {
+                        App.NotificationService.Notify("No match found. Create new entry.");
+                    });
+                }
+
+                System.Diagnostics.Debug.WriteLine("Updating UI properties");
+                OnPropertyChanged(nameof(ScannedBarcode));
+                OnPropertyChanged(nameof(ProductName));
+                OnPropertyChanged(nameof(BrandName));
+                OnPropertyChanged(nameof(SelectedCategory));
+                OnPropertyChanged(nameof(ProductWeight));
+                OnPropertyChanged(nameof(CurrentStockLevel));
+                OnPropertyChanged(nameof(WholesalePrice));
+                OnPropertyChanged(nameof(Price));
+                System.Diagnostics.Debug.WriteLine("ProcessScannedBarcode completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in ProcessScannedBarcode: {ex}");
                 Application.Current.Dispatcher.Dispatch(() =>
                 {
-                    App.NotificationService.Notify($"Match found: {product.ProductName}.");
+                    App.NotificationService.Notify($"Error scanning product: {ex.Message}");
                 });
             }
-            else
-            {
-                ResetFields();
-                ScannedBarcode = barcode;
-                LoadDefaultCategory();
-
-                Application.Current.Dispatcher.Dispatch(() =>
-                {
-                    App.NotificationService.Notify("No match found. Create new entry.");
-                });
-            }
-
-            OnPropertyChanged(nameof(ScannedBarcode));
-            OnPropertyChanged(nameof(ProductName));
-            OnPropertyChanged(nameof(BrandName));
-            OnPropertyChanged(nameof(SelectedCategory));
-            OnPropertyChanged(nameof(ProductWeight));
-            OnPropertyChanged(nameof(CurrentStockLevel));
-            OnPropertyChanged(nameof(WholesalePrice));
-            OnPropertyChanged(nameof(Price));
         }
 
         public async Task LoadCategories()
         {
-            var categories = await _databaseService.GetCategoriesAsync();
+            var categories = await _apiService.GetCategoriesAsync();
             Application.Current.Dispatcher.Dispatch(() =>
             {
                 Categories.Clear();
@@ -213,81 +267,77 @@ namespace INVApp.ViewModels
 
         public async Task AddStock()
         {
-            #region Data Validation
-
-            if (string.IsNullOrEmpty(ScannedBarcode) || string.IsNullOrEmpty(ProductName) || string.IsNullOrEmpty(SelectedCategory) || string.IsNullOrEmpty(ProductWeight))
+            try
             {
-                App.NotificationService.Notify("Please fill in all fields before updating inventory.");
-                return;
-            }
+                System.Diagnostics.Debug.WriteLine("Starting AddStock method");
+                System.Diagnostics.Debug.WriteLine($"ScannedBarcode: {ScannedBarcode}");
+                System.Diagnostics.Debug.WriteLine($"SelectedProduct is null: {SelectedProduct == null}");
 
-            if (StockAdjustment < 0 && string.IsNullOrEmpty(StockReductionReason))
-            {
-                App.NotificationService.Notify("Please provide a reason for stock reduction.");
-                return;
-            }
-
-            #endregion
-
-            if (SelectedProduct != null)
-            {
-                #region Update Existing Product
-
-                if (SelectedProduct.CurrentStockLevel + StockAdjustment < 0)
+                #region Data Validation
+                if (string.IsNullOrEmpty(ScannedBarcode) || string.IsNullOrEmpty(ProductName) ||
+                    string.IsNullOrEmpty(SelectedCategory) || string.IsNullOrEmpty(ProductWeight))
                 {
-                    App.NotificationService.Notify("Stock level cannot go below zero.");
+                    App.NotificationService.Notify("Please fill in all fields before updating inventory.");
                     return;
                 }
-
-                if (IsCategoryChanged || IsWeightChanged || IsNameChanged || IsWholesalePriceChanged || IsSalePriceChanged)
+                if (StockAdjustment < 0 && string.IsNullOrEmpty(StockReductionReason))
                 {
-                    bool confirm = await Application.Current.MainPage.DisplayAlert(
-                        "Confirm Changes",
-                        "You have modified some product details. Are you sure you want to update?",
-                        "Yes", "No");
+                    App.NotificationService.Notify("Please provide a reason for stock reduction.");
+                    return;
+                }
+                #endregion
 
-                    if (!confirm) return;
+                var success = false;
+
+                if (SelectedProduct != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Updating existing product");
+                    SelectedProduct.EAN13Barcode = ScannedBarcode;
+                    System.Diagnostics.Debug.WriteLine($"Product details before update:");
+                    System.Diagnostics.Debug.WriteLine($"- EAN13Barcode: {SelectedProduct.EAN13Barcode}");
+                    System.Diagnostics.Debug.WriteLine($"- ProductName: {SelectedProduct.ProductName}");
+                    System.Diagnostics.Debug.WriteLine($"- StockAdjustment: {StockAdjustment}");
+                    SelectedProduct.ProductName = ProductName;
+                    SelectedProduct.BrandName = BrandName;
+                    SelectedProduct.Category = SelectedCategory;
+                    SelectedProduct.ProductWeight = ProductWeight;
+                    SelectedProduct.WholesalePrice = WholesalePrice;
+                    SelectedProduct.Price = Price;
+                    success = await _apiService.UpdateProductStockAsync(SelectedProduct, StockAdjustment);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Creating new product");
+                    System.Diagnostics.Debug.WriteLine($"Details for new product:");
+                    System.Diagnostics.Debug.WriteLine($"- Barcode: {ScannedBarcode}");
+                    System.Diagnostics.Debug.WriteLine($"- Name: {ProductName}");
+                    System.Diagnostics.Debug.WriteLine($"- StockAdjustment: {StockAdjustment}");
+
+                    success = await _apiService.CreateProductStockAsync(
+                        ScannedBarcode,
+                        ProductName,
+                        BrandName,
+                        SelectedCategory,
+                        ProductWeight,
+                        WholesalePrice,
+                        Price,
+                        StockAdjustment
+                    );
                 }
 
-                SelectedProduct.ProductName = ProductName;
-                SelectedProduct.BrandName = BrandName;
-                SelectedProduct.Category = SelectedCategory;
-                SelectedProduct.ProductWeight = ProductWeight;
-                SelectedProduct.CurrentStockLevel += StockAdjustment;
-                SelectedProduct.WholesalePrice = WholesalePrice;
-                SelectedProduct.Price = Price;
-
-                await _databaseService.UpdateProductAsync(SelectedProduct, StockAdjustment);
-
-                App.NotificationService.Notify("Inventory updated successfully.");
-
-                #endregion
-            }
-            else
-            {
-                #region Add New Product
-
-                var newProduct = new Product
+                if (success)
                 {
-                    EAN13Barcode = ScannedBarcode,
-                    ProductName = ProductName,
-                    BrandName = BrandName,
-                    Category = SelectedCategory,
-                    ProductWeight = ProductWeight,
-                    CurrentStockLevel = StockAdjustment,
-                    WholesalePrice = WholesalePrice,
-                    Price = Price
-                };
-
-                await _databaseService.SaveProductAsync(newProduct);
-
-                App.NotificationService.Notify("Product added successfully.");
-
-                #endregion
+                    App.NotificationService.Notify("Inventory updated successfully.");
+                    //ResetFields();
+                }
             }
-
-            ResetFields();
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error in AddStock: {ex}");
+                App.NotificationService.Notify($"Error updating inventory: {ex.Message}");
+            }
         }
+
 
         public void ResetFields()
         {

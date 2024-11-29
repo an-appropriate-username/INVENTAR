@@ -9,6 +9,8 @@ namespace INVApp.Models
 {
     public class InventoryLog
     {
+        internal string Barcode;
+
         [PrimaryKey, AutoIncrement]
         public int LogID { get; set; }
 
