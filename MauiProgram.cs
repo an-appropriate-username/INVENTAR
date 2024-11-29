@@ -2,6 +2,7 @@
 using INVApp.Services;
 using INVApp.ViewModels;
 using INVApp.Views;
+using INVApp.Interfaces;
 using ZXing.Net.Maui.Controls;
 using CommunityToolkit.Maui;
 using Microsoft.Maui.LifecycleEvents;
@@ -51,6 +52,7 @@ namespace INVApp
             builder.Services.AddSingleton<ReceiptService>();
             builder.Services.AddSingleton<SoundService>();
             builder.Services.AddSingleton<DatabaseConfigService>();
+            builder.Services.AddSingleton<IValidationService, ValidationService>();
 
 
             // Register pages
