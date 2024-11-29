@@ -10,8 +10,9 @@ public partial class CreateUserPage : ContentPage
 		InitializeComponent();
 
         var databaseService = new DatabaseService();
+        var validationService = new ValidationService();
 
-        BindingContext = new CreateUserViewModel(databaseService);
+        BindingContext = new CreateUserViewModel(databaseService, validationService);
 
         App.NotificationService.OnNotify += message => NotificationBanner.Show(message);
         App.NotificationService.OnConfirm += message => ConfirmBanner.Show(message);

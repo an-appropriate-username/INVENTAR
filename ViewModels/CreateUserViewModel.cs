@@ -1,5 +1,6 @@
 ﻿using INVApp.Services;
 using INVApp.Models;
+using INVApp.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace INVApp.ViewModels
         #region Properties
 
         private readonly DatabaseService _databaseService;
+        private readonly IValidationService _validationService;
 
         // Individual properties for each field
         public string FirstName { get; set; } = string.Empty;
@@ -38,9 +40,10 @@ namespace INVApp.ViewModels
 
         #endregion
 
-        public CreateUserViewModel(DatabaseService databaseService) 
+        public CreateUserViewModel(DatabaseService databaseService, IValidationService validationService) 
         {
             _databaseService = databaseService;
+            _validationService = validationService;
 
             SaveCommand = new Command(SaveUser);
             CloseCommand = new Command(CloseModal);
@@ -50,38 +53,45 @@ namespace INVApp.ViewModels
 
         private async void SaveUser()
         {
-            // Validate FirstName
-            if (string.IsNullOrWhiteSpace(FirstName))
+            // Validate FirstName using ValidationService
+            if (!_validationService.ValidateName(FirstName))
             {
-                App.NotificationService.Notify("Validation Failed: First Name cannot be empty.");
+                App.NotificationService.Notify("First Name must be 2-40 characters and contain only letters, spaces, or hyphens.");
                 return;
             }
 
-            // Validate Email
-            if (string.IsNullOrWhiteSpace(Email) || !Email.Contains("@"))
+            // Validate LastName using ValidationService
+            if (!_validationService.ValidateName(LastName))
             {
-                App.NotificationService.Notify("Validation Failed: Please enter a valid Email address.");
+                App.NotificationService.Notify("Last Name must be 2-40 characters and contain only letters, spaces, or hyphens.");
                 return;
             }
 
-            // Validate Password
-            if (string.IsNullOrWhiteSpace(Password) || Password.Length < 6)
+            // Validate Email using ValidationService
+            if (!_validationService.ValidateEmail(Email))
             {
-                App.NotificationService.Notify("Validation Failed: Password must be at least 6 characters long.");
+                App.NotificationService.Notify("Please enter a valid Email address.");
+                return;
+            }
+
+            // Validate Password using ValidationService
+            if (!_validationService.ValidatePassword(Password))
+            {
+                App.NotificationService.Notify("Password must be 8-64 characters, minimum one number, one uppercase letter, and one lowercase letter");
                 return;
             }
 
             // Validate Passcode
-            if (string.IsNullOrWhiteSpace(Passcode) || Passcode.Length < 4)
+            if (!_validationService.ValidatePasscode(Passcode))
             {
-                App.NotificationService.Notify("Validation Failed: Passcode must be 4 or more digits long.");
+                App.NotificationService.Notify("Passcode must be at least 4 digits and contain only numbers.");
                 return;
             }
 
             // Validate Privilege selection
             if (SelectedPrivilegeIndex < 0)
             {
-                App.NotificationService.Notify("Validation Failed: Please select a Privilege level.");
+                App.NotificationService.Notify("Please select a Privilege level.");
                 return;
             }
 

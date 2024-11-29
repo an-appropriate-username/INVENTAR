@@ -9,7 +9,15 @@ public partial class CustomerPage : ContentPage
     public CustomerPage()
 	{
 		InitializeComponent();
-        BindingContext = new CustomerPageViewModel(App.DatabaseService, App.APIService);
+
+        var databaseService = new DatabaseService();
+        var apiService = new APIService();
+        var validationService = new ValidationService();
+
+        BindingContext = new CustomerPageViewModel(databaseService, apiService, validationService);
+
+        App.NotificationService.OnNotify += message => NotificationBanner.Show(message);
+        App.NotificationService.OnConfirm += message => ConfirmBanner.Show(message);
     }
 
 }

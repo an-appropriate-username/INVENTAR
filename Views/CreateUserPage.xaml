@@ -7,7 +7,7 @@
             BackgroundColor="{StaticResource BackgroundColor}">
 
     <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="20" WidthRequest="600">
-        <notify:NotificationBanner x:Name="NotificationBanner"/>
+        <notify:NotificationBanner x:Name="NotificationBanner" WidthRequest="700"/>
         <notify:ConfirmBanner x:Name="ConfirmBanner"/>
         
         <Label Text="Create New User" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" Margin="0,10,0,20"/>
@@ -18,7 +18,7 @@
                 <Entry Placeholder="Last Name" Text="{Binding LastName}" FontSize="18"/>
                 <Entry Placeholder="Email" Text="{Binding Email}" FontSize="18"/>
                 <Entry Placeholder="Password" Text="{Binding Password}" FontSize="18" IsPassword="True"/>
-                <Entry Placeholder="Passcode (minimum 4-digits)" Text="{Binding Passcode}" FontSize="18" Keyboard="Numeric"/>
+                <Entry Placeholder="Passcode (minimum 4-digits)" Text="{Binding Passcode}" FontSize="18" Keyboard="Numeric" IsPassword="True"/>
                 <Picker Title="Privilege" SelectedIndex="{Binding SelectedPrivilegeIndex}">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">

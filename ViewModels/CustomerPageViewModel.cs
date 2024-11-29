@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using SkiaSharp;
 using INVApp.Services;
+using INVApp.Interfaces;
 using INVApp.Models;
 using BarcodeStandard;
 using System.Transactions;
@@ -15,6 +16,7 @@ namespace INVApp.ViewModels
     {
         private readonly DatabaseService _databaseService;
         private readonly APIService _apiService;
+        private readonly IValidationService _validationService;
 
         public ObservableCollection<Customer>? Customers { get; set; } = new ObservableCollection<Customer>();
 
@@ -95,10 +97,11 @@ namespace INVApp.ViewModels
         public ICommand DeleteCustomerCommand { get; }
         public ICommand ShowCustomerDetailsCommand { get; }
 
-        public CustomerPageViewModel(DatabaseService databaseService, APIService apiService)
+        public CustomerPageViewModel(DatabaseService databaseService, APIService apiService, ValidationService validationService)
         {
             _databaseService = databaseService;
             _apiService = apiService;
+            _validationService = validationService;
             AddCustomerCommand = new Command(async () => await AddCustomerAsync());
             DeleteCustomerCommand = new Command(async () => await DeleteCustomerAsync());
             ShowCustomerDetailsCommand = new Command(async () => await ShowCustomerDetailsPopup());
@@ -124,6 +127,34 @@ namespace INVApp.ViewModels
         // Add new customer
         private async Task AddCustomerAsync()
         {
+
+            // Validate FirstName using ValidationService
+            if (!_validationService.ValidateName(CustomerName))
+            {
+                App.NotificationService.Notify("First Name must be 2-40 characters and contain only letters, spaces, or hyphens.");
+                return;
+            }
+
+            // Validate Surname using ValidationService
+            if (!_validationService.ValidateName(Surname))
+            {
+                App.NotificationService.Notify("Surname must be 2-40 characters and contain only letters, spaces, or hyphens.");
+                return;
+            }
+
+            if (!_validationService.ValidateEmail(Email))
+            {
+                App.NotificationService.Notify("Please enter a valid email address.");
+                return;
+            }
+
+            if (!_validationService.ValidatePhone(Phone))
+            {
+                App.NotificationService.Notify("Phone must be 7-15 digits");
+                return;
+            }
+
+
             int uniqueCustomerId = await GenerateUniqueCustomerIdAsync();
             string customerBarcode = await GenerateUniqueBarcodeAsync();
 
