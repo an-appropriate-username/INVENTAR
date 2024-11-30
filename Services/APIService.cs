@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -292,22 +293,44 @@ namespace INVApp.Services
         }
 
 
-        // Retrieve transactions within a date range
         public async Task<List<Transaction>> GetTransactionsAsync(DateTime dateFrom, DateTime dateTo, int count)
         {
-            string url = $"{_baseUri}Maui/Transactions?dateFrom={dateFrom:O}&dateTo={dateTo:O}&count={count}";
-
-            var response = await _httpClient.GetAsync(url);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                throw new Exception($"Error fetching transactions: {response.ReasonPhrase}");
+                string url = $"{_baseUri}Maui/Transactions?dateFrom={dateFrom:O}&dateTo={dateTo:O}&count={count}";
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Error fetching transactions: {response.ReasonPhrase}");
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                // First deserialize to DTO
+                var transactionDtos = JsonConvert.DeserializeObject<List<TransactionDto>>(content);
+
+                // Then map DTOs to your model
+                return transactionDtos.Select(dto => new Transaction
+                {
+                    DateTime = dto.TransactionDate,  // Here's where we map the date
+                    TotalAmount = dto.TotalAmount,
+                    Discount = dto.Discount,
+                    PaymentMethod = dto.PaymentMethod,
+                    GServiceTax = dto.TaxAmount,
+                    CustomerId = dto.CustomerId,
+                    TransactionItems = new ObservableCollection<TransactionItem>(
+                        dto.TransactionItems.Select(item => new TransactionItem
+                        {
+                            // Map your transaction items here based on your TransactionItem model
+                        }).ToList()
+                    )
+                }).ToList();
             }
-
-            var content = await response.Content.ReadAsStringAsync();
-
-            // Deserialize the JSON content to a list of Transaction objects
-            return JsonConvert.DeserializeObject<List<Transaction>>(content);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetTransactionsAsync: {ex.Message}");
+                throw;
+            }
         }
 
 
