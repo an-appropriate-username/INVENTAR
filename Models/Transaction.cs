@@ -26,6 +26,8 @@ namespace INVApp.Models
 
         public int? CustomerId { get; set; }
 
+        public string? CustomerName { get; set; }
+
         public string? Receipt { get; set; }
         public ICommand ShowReceiptCommand => new Command(ShowReceipt);
 
