@@ -6,7 +6,6 @@ using INVApp.Interfaces;
 using ZXing.Net.Maui.Controls;
 using CommunityToolkit.Maui;
 using Microsoft.Maui.LifecycleEvents;
-using Syncfusion.Maui.Core.Hosting;
 #if WINDOWS
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -32,7 +31,6 @@ namespace INVApp
                 .UseBarcodeReader()
                 .UseMauiCommunityToolkit()
                 .UseMauiCommunityToolkitMediaElement()
-                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("Lato-Regular.ttf", "LatoRegular");
