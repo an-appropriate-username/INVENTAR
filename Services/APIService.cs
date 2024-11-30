@@ -318,6 +318,7 @@ namespace INVApp.Services
                     PaymentMethod = dto.PaymentMethod,
                     GServiceTax = dto.TaxAmount,
                     CustomerId = dto.CustomerId,
+                    CustomerName = dto.Customer.FirstName + ' ' + dto.Customer.LastName,
                     TransactionItems = new ObservableCollection<TransactionItem>(
                         dto.TransactionItems.Select(item => new TransactionItem
                         {

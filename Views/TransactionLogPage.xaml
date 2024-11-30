@@ -59,7 +59,7 @@
             </toolkit:Expander>
 
             <!-- Narrow Grid Container -->
-            <Frame MaximumWidthRequest="700" HorizontalOptions="Center" Padding="0" HasShadow="True" 
+            <Frame MaximumWidthRequest="950" HorizontalOptions="Center" Padding="0" HasShadow="True" 
                 BorderColor="Transparent" Margin="0,10,0,0">
                 <StackLayout>
                     <!-- Grid Header -->
@@ -71,7 +71,7 @@
                         <Label Text="Total Amount" FontAttributes="Bold" TextColor="White" Grid.Column="2" />
                         <Label Text="Discount" FontAttributes="Bold" TextColor="White" Grid.Column="3" />
                         <Label Text="Service Tax" FontAttributes="Bold" TextColor="White" Grid.Column="4" />
-                        <Label Text="Customer ID" FontAttributes="Bold" TextColor="White" Grid.Column="5" />
+                        <Label Text="Customer" FontAttributes="Bold" TextColor="White" Grid.Column="5" />
                     </Grid>
 
                     <!-- Grid Rows -->
@@ -83,12 +83,12 @@
                                     <Grid ColumnDefinitions="*, *, *, *, *, *"
                                         Padding="10"
                                         BackgroundColor="{StaticResource PrimaryColor}">
-                                        <Label Text="{Binding DateTime, StringFormat='{0:MMM/dd/yy HH:mm}'}" />
+                                        <Label Text="{Binding DateTime, StringFormat='{0:dd/MMM/yy HH:mm}'}" />
                                         <Label Text="{Binding PaymentMethod}" Grid.Column="1" />
                                         <Label Text="{Binding TotalAmount, StringFormat='{}{0:C}'}" Grid.Column="2" />
                                         <Label Text="{Binding Discount, StringFormat='{}{0:C}'}" Grid.Column="3" />
                                         <Label Text="{Binding GServiceTax, StringFormat='{}{0:C}'}" Grid.Column="4" />
-                                        <Label Text="{Binding CustomerId}" Grid.Column="5" />
+                                        <Label Text="{Binding CustomerName}" Grid.Column="5" />
                                     </Grid>
 
                                     <!-- Separator Line -->
