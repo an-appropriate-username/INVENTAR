@@ -9,9 +9,9 @@ namespace INVApp.Models
 { 
     public class Customer
     {
-        internal string FirstName;
-        internal string LastName;
-        internal string PhoneNumber;
+        internal string? FirstName;
+        internal string? LastName;
+        internal string? PhoneNumber;
         internal bool IsLoyaltyMember;
 
         [PrimaryKey, AutoIncrement]
