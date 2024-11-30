@@ -58,73 +58,47 @@
                 </toolkit:Expander.Content>
             </toolkit:Expander>
 
-            <!-- CollectionView for Transaction Logs -->
-            <CollectionView ItemsSource="{Binding TransactionLogs}" Margin="10">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="3"/>
-                </CollectionView.ItemsLayout>
-                
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <toolkit:Expander>
-                            <toolkit:Expander.Header>
-                                <Frame BackgroundColor="{StaticResource PrimaryColor}"  Margin="0,10,0,5"
-                                        MaximumWidthRequest="450">
-                                    <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto" Padding="0">
-                                        <Label Text="{Binding DateTime, StringFormat='{0:MMM/dd/yyyy HH:mm}'}" FontSize="18" FontAttributes="Bold" 
-                                            Grid.Column="0" HorizontalOptions="Start" Margin="0,5,5,10"/>
-                                        <Label Text="{Binding PaymentMethod}" FontSize="15" 
-                                            Grid.Column="1" HorizontalOptions="End" Margin="0,5,20,20"/>
-                                        <Label Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontSize="15" 
-                                            Grid.Column="2" HorizontalOptions="End" Margin="0,5,20,20"/>
+            <!-- Narrow Grid Container -->
+            <Frame MaximumWidthRequest="700" HorizontalOptions="Center" Padding="0" HasShadow="True" 
+                BorderColor="Transparent" Margin="0,10,0,0">
+                <StackLayout>
+                    <!-- Grid Header -->
+                    <Grid ColumnDefinitions="*, *, *, *, *, *"
+                      BackgroundColor="{StaticResource FrameBackgroundColor}"
+                      Padding="10">
+                        <Label Text="Date" FontAttributes="Bold" TextColor="White" />
+                        <Label Text="Payment Method" FontAttributes="Bold" TextColor="White" Grid.Column="1" />
+                        <Label Text="Total Amount" FontAttributes="Bold" TextColor="White" Grid.Column="2" />
+                        <Label Text="Discount" FontAttributes="Bold" TextColor="White" Grid.Column="3" />
+                        <Label Text="Service Tax" FontAttributes="Bold" TextColor="White" Grid.Column="4" />
+                        <Label Text="Customer ID" FontAttributes="Bold" TextColor="White" Grid.Column="5" />
+                    </Grid>
+
+                    <!-- Grid Rows -->
+                    <CollectionView ItemsSource="{Binding TransactionLogs}" Margin="0" HeightRequest="700">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Spacing="0">
+                                    <!-- Transaction Row -->
+                                    <Grid ColumnDefinitions="*, *, *, *, *, *"
+                                        Padding="10"
+                                        BackgroundColor="{StaticResource PrimaryColor}">
+                                        <Label Text="{Binding DateTime, StringFormat='{0:MMM/dd/yy HH:mm}'}" />
+                                        <Label Text="{Binding PaymentMethod}" Grid.Column="1" />
+                                        <Label Text="{Binding TotalAmount, StringFormat='{}{0:C}'}" Grid.Column="2" />
+                                        <Label Text="{Binding Discount, StringFormat='{}{0:C}'}" Grid.Column="3" />
+                                        <Label Text="{Binding GServiceTax, StringFormat='{}{0:C}'}" Grid.Column="4" />
+                                        <Label Text="{Binding CustomerId}" Grid.Column="5" />
                                     </Grid>
-                                </Frame>
-                            </toolkit:Expander.Header>
 
-                            <toolkit:Expander.Content>
-                                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
-                                    BorderColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" Margin="0,0,0,0"
-                                    MaximumWidthRequest="450">
-                                    <Frame BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent" Margin="0,0,0,0">
-                                        <StackLayout Padding="5">
-
-                                            <!-- Transaction Summary -->
-                                            <Label Text="Discount:" FontAttributes="Bold"/>
-                                            <Label Text="{Binding Discount, StringFormat='{}{0:C}'}" />
-
-                                            <Label Text="Service Tax:" FontAttributes="Bold"/>
-                                            <Label Text="{Binding GServiceTax, StringFormat='{}{0:C}'}" />
-
-                                            <Label Text="Customer:" FontAttributes="Bold"/>
-                                            <Label Text="{Binding CustomerId}"/>
-
-                                            <!-- Transaction Items -->
-                                            <Label Text="Transaction Items:" FontAttributes="Bold" Margin="0,10,0,0"/>
-
-                                            <CollectionView ItemsSource="{Binding TransactionItems}">
-                                                <CollectionView.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid ColumnDefinitions="Auto, *, *, Auto" RowDefinitions="Auto, Auto">
-                                                           <Label Text="{Binding ProductName}" FontAttributes="Bold" Grid.Column="0" IsVisible="{Binding ProductName, Converter={StaticResource NullToVisibilityConverter}}"/>
-
-                                                            <Label Text="x" FontAttributes="Bold" Grid.Column="1"/>
-                                                            <Label Text="{Binding Quantity}" Margin="10,0,0,0" Grid.Column="2"/>
-                                                            <Label Text="{Binding TotalePrice, StringFormat='{}{0:C}'}" Margin="10,0,0,0" Grid.Column="3"/>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </CollectionView.ItemTemplate>
-                                            </CollectionView>
-
-                                            <Button Text="Receipt" FontAttributes="Bold" Margin="0,10,0,5" Command="{Binding ShowReceiptCommand}"/>
-                                        </StackLayout>
-                                    </Frame>
-                                </Frame>
-                            </toolkit:Expander.Content>
-
-                        </toolkit:Expander>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                    <!-- Separator Line -->
+                                    <BoxView HeightRequest="1" BackgroundColor="Gray" HorizontalOptions="FillAndExpand" />
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Frame>
         </StackLayout>
     </ScrollView>
 </ContentPage>
