@@ -10,8 +10,9 @@ public partial class LoginPage : ContentPage
 	{
 		InitializeComponent();
         var databaseService = new DatabaseService();
+        var apiService = new APIService();
 
-        BindingContext = new LoginPageViewModel(databaseService);
+        BindingContext = new LoginPageViewModel(databaseService, apiService);
 
         App.NotificationService.OnNotify += message => NotificationBanner.Show(message);
         App.NotificationService.OnConfirm += message => ConfirmBanner.Show(message);

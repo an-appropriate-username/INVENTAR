@@ -9,6 +9,7 @@ using INVApp.DTO;
 using INVApp.Models;
 using INVApp.NewFolder;
 using Newtonsoft.Json;
+using static INVApp.Models.User;
 
 namespace INVApp.Services
 {
@@ -543,6 +544,233 @@ namespace INVApp.Services
 
         #endregion
 
+
+        #region User Methods
+
+        public async Task<List<User>> GetUsersAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUri}Maui/Users");
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"API Response: {content}"); // Debug log
+
+                var userDtos = JsonConvert.DeserializeObject<List<UserListDto>>(content);
+
+                return userDtos.Select(dto => new User
+                {
+                    Id = dto.Id,
+                    UserId = dto.Id,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Email = dto.Email,
+                    Passcode = dto.Passcode,
+                    Privilege = (User.UserPrivilege)dto.Role,
+                    ItemsScanned = 0,
+                    CustomersAdded = 0,
+                    TransactionsClosed = 0,
+                    CreatedAt = DateTime.Now, // Default value since we're not sending it from API
+                    LastLogin = DateTime.Now  // Default value since we're not sending it from API
+                }).ToList();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in GetUsersAsync: {ex.Message}");
+                return new List<User>();
+            }
+        }
+
+        public async Task<bool> IsAdminUserExistsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUri}Maui/Users/AdminExists");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"API Response: {content}");
+                    return JsonConvert.DeserializeObject<bool>(content);
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in IsAdminUserExistsAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+
+        public async Task<User?> GetUserByDigitsAsync(int userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUri}Maui/Users/{userId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var dto = JsonConvert.DeserializeObject<UserDto>(content);
+                    if (dto == null) return null;
+
+                    return new User
+                    {
+                        Id = dto.Id,
+                        UserId = dto.UserId,
+                        FirstName = dto.FirstName,
+                        LastName = dto.LastName,
+                        Email = dto.Email,
+                        Passcode = dto.Passcode,
+                        Privilege = (User.UserPrivilege)dto.Role,
+                        ItemsScanned = dto.ItemsScanned,
+                        CustomersAdded = dto.CustomersAdded,
+                        TransactionsClosed = dto.TransactionsClosed,
+                        CreatedAt = dto.CreatedAt,
+                        LastLogin = dto.LastLogin
+                    };
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in GetUserByDigitsAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<bool> AddUserAsync(User user)
+        {
+            try
+            {
+                var createDto = new CreateUserDto
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Password = user.Password ?? "",
+                    Passcode = user.Passcode,
+                    Role = (int)user.Privilege
+                };
+
+                var jsonContent = JsonConvert.SerializeObject(createDto);
+                Debug.WriteLine($"Sending user data: {jsonContent}");
+
+                var response = await _httpClient.PostAsJsonAsync($"{_baseUri}Maui/Users", createDto);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Response Status: {response.StatusCode}");
+                Debug.WriteLine($"Response Content: {responseContent}");
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in AddUserAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            try
+            {
+                Debug.WriteLine($"Updating user - FirstName: {user.FirstName}, LastName: {user.LastName}, Id: {user.Id}, UserId: {user.UserId}");
+
+                // Check if we have the current user data before updating
+                if (string.IsNullOrEmpty(user.FirstName) && string.IsNullOrEmpty(user.LastName))
+                {
+                    // Fetch the existing user data first
+                    var existingUser = await GetUserByIdAsync(user.Id);
+                    Debug.WriteLine($"Existing User is: {existingUser}");
+
+                    if (existingUser != null)
+                    {
+                        user.FirstName = existingUser.FirstName;
+                        user.LastName = existingUser.LastName;
+                    }
+                }
+
+                // Build username from the parts we have
+                string username = user.FirstName;
+                if (!string.IsNullOrEmpty(user.LastName))
+                {
+                    username += " " + user.LastName;
+                }
+
+                Debug.WriteLine($"Constructed username: {username}");
+                var updateDto = new UserUpdateDto
+                {
+                    Username = username,
+                    Email = user.Email ?? "",
+                    Role = (int)user.Privilege,
+                    Passcode = user.Passcode,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                var jsonContent = JsonConvert.SerializeObject(updateDto);
+                Debug.WriteLine($"Sending updated user data: {jsonContent}");
+
+                var url = $"{_baseUri}Maui/Users/{user.Id}";
+                Debug.WriteLine($"Request URL: {url}");
+
+                var response = await _httpClient.PutAsJsonAsync(url, updateDto);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Response Status: {response.StatusCode}");
+                Debug.WriteLine($"Response Content: {responseContent}");
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in UpdateUserAsync: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                return false;
+            }
+        }
+
+        // Add this method if you don't already have it
+        private async Task<User> GetUserByIdAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUri}Maui/Users/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var userDto = JsonConvert.DeserializeObject<UserListDto>(content);
+
+                    if (userDto != null)
+                    {
+                        return new User
+                        {
+                            Id = userDto.Id,
+                            FirstName = userDto.FirstName,
+                            LastName = userDto.LastName,
+                            Email = userDto.Email,
+                            Privilege = (UserPrivilege)userDto.Role,
+                            Passcode = userDto.Passcode
+                        };
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in GetUserByIdAsync: {ex.Message}");
+                return null;
+            }
+        }
+
+        private class UserUpdateDto
+        {
+            public string Username { get; set; }
+            public string Email { get; set; }
+            public int Role { get; set; }
+            public string? Passcode { get; set; }
+            public DateTime UpdatedAt { get; set; }
+        }
+
+        #endregion
     }
-    
+
 }
