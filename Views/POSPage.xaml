@@ -9,7 +9,7 @@
             BackgroundColor="{StaticResource BackgroundColor}">
 
     <!-- Notify and Confirm Banners -->
-    
+
     <Shell.TitleView>
         <Grid BackgroundColor="{StaticResource BackgroundColor}">
             <notify:NotificationBanner x:Name="NotificationBanner"/>
@@ -23,35 +23,35 @@
             <!-- Main Grid -->
             <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
                 <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{OnIdiom Phone=*, Tablet=*, Desktop=*}" />
-                <ColumnDefinition Width="{OnIdiom Phone=0, Tablet=0, Desktop=Auto}" />
-            </Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{OnIdiom Phone=*, Tablet=*, Desktop=*}" />
+                    <ColumnDefinition Width="{OnIdiom Phone=0, Tablet=0, Desktop=Auto}" />
+                </Grid.ColumnDefinitions>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <StackLayout Grid.Row="0" Padding="10">
-            
-            <!-- Camera Barcode Scanner -->
-            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                <StackLayout Grid.Row="0" Padding="10">
+
+                    <!-- Camera Barcode Scanner -->
+                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
                     BorderColor="{StaticResource FrameBackgroundColor}" 
                     CornerRadius="10" Padding="5" Margin="0,0,0,5" 
                     MaximumWidthRequest="{OnIdiom Phone=315, Tablet=400, Desktop=600}"
                     IsVisible="{Binding IsCameraVisible}">
-                <zxing:CameraBarcodeReaderView
+                        <zxing:CameraBarcodeReaderView
                     x:Name="cameraBarcodeReaderView"
                     HeightRequest="200"
                     WidthRequest="300"
                     BarcodesDetected="BarcodesDetected"/>
-            </Frame>
+                    </Frame>
 
-            <!-- Barcode Entry -->
-            <Grid ColumnDefinitions="Auto, Auto" HorizontalOptions="Center" >
-                <Entry x:Name="BarcodeEntry"
+                    <!-- Barcode Entry -->
+                    <Grid ColumnDefinitions="Auto, Auto" HorizontalOptions="Center" >
+                        <Entry x:Name="BarcodeEntry"
                     Placeholder="Scan or enter barcode"
                     BackgroundColor="Transparent"
                     FontSize="16"
@@ -60,38 +60,38 @@
                     Text="{Binding ScannedBarcode, Mode=TwoWay}"
                     MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=600}"
                     HeightRequest="{OnIdiom Phone=40, Tablet=40, Desktop=40}"/>
-                
-                <Button Text="Add"
+
+                        <Button Text="Add"
                     Command="{Binding AddProductCommand}" 
                     Grid.Column="1" HeightRequest="35"/>
-            </Grid>
+                    </Grid>
 
-            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="Transparent" Padding="0" 
+                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="Transparent" Padding="0" 
                 MaximumWidthRequest="650">
 
-            <CollectionView x:Name="CartCollectionView"
+                        <CollectionView x:Name="CartCollectionView"
                 ItemsSource="{Binding CartReversed}"
                 SelectionMode="None"
                 VerticalOptions="Center" Margin="10"
                 MaximumHeightRequest="{OnIdiom Phone=350, Tablet=350, Desktop=580}">
-                
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="2" />
-                </CollectionView.ItemsLayout>
-                
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Padding="5" Margin="5" BackgroundColor="{StaticResource EntryBackgroundColor}" BorderColor="Black"
+
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="2" />
+                            </CollectionView.ItemsLayout>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame Padding="5" Margin="5" BackgroundColor="{StaticResource EntryBackgroundColor}" BorderColor="Black"
                                 CornerRadius="10" MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=550}">
 
-                            <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto" Padding="10">
-                                <StackLayout Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center">
-                                    <Label Text="{Binding Product.ProductName}" 
+                                        <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto" Padding="10">
+                                            <StackLayout Grid.Column="0" HorizontalOptions="Start" VerticalOptions="Center">
+                                                <Label Text="{Binding Product.ProductName}" 
                                             FontAttributes="Bold" 
                                             FontSize="17" />
-                                    <Label Text="{Binding Product.EAN13Barcode}" 
+                                                <Label Text="{Binding Product.EAN13Barcode}" 
                                             FontSize="13" />
-                                    <Stepper Minimum="1" 
+                                                <Stepper Minimum="1" 
                                             Maximum="100" 
                                             Increment="1"
                                             Value="{Binding Quantity, Mode=TwoWay}" 
@@ -101,125 +101,158 @@
                                             HorizontalOptions="StartAndExpand"
                                             BackgroundColor="{OnIdiom Phone=Transparent, Desktop={StaticResource PrimaryColor}}"
                                             Margin="25,0,0,0"/>
-                                </StackLayout>
+                                            </StackLayout>
 
-                                <StackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center">
-                                    <Label Text="{Binding Quantity, StringFormat='Qty: {0}'}" FontSize="15" />
+                                            <StackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center">
+                                                <Label Text="{Binding Quantity, StringFormat='Qty: {0}'}" FontSize="15" />
 
-                                    <Label Text="{Binding Product.Price, StringFormat='Price: {0:C}'}" FontSize="15" />
-                                    <Label Text="{Binding TotalPrice, StringFormat='Total: {0:C}'}" 
+                                                <Label Text="{Binding Product.Price, StringFormat='Price: {0:C}'}" FontSize="15" />
+                                                <Label Text="{Binding TotalPrice, StringFormat='Total: {0:C}'}" 
                                             FontAttributes="Bold" FontSize="16" />
-                                </StackLayout>
+                                            </StackLayout>
 
-                                <Button Text="Remove"
+                                            <Button Text="Remove"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type local:POSViewModel}}, Path=RemoveProductFromCartCommand}" 
                                     CommandParameter="{Binding .}" 
                                     Grid.Column="2"
                                     HorizontalOptions="End" VerticalOptions="Center" />
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
                     </Frame>
                 </StackLayout>
 
                 <!-- Checkout Section -->
 
-                <toolkit:Expander Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" 
-                                Grid.Row="{OnIdiom Phone=1, Tablet=1}" 
-                                IsExpanded="True" 
-                                HorizontalOptions="StartAndExpand">
-                    <toolkit:Expander.Margin>
-                        <OnPlatform x:TypeArguments="Thickness">
-                            <On Platform="iOS" Value="0,0,10,10" />
-                            <On Platform="Android" Value="0,0,10,10" />
-                            <On Platform="Windows" Value="0,0,100,10" />
-                        </OnPlatform>
-                    </toolkit:Expander.Margin>
-                    <toolkit:Expander.Header>
-                    <Button Text="Checkout"  FontSize="17" Margin="0,20,0,0" MaximumWidthRequest="{OnIdiom Phone=250, Tablet=350, Desktop=600}"/>
-                </toolkit:Expander.Header>
-
-                <toolkit:Expander.Content>
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
                         BorderColor="{StaticResource FrameBackgroundColor}" 
-                        Margin="10" Padding="5" 
-                        MaximumWidthRequest="{OnIdiom Phone=550, Tablet=400, Desktop=600}">
-                        <StackLayout Padding="10">
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}"
-                                HeightRequest="{OnIdiom Phone=200, Tablet=250, Desktop=180}" 
-                                WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
-                                <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
-                                    
-                                    <!-- Payment method label and picker -->
-                                    <Label Text="Payment Method:" FontSize="16" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,5,0"/>
-                                    <Picker x:Name="PaymentMethodPicker" 
-                                        ItemsSource="{Binding PaymentMethods}" 
-                                        SelectedItem="{Binding SelectedPaymentMethod}" 
-                                        Grid.Row="0" Grid.Column="1" HorizontalOptions="EndAndExpand" 
-                                        MaximumWidthRequest="{OnIdiom Phone=60, Tablet=80, Desktop=100}"/>
-                                    <Label Text="Total:" FontSize="16" FontAttributes="Bold" Margin="0,10,5,0" Grid.Row="1"/>
-                                    <Label Text="{Binding TotalAmount, StringFormat='{0:C}'}" FontSize="17" Grid.Row="1" Grid.Column="1"
-                                        Margin="0,10,5,0" HorizontalOptions="EndAndExpand" />
+                        Margin="0,25,100,25" Padding="5" 
+                        MaximumWidthRequest="{OnIdiom Phone=550, Tablet=400, Desktop=600}"
+                        Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" 
+                        Grid.Row="{OnIdiom Phone=1, Tablet=1}" 
+                        HorizontalOptions="StartAndExpand">
+                    <StackLayout Padding="10">
 
-                                    <!-- Cash given and change calculator -->
-                                    <Label Text="Given:" FontSize="16" FontAttributes="Bold" Grid.Row="2" Grid.Column="0" VerticalOptions="Center" Margin="0,0,0,0"
-                                            IsVisible="{Binding IsCashGivenVisible}"/>
-                                    <Entry x:Name="CashGivenEntry" 
-                                        Grid.Row="2" Grid.Column="1" Margin="0,10,0,0"
-                                        Keyboard="Numeric" HorizontalOptions="EndAndExpand" WidthRequest="60"
-                                        IsVisible="{Binding IsCashGivenVisible}" Text="{Binding CashGiven, Mode=TwoWay}"/>
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5"
+                            HeightRequest="{OnIdiom Phone=150, Tablet=150, Desktop=120}" 
+                            WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
+                            <Grid>
+                                <Label Text="Customer Account:" FontSize="16" FontAttributes="Bold" Grid.Column="0" Margin="0,10,5,0"/>
+                                <StackLayout Grid.Row="2" Grid.Column="1">
+                                    <SearchBar Placeholder="Search customer..." 
+                                        Text="{Binding SearchQuery}" 
+                                        HeightRequest="40"/>
+                                    <Picker x:Name="CustomerAccountPicker" Margin="0,5,0,0" 
+                                        ItemsSource="{Binding Customers}" 
+                                        SelectedItem="{Binding SelectedCustomer}"
+                                        ItemDisplayBinding="{Binding CustomerName}"/>
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
 
-                                    <Label Text="Change:" FontSize="16" FontAttributes="Bold" Grid.Row="3" Grid.Column="0" HorizontalOptions="Start" Margin="0,0,0,0"
-                                            IsVisible="{Binding IsCashGivenVisible}"/>
-                                    <Label x:Name="ChangeLabel" 
-                                        Text="{Binding ChangeAmount, StringFormat='{0:F2}'}" 
-                                        FontSize="16" Margin="0,10,0,0" FontAttributes="Bold"
-                                        Grid.Row="3" Grid.Column="1" HorizontalOptions="EndAndExpand" IsVisible="{Binding IsCashGivenVisible}"/>
+                        <!-- Select Customer -->
 
-                                </Grid>
-                            </Frame>
-
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,10,0,0"
-                                HeightRequest="{OnIdiom Phone=150, Tablet=150, Desktop=120}" 
-                                WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
-                                <Grid>
-                                    <Label Text="Customer Account:" FontSize="16" FontAttributes="Bold" Grid.Column="0" Margin="0,10,5,0"/>
-                                    <StackLayout Grid.Row="2" Grid.Column="1">
-                                        <SearchBar Placeholder="Search customer..." 
-                                            Text="{Binding SearchQuery}" 
-                                            HeightRequest="40"/>
-                                        <Picker x:Name="CustomerAccountPicker" Margin="0,5,0,0" 
-                                            ItemsSource="{Binding Customers}" 
-                                            SelectedItem="{Binding SelectedCustomer}"
-                                            ItemDisplayBinding="{Binding CustomerName}"/>
-                                    </StackLayout>
-                                </Grid>
-                            </Frame>
-
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}" 
                                 MaximumWidthRequest="{OnIdiom Phone=150, Tablet=350, Desktop=600}"
                                 MaximumHeightRequest="300"
-                                Margin="0,10,0,0">
-                                <StackLayout>
-                                    <Label Text="{Binding SelectedCustomer.CustomerName, StringFormat='Selected Customer: {0}'}"
-                                            FontSize="16" 
-                                            FontAttributes="Bold"
-                                            HorizontalOptions="Center" 
-                                            Margin="0,10,0,0"/>
-                                    <Label Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontSize="17" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" />
-                                </StackLayout>
-                            </Frame>
+                                Margin="0,0,0,5">
+                            <StackLayout>
+                                <Grid>
+                                    <Label Text="Selected Customer:" FontSize="16" FontAttributes="Bold" Grid.Row="4" Grid.Column="0" Margin="0,10,5,0" />
+                                    <Label Text="{Binding SelectedCustomer.CustomerName}"
+                                        FontSize="16" 
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="End"/>
+                                </Grid>
 
-                            <!-- Final checkout button to finalize payment -->
-                            <Button Text="Proccess Transaction" Command="{Binding CheckoutCommand}" 
+                                <Grid>
+                                    <Label Text="Original Amount:" FontSize="16" FontAttributes="None" Margin="0,10,5,0" />
+                                    <Label Text="{Binding TotalAmount, StringFormat='{0:C}'}" FontSize="17" HorizontalOptions="End" />
+                                </Grid>
+
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Discount Entry -->
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}">
+                            <StackLayout>
+                                
+                                <Grid>
+                                    <Label Text="Discount (%):" FontSize="16" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" Margin="0,10,5,0" />
+                                    <Entry x:Name="DiscountEntry"
+                                    Text="{Binding DiscountPercentage, Mode=TwoWay}"
+                                    Keyboard="Numeric"
+                                    HorizontalOptions="End"
+                                    WidthRequest="60"
+                                    Margin="0"/>
+                                </Grid>
+
+                                <!-- Discount Totals -->
+                                <Grid Margin="0,5,0,0">
+                                    <Label Text="Total Discount:" FontSize="16" FontAttributes="None" Margin="0,5,5,0" />
+                                    <Label Text="{Binding TotalDiscount, StringFormat='{0:C}'}" FontSize="17" HorizontalOptions="End" />
+                                </Grid>
+                                
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Final Amount -->
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,15,0,5">
+                            <StackLayout>
+                                <Grid>
+                                    <Label Text="Final Total:" FontSize="18" FontAttributes="Bold" Margin="0,5,5,0" />
+                                    <Label Text="{Binding TotalAmountAfterDiscount, StringFormat='{0:C}'}" FontSize="18" FontAttributes="Bold" HorizontalOptions="End" />
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Payment method label and picker -->
+                        <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                            WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
+                            <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+
+                                <Label Text="Payment Method:" FontSize="16" FontAttributes="Bold" Grid.Row="0" Grid.Column="0" Margin="0,0,5,0"/>
+                                <Picker x:Name="PaymentMethodPicker" 
+                                    ItemsSource="{Binding PaymentMethods}" 
+                                    SelectedItem="{Binding SelectedPaymentMethod}" 
+                                    Grid.Row="0" Grid.Column="1" HorizontalOptions="EndAndExpand" 
+                                    MaximumWidthRequest="{OnIdiom Phone=60, Tablet=80, Desktop=250}"/>
+
+                            </Grid>
+                        </Frame>
+
+                        <!-- Cash given and change calculator -->
+                        <Frame MaximumWidthRequest="200" BackgroundColor="{StaticResource PrimaryColor}" IsVisible="{Binding IsCashGivenVisible}" Margin="0,5,0,0">
+                            <StackLayout>
+                                <Grid>
+                                    <Label Text="Given:" FontSize="16" FontAttributes="Bold" Grid.Row="2" Grid.Column="0" VerticalOptions="Start" Margin="0,0,0,0"/>
+                                    <Entry x:Name="CashGivenEntry" 
+                                        Grid.Row="2" Grid.Column="1" VerticalOptions="Start"
+                                        Keyboard="Numeric" HorizontalOptions="End" WidthRequest="60"
+                                        Text="{Binding CashGiven, Mode=TwoWay}"/>
+                                </Grid>
+
+                                <Grid>
+                                    <Label Text="Change:" FontSize="16" FontAttributes="Bold" HorizontalOptions="Start" Margin="0,10,0,0"/>
+                                    <Label x:Name="ChangeLabel" 
+                                        Text="{Binding ChangeAmount, StringFormat='{0:F2}'}" 
+                                        FontSize="16" Margin="0,10,10,0" FontAttributes="Bold" HorizontalOptions="End"/>
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+
+                        <!-- Final checkout button to finalize payment -->
+                        <Button Text="Proccess Transaction" Command="{Binding CheckoutCommand}" 
                                 WidthRequest="200" Margin="0,10,0,0"/>
-                        </StackLayout>
-                    </Frame>
-                </toolkit:Expander.Content>
-            </toolkit:Expander>
-        </Grid>
+                        
+                        
+                    </StackLayout>
+                </Frame>
+            </Grid>
+            
+            
         </ScrollView>
 
     </ContentPage.Content>
