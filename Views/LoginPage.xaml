@@ -32,7 +32,7 @@
                 SelectionMode="Single"
                 HorizontalOptions="CenterAndExpand"
                 Margin="0,25,0,25"
-                WidthRequest="600">
+                WidthRequest="750">
                 <!-- Explicitly set ItemsLayout with Spacing -->
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Horizontal"
@@ -69,7 +69,7 @@
 
             <Frame BackgroundColor="{StaticResource PrimaryColor}" 
                Margin="0,0,0,5" 
-               MaximumWidthRequest="600"
+               MaximumWidthRequest="750"
                IsVisible="{Binding CanLogin}">
                 <VerticalStackLayout>
                     <!-- User ID -->

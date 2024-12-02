@@ -14,6 +14,7 @@ namespace INVApp.ViewModels
     public class LoginPageViewModel : BaseViewModel
     {
         private readonly DatabaseService _databaseService;
+        private readonly APIService _apiService;
         public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
 
         private string? _userId;
@@ -92,10 +93,11 @@ namespace INVApp.ViewModels
         public ICommand CreateAdminCommand { get; }
         public ICommand SelectUserCommand { get; }
 
-        public LoginPageViewModel(DatabaseService databaseService)
+        public LoginPageViewModel(DatabaseService databaseService, APIService apIService)
         {
 
             _databaseService = databaseService;
+            _apiService = apIService;
 
             LoginCommand = new Command(async () => await OnLogin());
             CreateAdminCommand = new Command(async () => await OnCreateAdmin());
@@ -108,7 +110,7 @@ namespace INVApp.ViewModels
 
         private async void InitializePage()
         {
-            bool adminExists = await _databaseService.IsAdminUserExistsAsync();
+            bool adminExists = await _apiService.IsAdminUserExistsAsync();
             CanLogin = adminExists;
             CanCreateAdmin = !adminExists;
         }
@@ -129,7 +131,7 @@ namespace INVApp.ViewModels
             }
 
             // Retrieve user from database
-            var user = await _databaseService.GetUserByDigitsAsync(userId);
+            var user = await _apiService.GetUserByDigitsAsync(userId);
             if (user == null)
             {
                 App.NotificationService.Notify("Error: User not found.");
@@ -146,7 +148,7 @@ namespace INVApp.ViewModels
             // Successful login
             App.CurrentUser = user;
             user.LastLogin = DateTime.Now;
-            await _databaseService.UpdateUserAsync(user);
+            await _apiService.UpdateUserAsync(user);
 
             ClearFields();
 
@@ -181,7 +183,7 @@ namespace INVApp.ViewModels
                 LastLogin = DateTime.MinValue
             };
 
-            await _databaseService.AddUserAsync(adminUser);
+            await _apiService.AddUserAsync(adminUser);
 
             App.CurrentUser = adminUser;
 
@@ -192,7 +194,7 @@ namespace INVApp.ViewModels
 
         private async void LoadUsers()
         {
-            var usersFromDb = await _databaseService.GetUsersAsync(); 
+            var usersFromDb = await _apiService.GetUsersAsync(); 
             Users.Clear();
 
             foreach (var user in usersFromDb)
