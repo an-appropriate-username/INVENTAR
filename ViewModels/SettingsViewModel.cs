@@ -49,6 +49,10 @@ namespace INVApp.ViewModels
             RestoreDatabaseCommand = new Command(async () => await  RestoreDatabaseAsync());
 
             SaveGSTCommand = new Command(async () => await SaveGST());
+            ToggleGSTInclusiveCommand = new Command(() =>
+            {
+                IsGSTInclusive = !IsGSTInclusive; // Toggle the value
+            });
 
             _ = LoadDataAsync();
         }
@@ -58,6 +62,7 @@ namespace INVApp.ViewModels
         #region Tax Section
 
         public ICommand SaveGSTCommand { get; }
+        public ICommand ToggleGSTInclusiveCommand { get; }
 
         private double _gst;
         public double GST
@@ -77,17 +82,39 @@ namespace INVApp.ViewModels
             }
         }
 
+        private bool _isGSTInclusive;
+        public bool IsGSTInclusive
+        {
+            get => _isGSTInclusive;
+            set
+            {
+                if (_isGSTInclusive != value)
+                {
+                    _isGSTInclusive = value;
+                    OnPropertyChanged();
+
+                    // Save the new value to the database
+                    var taxSettings = new TaxSettings { Inclusive = _isGSTInclusive };
+                    _ = _databaseService.SaveTaxSettingsAsync(taxSettings);
+                }
+            }
+        }
+
         public async Task LoadTaxSettingsAsync()
         {
             var taxSettings = await _databaseService.GetTaxSettingsAsync();
             GST = taxSettings.GST;
+            IsGSTInclusive = taxSettings.Inclusive;
         }
 
         private async Task SaveGST()
         {
             try
             {
-                var taxSettings = new TaxSettings { GST = GST }; // Create a TaxSettings object with the current GST value
+                var taxSettings = new TaxSettings { 
+                    GST = GST,
+                    Inclusive = IsGSTInclusive
+                }; 
 
                 await _databaseService.SaveTaxSettingsAsync(taxSettings); // Save the GST value in the database
 

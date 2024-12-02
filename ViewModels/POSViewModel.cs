@@ -45,7 +45,24 @@ namespace INVApp.ViewModels
         private decimal _discountPercentage;
         private decimal _totalDiscount;
         private decimal _totalAmountAfterDiscount;
-        public decimal FinalTotal => TotalAmountAfterDiscount + GSTAmount;
+        public decimal FinalTotal => IsGSTInclusive
+            ? TotalAmountAfterDiscount  // GST is already included
+            : TotalAmountAfterDiscount + GSTAmount;  // GST added on top
+
+        private bool _isGSTInclusive;
+        public bool IsGSTInclusive
+        {
+            get => _isGSTInclusive;
+            set
+            {
+                if (_isGSTInclusive != value)
+                {
+                    _isGSTInclusive = value;
+                    OnPropertyChanged(nameof(IsGSTInclusive));
+                    CalculateGST(); 
+                }
+            }
+        }
 
 
         public ObservableCollection<CartItem> Cart { get; set; }
@@ -75,7 +92,7 @@ namespace INVApp.ViewModels
                 {
                     _gstAmount = value;
                     OnPropertyChanged(nameof(GSTAmount));
-                    OnPropertyChanged(nameof(FinalTotal)); // Ensure FinalTotal updates
+                    OnPropertyChanged(nameof(FinalTotal)); 
                 }
             }
         }
@@ -286,7 +303,7 @@ namespace INVApp.ViewModels
             {
                 OnPropertyChanged(nameof(TotalAmount));
                 CalculateDiscount();
-                CalculateGST(); // Keeps GST updated
+                CalculateGST(); 
             };
 
             IsCameraVisible = DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android;
@@ -660,7 +677,8 @@ namespace INVApp.ViewModels
         private async void LoadTaxSettingsAsync()
         {
             var taxSettings = await _databaseService.GetTaxSettingsAsync();
-            GSTRate = (decimal)taxSettings.GST; 
+            GSTRate = (decimal)taxSettings.GST;
+            _isGSTInclusive = taxSettings.Inclusive;
         }
 
         private void ClearCartAndFields()
