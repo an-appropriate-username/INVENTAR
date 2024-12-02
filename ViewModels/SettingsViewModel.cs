@@ -48,7 +48,55 @@ namespace INVApp.ViewModels
             SetRestorePointCommand = new Command(async () => await SetRestorePointAsync());
             RestoreDatabaseCommand = new Command(async () => await  RestoreDatabaseAsync());
 
+            SaveGSTCommand = new Command(async () => await SaveGST());
+
             _ = LoadDataAsync();
+        }
+
+        #endregion
+
+        #region Tax Section
+
+        public ICommand SaveGSTCommand { get; }
+
+        private double _gst;
+        public double GST
+        {
+            get => _gst;
+            set
+            {
+                if (_gst != value)
+                {
+                    _gst = value;
+                    OnPropertyChanged();
+
+                    // Save changes to the database
+                    var taxSettings = new TaxSettings { GST = _gst };
+                    _ = _databaseService.SaveTaxSettingsAsync(taxSettings);
+                }
+            }
+        }
+
+        public async Task LoadTaxSettingsAsync()
+        {
+            var taxSettings = await _databaseService.GetTaxSettingsAsync();
+            GST = taxSettings.GST;
+        }
+
+        private async Task SaveGST()
+        {
+            try
+            {
+                var taxSettings = new TaxSettings { GST = GST }; // Create a TaxSettings object with the current GST value
+
+                await _databaseService.SaveTaxSettingsAsync(taxSettings); // Save the GST value in the database
+
+                App.NotificationService.Confirm("GST settings saved successfully!");
+            }
+            catch (Exception ex)
+            {
+                App.NotificationService.Notify($"Error saving GST settings: {ex.Message}");
+            }
         }
 
         #endregion
@@ -395,6 +443,7 @@ namespace INVApp.ViewModels
             await LoadCategories();
             await LoadDefaultCategory();
             await LoadAudioSettings();
+            await LoadTaxSettingsAsync();
         }
 
         #endregion
