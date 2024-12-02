@@ -15,8 +15,9 @@
             <Color x:Key="BackgroundColor">#607d8b</Color>
             <Color x:Key="EntryBackgroundColor">#cfd8dc</Color>
             <Color x:Key="FrameBackgroundColor">#37474f</Color>
-            <Color x:Key="TextColor">#263238</Color> 
-
+            <Color x:Key="TextColor">#263238</Color>
+            <Color x:Key="FlyoutTextColor">#ffffff</Color>
+            
             <!-- Define Styles -->
             <Style TargetType="Label">
                 <Setter Property="TextColor" Value="{StaticResource TextColor}" />
@@ -89,11 +90,17 @@
                 <Setter Property="FontFamily" Value="LatoRegular"/>
             </Style>
 
+           
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
+
+
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
