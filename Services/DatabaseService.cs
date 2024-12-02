@@ -342,10 +342,10 @@ namespace INVApp.Services
             return count > 0; // If count > 0, at least one admin exists
         }
 
-        #endregion
+		#endregion
 
-        #region Customer Methods
-        public Task<List<Customer>> GetCustomersAsync() => _database.Table<Customer>().ToListAsync();
+		#region Customer Methods
+		public Task<List<Customer>> GetCustomersAsync() => _database.Table<Customer>().ToListAsync();
 
         public Task<int> AddCustomerAsync(Customer customer) => _database.InsertAsync(customer);
 

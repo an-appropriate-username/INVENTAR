@@ -4,10 +4,23 @@
             x:Class="INVApp.Views.LoginPage"
             xmlns:notify="clr-namespace:INVApp.ContentViews"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}" >
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}" >
             <Label Text="LOCKED" FontSize="16" FontAttributes="Bold" Grid.Row="2"/>
         </Grid>
     </Shell.TitleView>
@@ -36,8 +49,8 @@
                         HeightRequest="150">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Padding="0" Margin="0" BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent">
-                            <Frame BackgroundColor="{StaticResource BackgroundColor}" BorderColor="Transparent" Padding="0" Margin="2">
+                        <Frame Padding="0" Margin="0" BackgroundColor="{DynamicResource PrimaryColor}" BorderColor="Transparent">
+                            <Frame BackgroundColor="{DynamicResource BackgroundColor}" BorderColor="Transparent" Padding="0" Margin="2">
                                 <StackLayout>
                                     <Label Text="{Binding FirstName}" HorizontalOptions="Center" />
                                     <Label Text="{Binding LastName}" HorizontalOptions="Center" />
@@ -59,7 +72,7 @@
                HorizontalOptions="CenterAndExpand"
                IsVisible="{Binding CanLogin}" />
 
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+            <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
                Margin="0,0,0,5" 
                MaximumWidthRequest="600"
                IsVisible="{Binding CanLogin}">
@@ -80,7 +93,7 @@
                HorizontalOptions="CenterAndExpand"
                IsVisible="{Binding CanCreateAdmin}" />
 
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+            <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
                Margin="0,0,0,5" 
                MaximumWidthRequest="600"
                IsVisible="{Binding CanCreateAdmin}">

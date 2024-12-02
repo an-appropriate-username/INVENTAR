@@ -43,12 +43,14 @@ namespace INVApp.Models
         public DateTime CreatedAt { get; set; }
         public DateTime LastLogin { get; set; }
 
-        /// <summary>
-        /// Checks if the user has the required privilege level or higher.
-        /// </summary>
-        /// <param name="requiredPrivilegeLevel">The minimum privilege level required.</param>
-        /// <returns>True if the user's privilege level meets or exceeds the required level, false otherwise.</returns>
-        public bool HasPrivileges(UserPrivilege requiredPrivilegeLevel)
+		public string Theme { get; set; }
+
+		/// <summary>
+		/// Checks if the user has the required privilege level or higher.
+		/// </summary>
+		/// <param name="requiredPrivilegeLevel">The minimum privilege level required.</param>
+		/// <returns>True if the user's privilege level meets or exceeds the required level, false otherwise.</returns>
+		public bool HasPrivileges(UserPrivilege requiredPrivilegeLevel)
         {
             return Privilege >= requiredPrivilegeLevel;
         }

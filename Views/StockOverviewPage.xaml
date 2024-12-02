@@ -4,13 +4,26 @@
             x:Class="INVApp.Views.StockOverviewPage"
             xmlns:vm="clr-namespace:INVApp.ViewModels"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             <Label Text="INVENTAR : STOCK OVERVIEW"
                 FontSize="15" 
-                TextColor="{StaticResource TextColor}" 
+                TextColor="{DynamicResource TextColor}" 
                 HorizontalOptions="Center" 
                 VerticalOptions="Center" />
         </Grid>
@@ -25,8 +38,8 @@
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Frame Margin="5,5,5,0" Padding="5" BackgroundColor="{StaticResource FrameBackgroundColor}"
-                            BorderColor="{StaticResource BackgroundColor}"
+                    <Frame Margin="5,5,5,0" Padding="5" BackgroundColor="{DynamicResource FrameBackgroundColor}"
+                            BorderColor="{DynamicResource BackgroundColor}"
                             MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
                         <StackLayout Padding="5">
                             <!-- Search Bar -->
@@ -43,13 +56,13 @@
                                     ItemsSource="{Binding Categories}"
                                     SelectedItem="{Binding SelectedCategory}"
                                     Title="Select Category" Grid.Column="0"
-                                    BackgroundColor="{StaticResource EntryBackgroundColor}"/>
+                                    BackgroundColor="{DynamicResource EntryBackgroundColor}"/>
                                 </StackLayout>
 
                                 <Button
                                 Text="Clear + Reload"
                                 Command="{Binding ClearFiltersCommand}"
-                                BackgroundColor="{StaticResource WarningColor}"
+                                BackgroundColor="{DynamicResource WarningColor}"
                                 Margin="10,10,0,0" Grid.Column="1"
                                 HeightRequest="40"
                                 />
@@ -73,7 +86,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame BorderColor="Transparent" 
-                                    BackgroundColor="{StaticResource FrameBackgroundColor}"
+                                    BackgroundColor="{DynamicResource FrameBackgroundColor}"
                                     CornerRadius="10" Margin="0,5,0,5" Padding="10"
                                     MaximumWidthRequest="{OnIdiom Phone=400, Tablet=300, Desktop=300}">
                                 <StackLayout WidthRequest="{OnIdiom Phone=160, Tablet=100, Desktop=280}">
@@ -81,11 +94,11 @@
                                     <Button Text="{Binding ProductName}" Grid.Column="1" Grid.Row="0" Margin="0,0,0,5"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StockOverviewViewModel}}, Path=OpenProductDetailCommand}"
                                             CommandParameter="{Binding .}"
-                                            BorderColor="{StaticResource FrameBackgroundColor}"
+                                            BorderColor="{DynamicResource FrameBackgroundColor}"
                                             FontSize="17" FontAttributes="Bold"/>
 
-                                    <Frame BackgroundColor="{StaticResource PrimaryColor}" 
-                                            BorderColor="{StaticResource FrameBackgroundColor}" Margin="0,0,0,5" Padding="10">
+                                    <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
+                                            BorderColor="{DynamicResource FrameBackgroundColor}" Margin="0,0,0,5" Padding="10">
                                         <Grid RowDefinitions="*,*">
                                             <Label Text="{Binding BrandName}" Grid.Row="0" FontSize="14"/>
                                             <Grid ColumnDefinitions="Auto,*" RowDefinitions="*" Grid.Row="1">
@@ -98,12 +111,12 @@
                                         <Button Text="Details" Grid.Column="1" Grid.Row="0"
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StockOverviewViewModel}}, Path=OpenProductDetailCommand}"
                                                 CommandParameter="{Binding .}"
-                                                BorderColor="{StaticResource FrameBackgroundColor}"
+                                                BorderColor="{DynamicResource FrameBackgroundColor}"
                                                 WidthRequest="{OnIdiom Phone=70, Tablet=100, Desktop=100}"/>
                                         <Button Text="Log" Grid.Column="0" Grid.Row="0"
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:StockOverviewViewModel}}, Path=OpenChangelogCommand}"
                                                 CommandParameter="{Binding .}"
-                                                BorderColor="{StaticResource FrameBackgroundColor}"
+                                                BorderColor="{DynamicResource FrameBackgroundColor}"
                                                 WidthRequest="{OnIdiom Phone=70, Tablet=100, Desktop=100}"/>
                                     </Grid>
                                 </StackLayout>
