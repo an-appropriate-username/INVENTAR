@@ -194,7 +194,12 @@
                                     <Label Text="Total Discount:" FontSize="16" FontAttributes="None" Margin="0,5,5,0" />
                                     <Label Text="{Binding TotalDiscount, StringFormat='{0:C}'}" FontSize="17" HorizontalOptions="End" />
                                 </Grid>
-                                
+
+                                <Grid>
+                                    <Label Text="Total After Discount:" FontSize="18" FontAttributes="Bold" Margin="0,5,5,0" />
+                                    <Label Text="{Binding TotalAmountAfterDiscount, StringFormat='{0:C}'}" FontSize="18" FontAttributes="Bold" HorizontalOptions="End" />
+                                </Grid>
+
                             </StackLayout>
                         </Frame>
 
@@ -202,8 +207,15 @@
                         <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,15,0,5">
                             <StackLayout>
                                 <Grid>
-                                    <Label Text="Final Total:" FontSize="18" FontAttributes="Bold" Margin="0,5,5,0" />
-                                    <Label Text="{Binding TotalAmountAfterDiscount, StringFormat='{0:C}'}" FontSize="18" FontAttributes="Bold" HorizontalOptions="End" />
+                                    <Label Text="GST Amount:" FontSize="16" FontAttributes="Bold" Margin="0,5,5,0" />
+                                    <Label Text="{Binding GSTAmount, StringFormat='{0:C}'}" 
+                                        FontSize="16" FontAttributes="Bold" HorizontalOptions="End" />
+                                </Grid>
+
+                                <Grid>
+                                    <Label Text="Final Total (incl. GST):" FontSize="18" FontAttributes="Bold" Margin="0,5,5,0" />
+                                    <Label Text="{Binding FinalTotal, StringFormat='{0:C}'}" 
+                                        FontSize="18" FontAttributes="Bold" HorizontalOptions="End" />
                                 </Grid>
                             </StackLayout>
                         </Frame>

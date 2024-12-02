@@ -40,12 +40,13 @@ namespace INVApp.ViewModels
         public decimal Price { get; set; }
 
         private decimal _totalCashAmount;
-        private decimal TaxAmount;
         private int CurrentUserId;
 
         private decimal _discountPercentage;
         private decimal _totalDiscount;
         private decimal _totalAmountAfterDiscount;
+        public decimal FinalTotal => TotalAmountAfterDiscount + GSTAmount;
+
 
         public ObservableCollection<CartItem> Cart { get; set; }
         public ObservableCollection<Customer> Customers { get; } = new ObservableCollection<Customer>();
@@ -63,6 +64,37 @@ namespace INVApp.ViewModels
             "GiftCard",
             "BankTransfer"
         };
+
+        private decimal _gstAmount;
+        public decimal GSTAmount
+        {
+            get => _gstAmount;
+            private set
+            {
+                if (_gstAmount != value)
+                {
+                    _gstAmount = value;
+                    OnPropertyChanged(nameof(GSTAmount));
+                    OnPropertyChanged(nameof(FinalTotal)); // Ensure FinalTotal updates
+                }
+            }
+        }
+
+        private decimal _gstRate;
+        public decimal GSTRate
+        {
+            get => _gstRate;
+            private set
+            {
+                if (_gstRate != value)
+                {
+                    _gstRate = value;
+                    OnPropertyChanged(nameof(GSTRate));
+                    CalculateGST();
+                }
+            }
+        }
+
 
         public decimal DiscountPercentage
         {
@@ -250,10 +282,16 @@ namespace INVApp.ViewModels
             RemoveProductFromCartCommand = new Command<CartItem>(RemoveProductFromCart);
             CheckoutCommand = new Command(Checkout);
 
-            Cart.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(TotalAmount));
+            Cart.CollectionChanged += (sender, args) =>
+            {
+                OnPropertyChanged(nameof(TotalAmount));
+                CalculateDiscount();
+                CalculateGST(); // Keeps GST updated
+            };
 
             IsCameraVisible = DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android;
 
+            LoadTaxSettingsAsync();
             LoadCustomersAsync();
         }
         #endregion
@@ -345,6 +383,13 @@ namespace INVApp.ViewModels
                 // Notify the UI
                 OnPropertyChanged(nameof(CartReversed));
                 OnPropertyChanged(nameof(TotalAmount));
+                OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+                OnPropertyChanged(nameof(TotalDiscount));
+                OnPropertyChanged(nameof(FinalTotal));
+
+                CalculateDiscount();
+                CalculateGST();
+
 
                 NotifyProductRemoved(cartItem);
             }
@@ -371,8 +416,8 @@ namespace INVApp.ViewModels
             transaction.DateTime = DateTime.Now;
             transaction.PaymentMethod = SelectedPaymentMethod;
             transaction.Discount = TotalDiscount;
-            transaction.GServiceTax = 0;
-            transaction.TotalAmount = TotalAmountAfterDiscount;
+            transaction.GServiceTax = GSTAmount;
+            transaction.TotalAmount = FinalTotal;
             transaction.CustomerId = customerId;
             transaction.Receipt = receipt;
         }
@@ -413,6 +458,10 @@ namespace INVApp.ViewModels
 
             OnPropertyChanged(nameof(CartReversed));
             OnPropertyChanged(nameof(TotalAmount));
+            OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+
+            CalculateDiscount();
+            CalculateGST();
         }
 
         private async Task<(TransactionDto transaction, List<TransactionItemDto> items)> CreateTransactionDto()
@@ -425,10 +474,10 @@ namespace INVApp.ViewModels
             var transactionDto = new TransactionDto
             {
                 TransactionDate = DateTime.UtcNow,
-                TotalAmount = TotalAmountAfterDiscount,
+                TotalAmount = FinalTotal,
                 Discount = TotalDiscount,
                 PaymentMethod = SelectedPaymentMethod ?? throw new ArgumentNullException(nameof(SelectedPaymentMethod)),
-                TaxAmount = TaxAmount,
+                TaxAmount = GSTAmount,
                 UserId = App.CurrentUser.Id,
                 CustomerId = SelectedCustomer.Id,
                 Customer = new CustomerDto
@@ -538,6 +587,16 @@ namespace INVApp.ViewModels
                 TotalDiscount = 0;
                 TotalAmountAfterDiscount = TotalAmount;
             }
+
+            OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+            OnPropertyChanged(nameof(TotalDiscount));
+            OnPropertyChanged(nameof(FinalTotal)); 
+            CalculateGST();
+        }
+
+        private void CalculateGST()
+        {
+            GSTAmount = TotalAmountAfterDiscount * (GSTRate / 100);
         }
 
         private void CalculateChange()
@@ -545,13 +604,30 @@ namespace INVApp.ViewModels
             // Try to parse the CashGiven value
             if (decimal.TryParse(CashGiven, NumberStyles.Any, CultureInfo.InvariantCulture, out var cashGivenValue))
             {
-                ChangeAmount = cashGivenValue - TotalAmountAfterDiscount;
+                // Calculate the change
+                var change = cashGivenValue - FinalTotal;
+
+                // Multiply by 20 to scale up (e.g., 1.23 becomes 24.6)
+                var scaledChange = change * 20;
+
+                // Round up or down depending on the fractional part
+                if (scaledChange % 1 <= 0.08m) // Use '0.08m' to make it a decimal
+                {
+                    // Round down
+                    ChangeAmount = Math.Floor(scaledChange) / 20;
+                }
+                else
+                {
+                    // Round up
+                    ChangeAmount = Math.Ceiling(scaledChange) / 20;
+                }
             }
             else
             {
                 ChangeAmount = 0;
             }
         }
+
 
         //private async Task DecrementStock()
         //{
@@ -579,6 +655,12 @@ namespace INVApp.ViewModels
             {
                 Customers.Add(customer); 
             }
+        }
+
+        private async void LoadTaxSettingsAsync()
+        {
+            var taxSettings = await _databaseService.GetTaxSettingsAsync();
+            GSTRate = (decimal)taxSettings.GST; 
         }
 
         private void ClearCartAndFields()
@@ -656,6 +738,9 @@ namespace INVApp.ViewModels
             if (e.PropertyName == nameof(CartItem.Quantity) || e.PropertyName == nameof(CartItem.TotalPrice))
             {
                 OnPropertyChanged(nameof(TotalAmount));
+
+                CalculateDiscount();
+                CalculateGST();
             }
         }
 

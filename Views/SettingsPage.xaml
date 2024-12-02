@@ -133,7 +133,7 @@
 
             <toolkit:Expander>
                 <toolkit:Expander.Header>
-                    <Button Text="General Service Tax" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10"
+                    <Button Text="GST Settings" FontSize="20" FontAttributes="Bold" Margin="0,0,0,10"
                     MaximumWidthRequest="{OnIdiom Phone=320, Tablet=320, Desktop=400}"/>
                 </toolkit:Expander.Header>
 
