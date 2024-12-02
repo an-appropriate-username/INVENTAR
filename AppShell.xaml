@@ -77,10 +77,10 @@
     </FlyoutItem>
 
     <FlyoutItem Title="User Account"
-            Icon="account_icon.png"
-            FlyoutDisplayOptions="AsSingleItem">
+        Icon="account_icon.png"
+        FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Account"
-                  ContentTemplate="{DataTemplate local:AccountPage}" />
+              ContentTemplate="{DataTemplate local:AccountPage}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Settings"

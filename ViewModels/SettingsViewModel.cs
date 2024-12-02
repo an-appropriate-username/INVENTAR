@@ -63,72 +63,72 @@ namespace INVApp.ViewModels
             SetRestorePointCommand = new Command(async () => await SetRestorePointAsync());
             RestoreDatabaseCommand = new Command(async () => await  RestoreDatabaseAsync());
 
-			SetThemeCommand = new Command<string>(async (theme) => await SetTheme(theme));
-			CurrentTheme = !string.IsNullOrEmpty(CurrentUser.Theme) ? CurrentUser.Theme : "Default";
+            SetThemeCommand = new Command<string>(async (theme) => await SetTheme(theme));
+            CurrentTheme = !string.IsNullOrEmpty(CurrentUser.Theme) ? CurrentUser.Theme : "Default";
 
-			_ = LoadDataAsync();
+            _ = LoadDataAsync();
         }
 
-		#endregion
+        #endregion
 
-		#region Theme Section
+        #region Theme Section
 
-		private string _currentTheme;
+        private string _currentTheme;
 		private bool _isDefaultTheme;
 		private bool _isBlueTheme;
 		private bool _isLightTheme;
-		private bool _isDarkTheme;
+        private bool _isDarkTheme;
 
-		public bool IsDefaultTheme
-		{
-			get => _isDefaultTheme;
-			set => SetProperty(ref _isDefaultTheme, value);
-		}
+        public bool IsDefaultTheme
+        {
+            get => _isDefaultTheme;
+            set => SetProperty(ref _isDefaultTheme, value);
+        }
 
-		public bool IsBlueTheme
-		{
-			get => _isBlueTheme;
-			set => SetProperty(ref _isBlueTheme, value);
-		}
+        public bool IsBlueTheme
+        {
+            get => _isBlueTheme;
+            set => SetProperty(ref _isBlueTheme, value);
+        }
 
-		public bool IsLightTheme
-		{
-			get => _isLightTheme;
-			set => SetProperty(ref _isLightTheme, value);
-		}
+        public bool IsLightTheme
+        {
+            get => _isLightTheme;
+            set => SetProperty(ref _isLightTheme, value);
+        }
 
-		public bool IsDarkTheme
-		{
-			get => _isDarkTheme;
-			set => SetProperty(ref _isDarkTheme, value);
-		}
+        public bool IsDarkTheme
+        {
+            get => _isDarkTheme;
+            set => SetProperty(ref _isDarkTheme, value);
+        }
 
-		public string CurrentTheme
-		{
-			get => _currentTheme;
-			set => SetProperty(ref _currentTheme, value);
-		}
+        public string CurrentTheme
+        {
+            get => _currentTheme;
+            set => SetProperty(ref _currentTheme, value);
+        }
 
-		public ICommand SetThemeCommand { get; }
+        public ICommand SetThemeCommand { get; }
 
-		private async Task SetTheme(string theme)
-		{
-			if (theme == CurrentTheme) return;
+        private async Task SetTheme(string theme)
+        {
+            if (theme == CurrentTheme) return;
 
-			CurrentTheme = theme;
-			Preferences.Set("AppTheme", theme);
+            CurrentTheme = theme;
+            Preferences.Set("AppTheme", theme);
 
-			CurrentUser.Theme = theme;
+            CurrentUser.Theme = theme;
 
-			await _databaseService.UpdateUserAsync(CurrentUser);
+            await _databaseService.UpdateUserAsync(CurrentUser);
 
-			App.ApplyTheme(theme);
+            App.ApplyTheme(theme);
 
-			IsDefaultTheme = theme == "Default";
-			IsBlueTheme = theme == "Blue";
-			IsLightTheme = theme == "Light";
-			IsDarkTheme = theme == "Dark";
-		}
+            IsDefaultTheme = theme == "Default";
+            IsBlueTheme = theme == "Blue";
+            IsLightTheme = theme == "Light";
+            IsDarkTheme = theme == "Dark";
+        }
 
 		#endregion
 
