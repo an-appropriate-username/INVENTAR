@@ -39,23 +39,25 @@ namespace INVApp
             {
                 if (task.IsFaulted)
                 {
-                    // Handle any initialization errors
                     Console.WriteLine(task.Exception);
                 }
             });
 
+            // Get current user and theme
             User? user = App.CurrentUser;
-            var savedTheme = "Default";
+            var savedTheme = "Default";  // Default theme if none is saved
             if (user != null && !string.IsNullOrEmpty(user.Theme))
             {
                 savedTheme = user.Theme;
             }
+
+            // Apply the saved theme at app startup
             ApplyTheme(savedTheme);
 
             // Set the main page of the application
             MainPage = new AppShell();
-
         }
+
 
         public static void ApplyTheme(string theme)
         {

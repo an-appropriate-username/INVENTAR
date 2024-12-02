@@ -44,9 +44,9 @@ namespace INVApp.ViewModels
             _databaseService = databaseService;
             _databaseConfigService = databaseConfigService;
 
-			CurrentUser = App.CurrentUser;
+            CurrentUser = App.CurrentUser;
 
-			Categories = new ObservableCollection<Category>();
+            Categories = new ObservableCollection<Category>();
             BackupFrequencies = new ObservableCollection<string> { "Daily", "Bi-Daily", "Weekly", "Monthly", "Half-Yearly", "Yearly" };
             ArchiveFrequencies = new ObservableCollection<string> { "7 Days", "30 Days", "90 Days", "1 Year" };
 
@@ -61,11 +61,12 @@ namespace INVApp.ViewModels
             ResetDatabaseCommand = new Command(async () => await ResetDatabase());
             UploadCsvCommand = new Command(async () => await UploadCsvFile());
             SetRestorePointCommand = new Command(async () => await SetRestorePointAsync());
-            RestoreDatabaseCommand = new Command(async () => await  RestoreDatabaseAsync());
+            RestoreDatabaseCommand = new Command(async () => await RestoreDatabaseAsync());
 
             SetThemeCommand = new Command<string>(async (theme) => await SetTheme(theme));
-            CurrentTheme = !string.IsNullOrEmpty(CurrentUser.Theme) ? CurrentUser.Theme : "Default";
+            LoadThemeCommand = new Command(async () => await LoadTheme());
 
+            _ = LoadTheme(); 
             _ = LoadDataAsync();
         }
 
@@ -109,7 +110,7 @@ namespace INVApp.ViewModels
             set => SetProperty(ref _currentTheme, value);
         }
 
-        public ICommand SetThemeCommand { get; }
+
 
         private async Task SetTheme(string theme)
         {
@@ -118,9 +119,25 @@ namespace INVApp.ViewModels
             CurrentTheme = theme;
             Preferences.Set("AppTheme", theme);
 
+            // Update the theme for the user
             CurrentUser.Theme = theme;
+            await _databaseService.UpdateUserAsync(CurrentUser); 
 
-            await _databaseService.UpdateUserAsync(CurrentUser);
+            // Apply the theme immediately
+            App.ApplyTheme(theme);
+
+            // Update the theme flags for UI
+            IsDefaultTheme = theme == "Default";
+            IsBlueTheme = theme == "Blue";
+            IsLightTheme = theme == "Light";
+            IsDarkTheme = theme == "Dark";
+        }
+
+
+        private async Task LoadTheme()
+        {
+            var theme = Preferences.Get("AppTheme", "Default");  // Load saved theme
+            CurrentTheme = theme;
 
             App.ApplyTheme(theme);
 
@@ -130,14 +147,18 @@ namespace INVApp.ViewModels
             IsDarkTheme = theme == "Dark";
         }
 
-		#endregion
+        
 
-		#region Categories Section
+        public ICommand LoadThemeCommand { get; }
+        public ICommand SetThemeCommand { get; }
+        #endregion
 
-		/// <summary>
-		/// List of categories.
-		/// </summary>
-		private ObservableCollection<Category> _categories;
+        #region Categories Section
+
+        /// <summary>
+        /// List of categories.
+        /// </summary>
+        private ObservableCollection<Category> _categories;
         public ObservableCollection<Category> Categories
         {
             get => _categories;
