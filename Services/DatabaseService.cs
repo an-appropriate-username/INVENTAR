@@ -32,6 +32,7 @@ namespace INVApp.Services
             _database.CreateTableAsync<User>().Wait();
 
             _database.CreateTableAsync<AudioSettings>().Wait();
+            _database.CreateTableAsync<TaxSettings>().Wait();
 
             _database.CreateTableAsync<ToDoItem>().Wait();
 
@@ -449,6 +450,28 @@ namespace INVApp.Services
             return await _database.DeleteAsync(todoItem);
         }
 
+        #endregion
+
+        #region Tax Methods
+        public async Task<TaxSettings> GetTaxSettingsAsync()
+        {
+            var settings = await _database.Table<TaxSettings>().FirstOrDefaultAsync();
+            return settings ?? new TaxSettings(); // Return default settings if none exist
+        }
+
+        public async Task SaveTaxSettingsAsync(TaxSettings settings)
+        {
+            var existingSettings = await _database.Table<TaxSettings>().FirstOrDefaultAsync();
+            if (existingSettings == null)
+            {
+                await _database.InsertAsync(settings);
+            }
+            else
+            {
+                existingSettings.GST = settings.GST;
+                await _database.UpdateAsync(existingSettings);
+            }
+        }
         #endregion
     }
 }

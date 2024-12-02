@@ -29,42 +29,6 @@ namespace INVApp.ViewModels
         private string? _scannedBarcode;
         #endregion
 
-        #region Commands
-
-        public ICommand AddProductCommand { get; }
-        public ICommand RemoveProductFromCartCommand { get; }
-        public ICommand CheckoutCommand { get; }
-
-        #endregion
-
-        #region Constructor
-        public POSViewModel(
-            DatabaseService databaseService,
-            APIService apiService,
-            TransactionService transactionService,
-            StockService stockService,
-            ReceiptService receiptService)
-        {
-            _databaseService = databaseService;
-            _apiService = apiService;
-            _transactionService = transactionService;
-            _stockService = stockService;
-            _receiptService = receiptService;
-
-            Cart = new ObservableCollection<CartItem>();
-
-            AddProductCommand = new Command(async () => await AddProduct());
-            RemoveProductFromCartCommand = new Command<CartItem>(RemoveProductFromCart);
-            CheckoutCommand = new Command(Checkout);
-
-            Cart.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(TotalAmount));
-
-            IsCameraVisible = DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android;
-
-            LoadCustomersAsync();
-        }
-        #endregion
-
         #region Properties
 
         public Product? SelectedProduct { get; set; }
@@ -74,6 +38,15 @@ namespace INVApp.ViewModels
         public int CurrentStockLevel { get; set; }
         public decimal WholesalePrice { get; set; }
         public decimal Price { get; set; }
+
+        private decimal _totalCashAmount;
+        private int CurrentUserId;
+
+        private decimal _discountPercentage;
+        private decimal _totalDiscount;
+        private decimal _totalAmountAfterDiscount;
+        public decimal FinalTotal => TotalAmountAfterDiscount + GSTAmount;
+
 
         public ObservableCollection<CartItem> Cart { get; set; }
         public ObservableCollection<Customer> Customers { get; } = new ObservableCollection<Customer>();
@@ -91,6 +64,77 @@ namespace INVApp.ViewModels
             "GiftCard",
             "BankTransfer"
         };
+
+        private decimal _gstAmount;
+        public decimal GSTAmount
+        {
+            get => _gstAmount;
+            private set
+            {
+                if (_gstAmount != value)
+                {
+                    _gstAmount = value;
+                    OnPropertyChanged(nameof(GSTAmount));
+                    OnPropertyChanged(nameof(FinalTotal)); // Ensure FinalTotal updates
+                }
+            }
+        }
+
+        private decimal _gstRate;
+        public decimal GSTRate
+        {
+            get => _gstRate;
+            private set
+            {
+                if (_gstRate != value)
+                {
+                    _gstRate = value;
+                    OnPropertyChanged(nameof(GSTRate));
+                    CalculateGST();
+                }
+            }
+        }
+
+
+        public decimal DiscountPercentage
+        {
+            get => _discountPercentage;
+            set
+            {
+                if (_discountPercentage != value)
+                {
+                    _discountPercentage = value;
+                    OnPropertyChanged(nameof(DiscountPercentage));
+                    CalculateDiscount();
+                }
+            }
+        }
+
+        public decimal TotalDiscount
+        {
+            get => _totalDiscount;
+            private set
+            {
+                if (_totalDiscount != value)
+                {
+                    _totalDiscount = value;
+                    OnPropertyChanged(nameof(TotalDiscount));
+                }
+            }
+        }
+
+        public decimal TotalAmountAfterDiscount
+        {
+            get => _totalAmountAfterDiscount;
+            private set
+            {
+                if (_totalAmountAfterDiscount != value)
+                {
+                    _totalAmountAfterDiscount = value;
+                    OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+                }
+            }
+        }
 
         private bool _isCameraVisible;
         public bool IsCameraVisible
@@ -141,8 +185,8 @@ namespace INVApp.ViewModels
                 {
                     // Trigger AddProduct and clear the barcode field
                     AddProductCommand.Execute(null);
-                    _scannedBarcode = string.Empty; 
-                    OnPropertyChanged(nameof(ScannedBarcode)); 
+                    _scannedBarcode = string.Empty;
+                    OnPropertyChanged(nameof(ScannedBarcode));
                 }
             }
         }
@@ -159,7 +203,7 @@ namespace INVApp.ViewModels
             }
         }
 
-        private Customer? _selectedCustomer; 
+        private Customer? _selectedCustomer;
         public Customer? SelectedCustomer
         {
             get => _selectedCustomer;
@@ -196,11 +240,6 @@ namespace INVApp.ViewModels
             }
         }
 
-        private decimal _totalCashAmount;
-        private decimal DiscountAmount;
-        private decimal TaxAmount;
-        private int CurrentUserId;
-
         public decimal TotalCashAmount
         {
             get => _totalCashAmount;
@@ -209,6 +248,51 @@ namespace INVApp.ViewModels
                 _totalCashAmount = value;
                 OnPropertyChanged();
             }
+        }
+        #endregion
+
+        #region Commands
+
+        public ICommand AddProductCommand { get; }
+        public ICommand RemoveProductFromCartCommand { get; }
+        public ICommand CheckoutCommand { get; }
+
+        public ICommand ApplyDiscountCommand { get; }
+        public ICommand ClearDiscountCommand { get; }
+
+        #endregion
+
+        #region Constructor
+        public POSViewModel(
+            DatabaseService databaseService,
+            APIService apiService,
+            TransactionService transactionService,
+            StockService stockService,
+            ReceiptService receiptService)
+        {
+            _databaseService = databaseService;
+            _apiService = apiService;
+            _transactionService = transactionService;
+            _stockService = stockService;
+            _receiptService = receiptService;
+
+            Cart = new ObservableCollection<CartItem>();
+
+            AddProductCommand = new Command(async () => await AddProduct());
+            RemoveProductFromCartCommand = new Command<CartItem>(RemoveProductFromCart);
+            CheckoutCommand = new Command(Checkout);
+
+            Cart.CollectionChanged += (sender, args) =>
+            {
+                OnPropertyChanged(nameof(TotalAmount));
+                CalculateDiscount();
+                CalculateGST(); // Keeps GST updated
+            };
+
+            IsCameraVisible = DeviceInfo.Platform == DevicePlatform.iOS || DeviceInfo.Platform == DevicePlatform.Android;
+
+            LoadTaxSettingsAsync();
+            LoadCustomersAsync();
         }
         #endregion
 
@@ -299,6 +383,13 @@ namespace INVApp.ViewModels
                 // Notify the UI
                 OnPropertyChanged(nameof(CartReversed));
                 OnPropertyChanged(nameof(TotalAmount));
+                OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+                OnPropertyChanged(nameof(TotalDiscount));
+                OnPropertyChanged(nameof(FinalTotal));
+
+                CalculateDiscount();
+                CalculateGST();
+
 
                 NotifyProductRemoved(cartItem);
             }
@@ -324,9 +415,9 @@ namespace INVApp.ViewModels
         {
             transaction.DateTime = DateTime.Now;
             transaction.PaymentMethod = SelectedPaymentMethod;
-            transaction.Discount = 0;
-            transaction.GServiceTax = 0;
-            transaction.TotalAmount = TotalAmount;
+            transaction.Discount = TotalDiscount;
+            transaction.GServiceTax = GSTAmount;
+            transaction.TotalAmount = FinalTotal;
             transaction.CustomerId = customerId;
             transaction.Receipt = receipt;
         }
@@ -367,6 +458,10 @@ namespace INVApp.ViewModels
 
             OnPropertyChanged(nameof(CartReversed));
             OnPropertyChanged(nameof(TotalAmount));
+            OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+
+            CalculateDiscount();
+            CalculateGST();
         }
 
         private async Task<(TransactionDto transaction, List<TransactionItemDto> items)> CreateTransactionDto()
@@ -379,10 +474,10 @@ namespace INVApp.ViewModels
             var transactionDto = new TransactionDto
             {
                 TransactionDate = DateTime.UtcNow,
-                TotalAmount = TotalAmount,
-                Discount = DiscountAmount,
+                TotalAmount = FinalTotal,
+                Discount = TotalDiscount,
                 PaymentMethod = SelectedPaymentMethod ?? throw new ArgumentNullException(nameof(SelectedPaymentMethod)),
-                TaxAmount = TaxAmount,
+                TaxAmount = GSTAmount,
                 UserId = App.CurrentUser.Id,
                 CustomerId = SelectedCustomer.Id,
                 Customer = new CustomerDto
@@ -425,7 +520,7 @@ namespace INVApp.ViewModels
 
                 if (isSuccess)
                 {
-                    App.NotificationService.Notify("Transaction completed successfully.");
+                    App.NotificationService.Confirm("Transaction completed successfully.");
                     ClearCartAndFields();
                 }
                 else
@@ -469,18 +564,70 @@ namespace INVApp.ViewModels
             return Cart.Sum(item => item.Product.Price * item.Quantity);
         }
 
+        private void ApplyDiscount()
+        {
+            CalculateDiscount();
+        }
+
+        private void ClearDiscount()
+        {
+            DiscountPercentage = 0;
+            CalculateDiscount();
+        }
+
+        private void CalculateDiscount()
+        {
+            if (DiscountPercentage > 0 && DiscountPercentage <= 100)
+            {
+                TotalDiscount = TotalAmount * (DiscountPercentage / 100);
+                TotalAmountAfterDiscount = TotalAmount - TotalDiscount;
+            }
+            else
+            {
+                TotalDiscount = 0;
+                TotalAmountAfterDiscount = TotalAmount;
+            }
+
+            OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+            OnPropertyChanged(nameof(TotalDiscount));
+            OnPropertyChanged(nameof(FinalTotal)); 
+            CalculateGST();
+        }
+
+        private void CalculateGST()
+        {
+            GSTAmount = TotalAmountAfterDiscount * (GSTRate / 100);
+        }
+
         private void CalculateChange()
         {
             // Try to parse the CashGiven value
             if (decimal.TryParse(CashGiven, NumberStyles.Any, CultureInfo.InvariantCulture, out var cashGivenValue))
             {
-                ChangeAmount = cashGivenValue - TotalAmount;
+                // Calculate the change
+                var change = cashGivenValue - FinalTotal;
+
+                // Multiply by 20 to scale up (e.g., 1.23 becomes 24.6)
+                var scaledChange = change * 20;
+
+                // Round up or down depending on the fractional part
+                if (scaledChange % 1 <= 0.08m) // Use '0.08m' to make it a decimal
+                {
+                    // Round down
+                    ChangeAmount = Math.Floor(scaledChange) / 20;
+                }
+                else
+                {
+                    // Round up
+                    ChangeAmount = Math.Ceiling(scaledChange) / 20;
+                }
             }
             else
             {
                 ChangeAmount = 0;
             }
         }
+
 
         //private async Task DecrementStock()
         //{
@@ -510,17 +657,58 @@ namespace INVApp.ViewModels
             }
         }
 
+        private async void LoadTaxSettingsAsync()
+        {
+            var taxSettings = await _databaseService.GetTaxSettingsAsync();
+            GSTRate = (decimal)taxSettings.GST; 
+        }
+
         private void ClearCartAndFields()
         {
             // Clear the cart
             Cart.Clear();
             OnPropertyChanged(nameof(CartReversed));
 
+            // Reset customer selection
             SelectedCustomer = null;
+            OnPropertyChanged(nameof(SelectedCustomer));
 
+            // Reset payment method
             SelectedPaymentMethod = null;
-            CashGiven = null;
+            OnPropertyChanged(nameof(SelectedPaymentMethod));
+
+            // Reset financial fields
+            CashGiven = string.Empty;
+            ChangeAmount = 0;
+            DiscountPercentage = 0;
+            TotalDiscount = 0;
+            TotalAmountAfterDiscount = 0;
+
+            // Reset scanned barcode
+            ScannedBarcode = string.Empty;
+            OnPropertyChanged(nameof(ScannedBarcode));
+
+            // Reset product details
+            ProductName = null;
+            ProductWeight = null;
+            Category = null;
+            CurrentStockLevel = 0;
+            WholesalePrice = 0;
+            Price = 0;
+
+            // Notify the UI of reset
             OnPropertyChanged(nameof(TotalAmount));
+            OnPropertyChanged(nameof(CashGiven));
+            OnPropertyChanged(nameof(ChangeAmount));
+            OnPropertyChanged(nameof(DiscountPercentage));
+            OnPropertyChanged(nameof(TotalDiscount));
+            OnPropertyChanged(nameof(TotalAmountAfterDiscount));
+            OnPropertyChanged(nameof(ProductName));
+            OnPropertyChanged(nameof(ProductWeight));
+            OnPropertyChanged(nameof(Category));
+            OnPropertyChanged(nameof(CurrentStockLevel));
+            OnPropertyChanged(nameof(WholesalePrice));
+            OnPropertyChanged(nameof(Price));
         }
 
         private void UpdateVisibility()
@@ -550,6 +738,9 @@ namespace INVApp.ViewModels
             if (e.PropertyName == nameof(CartItem.Quantity) || e.PropertyName == nameof(CartItem.TotalPrice))
             {
                 OnPropertyChanged(nameof(TotalAmount));
+
+                CalculateDiscount();
+                CalculateGST();
             }
         }
 
