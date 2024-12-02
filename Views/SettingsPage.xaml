@@ -145,7 +145,9 @@
                             <Frame BackgroundColor="{StaticResource PrimaryColor}" MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=500}" Margin="0,10,0,0">
                                 <StackLayout>
                                     <Label Text="Set GST (%)" FontSize="Medium" HorizontalOptions="Center" Margin="0,0,0,10"/>
-                                    <Entry Text="{Binding GST}" Keyboard="Numeric" WidthRequest="100"/>
+                                    <Entry Text="{Binding GST, Mode=TwoWay}" Keyboard="Numeric" WidthRequest="100"/>
+                                    <Label Text="GST Inclusive?" HorizontalOptions="Center" Margin="0,15,0,0" />
+                                    <Switch IsToggled="{Binding IsGSTInclusive, Mode=TwoWay}" HorizontalOptions="Center" Margin="100,5,0,0"/>
                                 </StackLayout>
                             </Frame>
                             

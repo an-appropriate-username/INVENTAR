@@ -469,6 +469,7 @@ namespace INVApp.Services
             else
             {
                 existingSettings.GST = settings.GST;
+                existingSettings.Inclusive = settings.Inclusive;
                 await _database.UpdateAsync(existingSettings);
             }
         }
