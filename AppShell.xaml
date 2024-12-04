@@ -25,70 +25,70 @@
             </Grid>
         </StackLayout>
     </Shell.FlyoutHeader>
-
-    <!-- FlyoutItem: Home Page -->
+    
+    <!--<Shell.Resources>
+        <Style TargetType="FlyoutItem">
+            <Setter Property="TextColor" Value="{DynamicResource FlyoutTextColor}" />
+        </Style>
+    </Shell.Resources>-->
+    
     <FlyoutItem Title="Home Page"
-        Icon="home_icon.png"
-        FlyoutDisplayOptions="AsSingleItem">
+            Icon="home_icon.png"
+            FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Home Page"
-            ContentTemplate="{DataTemplate local:HomePage}" />
+                  ContentTemplate="{DataTemplate local:HomePage}" />
     </FlyoutItem>
 
-    <!-- FlyoutItem: Point Of Sale -->
     <FlyoutItem Title="Point Of Sale"
             Icon="pos_icon.png"
-            FlyoutDisplayOptions="AsSingleItem" >
+            FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Point Of Sale"
-                ContentTemplate="{DataTemplate local:POSPage}" />
+                  ContentTemplate="{DataTemplate local:POSPage}" />
     </FlyoutItem>
 
-    <!-- FlyoutItem: Transaction Log -->
+    <!-- Update FlyoutItem Text Color -->
     <FlyoutItem Title="Transaction Log"
-                Icon="log_icon.png"
-                FlyoutDisplayOptions="AsSingleItem">
+            Icon="log_icon.png"
+            FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Transaction Log"
-                    ContentTemplate="{DataTemplate local:TransactionLogPage}" />
+                  ContentTemplate="{DataTemplate local:TransactionLogPage}" />
     </FlyoutItem>
 
-    <!-- FlyoutItem: Stock Take -->
     <FlyoutItem Title="Stock Take"
             Icon="stock_take_icon.png"
             FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Stock Take"
-                ContentTemplate="{DataTemplate local:StockIntakePage}" />
-    </FlyoutItem>
-    
-    <!-- FlyoutItem: Stock Overview -->
-    <FlyoutItem Title="Stock Overview"
-                Icon="overview_icon.png"
-                FlyoutDisplayOptions="AsSingleItem">
-        <ShellContent Title="Overview"
-                    ContentTemplate="{DataTemplate local:StockOverviewPage}" />
+                  ContentTemplate="{DataTemplate local:StockIntakePage}" />
     </FlyoutItem>
 
-    <!-- FlyoutItem: Customer Page -->
+    <FlyoutItem Title="Stock Overview"
+            Icon="overview_icon.png"
+            FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent Title="Overview"
+                  ContentTemplate="{DataTemplate local:StockOverviewPage}" />
+    </FlyoutItem>
+
     <FlyoutItem Title="Customer Accounts"
             Icon="customer_icon.png"
             FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Customer Accounts"
-                ContentTemplate="{DataTemplate local:CustomerPage}" />
+                  ContentTemplate="{DataTemplate local:CustomerPage}" />
     </FlyoutItem>
 
-    <!-- FlyoutItem: Settings -->
     <FlyoutItem Title="User Account"
-            Icon="account_icon.png"
-            FlyoutDisplayOptions="AsSingleItem">
+        Icon="account_icon.png"
+        FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Account"
-                ContentTemplate="{DataTemplate local:AccountPage}" />
+              ContentTemplate="{DataTemplate local:AccountPage}" />
     </FlyoutItem>
 
-    <!-- FlyoutItem: Settings -->
     <FlyoutItem Title="Settings"
-                Icon="settings_icon.png"
-                FlyoutDisplayOptions="AsSingleItem">
+            Icon="settings_icon.png"
+            FlyoutDisplayOptions="AsSingleItem">
         <ShellContent Title="Settings"
-                    ContentTemplate="{DataTemplate local:SettingsPage}" />
+                  ContentTemplate="{DataTemplate local:SettingsPage}" />
     </FlyoutItem>
+
 
     <!-- FlyoutItem: Settings -->
     <MenuItem Text="Log Out"

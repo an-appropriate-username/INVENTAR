@@ -61,12 +61,46 @@ namespace INVApp.ViewModels
             ResetDatabaseCommand = new Command(async () => await ResetDatabase());
             UploadCsvCommand = new Command(async () => await UploadCsvFile());
             SetRestorePointCommand = new Command(async () => await SetRestorePointAsync());
-            RestoreDatabaseCommand = new Command(async () => await  RestoreDatabaseAsync());
+            RestoreDatabaseCommand = new Command(async () => await RestoreDatabaseAsync());
 
 			SetThemeCommand = new Command<string>(async (theme) => await SetTheme(theme));
 			CurrentTheme = CurrentUser.UserTheme != 0 ? CurrentUser.UserTheme.ToString() : Theme.Default.ToString();
 
 			_ = LoadDataAsync();
+        }
+
+        #endregion
+
+        #region Theme Section
+
+        private string _currentTheme;
+		private bool _isDefaultTheme;
+		private bool _isBlueTheme;
+		private bool _isLightTheme;
+        private bool _isDarkTheme;
+
+        public bool IsDefaultTheme
+        {
+            get => _isDefaultTheme;
+            set => SetProperty(ref _isDefaultTheme, value);
+        }
+
+        public bool IsBlueTheme
+        {
+            get => _isBlueTheme;
+            set => SetProperty(ref _isBlueTheme, value);
+        }
+
+        public bool IsLightTheme
+        {
+            get => _isLightTheme;
+            set => SetProperty(ref _isLightTheme, value);
+        }
+
+        public bool IsDarkTheme
+        {
+            get => _isDarkTheme;
+            set => SetProperty(ref _isDarkTheme, value);
         }
 
 		#endregion
