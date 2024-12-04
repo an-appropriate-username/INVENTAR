@@ -6,20 +6,20 @@
     xmlns:local="clr-namespace:INVApp.Views"
     xmlns:notify="clr-namespace:INVApp.ContentViews"
     Shell.FlyoutBehavior="Flyout"
-    Shell.BackgroundColor="{StaticResource FrameBackgroundColor}"
-    Shell.TitleColor="{StaticResource EntryBackgroundColor}"
-    Shell.FlyoutBackgroundColor="{StaticResource PrimaryColor}"
-    Shell.ForegroundColor="{StaticResource FrameBackgroundColor}"
+    Shell.BackgroundColor="{DynamicResource FrameBackgroundColor}"
+    Shell.TitleColor="{DynamicResource EntryBackgroundColor}"
+    Shell.FlyoutBackgroundColor="{DynamicResource BackgroundGradientStart}"
+    Shell.ForegroundColor="{DynamicResource FrameBackgroundColor}"
     Title="INVApp">
 
     <!-- Flyout Header -->
     <Shell.FlyoutHeader>
-        <StackLayout BackgroundColor="{StaticResource FrameBackgroundColor}" Padding="10">
+        <StackLayout BackgroundColor="{DynamicResource FrameBackgroundColor}" Padding="10">
             <Grid ColumnDefinitions="Auto, Auto">
                 <Image Source="main_icon.png" WidthRequest="100" Grid.Column="0" MaximumHeightRequest="60"></Image>
                 <Label Text="INVENTAR" Grid.Column="1" VerticalOptions="Center"
                     FontSize="20"
-                    TextColor="{StaticResource EntryBackgroundColor}"
+                    TextColor="{DynamicResource EntryBackgroundColor}"
                     FontAttributes="Bold" 
                     HorizontalOptions="CenterAndExpand"/>
             </Grid>

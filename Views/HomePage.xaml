@@ -5,13 +5,26 @@
             xmlns:local="clr-namespace:INVApp.ViewModels"
             x:Class="INVApp.Views.HomePage"
             x:Name="thisPage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             <Label Text="INVENTAR : HOME"
             FontSize="15"
-            TextColor="{StaticResource TextColor}"
+            TextColor="{DynamicResource TextColor}"
             HorizontalOptions="Center"
             VerticalOptions="Center" />
         </Grid>
@@ -25,7 +38,7 @@
             <CarouselView ItemsSource="{Binding CarouselItems}" IsSwipeEnabled="True" Loop="True" Opacity="0.85" HeightRequest="200">
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Padding="5" HeightRequest="{OnIdiom Phone=200, Tablet=250}" WidthRequest="340" BackgroundColor="{StaticResource PrimaryColor}" CornerRadius="10">
+                        <Frame Padding="5" HeightRequest="{OnIdiom Phone=200, Tablet=250}" WidthRequest="340" BackgroundColor="{DynamicResource PrimaryColor}" CornerRadius="10">
                             <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="5">
                                 <Button ImageSource="{Binding Icon}" BackgroundColor="Transparent" BorderColor="Transparent" 
                             Clicked="OnCarouselItemClicked"
@@ -45,7 +58,7 @@
             <CarouselView ItemsSource="{Binding SupportItems}" IsSwipeEnabled="True" Loop="True" Opacity="0.85" HeightRequest="250">
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Padding="5" HeightRequest="{OnIdiom Phone=200, Tablet=250}" WidthRequest="340" BackgroundColor="{StaticResource PrimaryColor}" CornerRadius="10">
+                        <Frame Padding="5" HeightRequest="{OnIdiom Phone=200, Tablet=250}" WidthRequest="340" BackgroundColor="{DynamicResource PrimaryColor}" CornerRadius="10">
                             <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="5">
                                 <Button ImageSource="{Binding Icon}" BackgroundColor="Transparent" BorderColor="Transparent" 
                                     Clicked="OnCarouselItemClicked"
@@ -62,16 +75,16 @@
                 </CarouselView.Triggers>
             </CarouselView>
 
-            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" 
+            <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" 
                 WidthRequest="300" HeightRequest="50" VerticalOptions="Start" HorizontalOptions="Center"
                 Margin="0,0,0,5" IsVisible="{OnIdiom Phone=True, Desktop=False}">
-                <Label x:Name="DateTimeLabelPhone" TextColor="{StaticResource EntryBackgroundColor}" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Label x:Name="DateTimeLabelPhone" TextColor="{DynamicResource EntryBackgroundColor}" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
             </Frame>
         </StackLayout>
 
         <!-- Grid for Desktop -->
         <StackLayout Grid.Column="1" VerticalOptions="EndAndExpand" IsVisible="{OnIdiom Desktop=True, Phone=False}">
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+            <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
                 CornerRadius="10" Padding="10" HasShadow="True" 
                 Margin="20,10,20,20" WidthRequest="600"
                 VerticalOptions="EndAndExpand">
@@ -94,7 +107,7 @@
         <!-- To-Do List Section and Date Label for Desktop Right, Phone Below Carousel -->
         <StackLayout Grid.Column="{OnIdiom Phone=0, Desktop=2}" VerticalOptions="StartAndExpand" Margin="0, 25, 0, 0">
             <!-- To-Do List Frame -->
-            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" IsVisible="{OnIdiom Phone=False, Desktop=True}">
+            <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" IsVisible="{OnIdiom Phone=False, Desktop=True}">
                 <StackLayout>
                     <Button Text="Add Task" FontSize="15" Margin="5" Command="{Binding AddNewTodoCommand}" 
                                 MaximumHeightRequest="35" MaximumWidthRequest="200" BorderColor="Transparent"/>
@@ -119,10 +132,10 @@
             </Frame>
         </StackLayout>
 
-        <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" 
+        <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" CornerRadius="10" Padding="5" HasShadow="True" 
             WidthRequest="300" HeightRequest="80" VerticalOptions="EndAndExpand" HorizontalOptions="Center"
             Grid.Column="2" Margin="0,0,0,25" IsVisible="{OnIdiom Desktop=True, Phone=False}">
-            <Label x:Name="DateTimeLabel" TextColor="{StaticResource EntryBackgroundColor}" FontSize="15" Text="TEST"
+            <Label x:Name="DateTimeLabel" TextColor="{DynamicResource TextColor}" FontSize="15" Text="TEST"
                 HorizontalOptions="Center" VerticalOptions="Center" />
         </Frame>
 
