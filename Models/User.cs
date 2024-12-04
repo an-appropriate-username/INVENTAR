@@ -67,11 +67,11 @@ namespace INVApp.Models
         
     }
 
-	public enum Theme
-	{
-		Default = 1,
-		Blue = 2,
-		Light = 3,
-		Dark = 4
-	}
+    public enum Theme
+    {
+        Default = 1,
+        Blue = 2,
+        Light = 3,
+        Dark = 4
+    }
 }
