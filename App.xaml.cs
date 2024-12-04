@@ -35,6 +35,7 @@ namespace INVApp
 			DatabaseConfigService = new DatabaseConfigService(DatabaseService);
 			APIService = new APIService();
 
+
 			DatabaseService.InitializeAsync().ContinueWith(task =>
 			{
 				if (task.IsFaulted)
