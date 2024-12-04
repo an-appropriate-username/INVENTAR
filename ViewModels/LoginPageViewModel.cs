@@ -148,7 +148,11 @@ namespace INVApp.ViewModels
             user.LastLogin = DateTime.Now;
             await _databaseService.UpdateUserAsync(user);
 
-            ClearFields();
+            if (user.UserTheme != 0) {
+                App.ApplyTheme(user.UserTheme);
+            }
+
+			ClearFields();
 
             await Application.Current.MainPage.Navigation.PopModalAsync();
         }

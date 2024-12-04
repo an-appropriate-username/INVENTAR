@@ -14,9 +14,22 @@ namespace INVApp.ViewModels
     /// </summary>
     public class SettingsViewModel : BaseViewModel
     {
-        #region Fields and Services
+		#region Fields and Services
+		private User _currentUser;
+		public User CurrentUser
+		{
+			get => _currentUser;
+			set
+			{
+				if (_currentUser != value)
+				{
+					_currentUser = value;
+					OnPropertyChanged(nameof(CurrentUser));
+				}
+			}
+		}
 
-        private readonly DatabaseService _databaseService;
+		private readonly DatabaseService _databaseService;
         private readonly DatabaseConfigService _databaseConfigService;
 
         #endregion
@@ -31,7 +44,9 @@ namespace INVApp.ViewModels
             _databaseService = databaseService;
             _databaseConfigService = databaseConfigService;
 
-            Categories = new ObservableCollection<Category>();
+			CurrentUser = App.CurrentUser;
+
+			Categories = new ObservableCollection<Category>();
             BackupFrequencies = new ObservableCollection<string> { "Daily", "Bi-Daily", "Weekly", "Monthly", "Half-Yearly", "Yearly" };
             ArchiveFrequencies = new ObservableCollection<string> { "7 Days", "30 Days", "90 Days", "1 Year" };
 
@@ -48,17 +63,83 @@ namespace INVApp.ViewModels
             SetRestorePointCommand = new Command(async () => await SetRestorePointAsync());
             RestoreDatabaseCommand = new Command(async () => await  RestoreDatabaseAsync());
 
-            _ = LoadDataAsync();
+			SetThemeCommand = new Command<string>(async (theme) => await SetTheme(theme));
+			CurrentTheme = CurrentUser.UserTheme != 0 ? CurrentUser.UserTheme.ToString() : Theme.Default.ToString();
+
+			_ = LoadDataAsync();
         }
 
-        #endregion
+		#endregion
 
-        #region Categories Section
+		#region Theme Section
 
-        /// <summary>
-        /// List of categories.
-        /// </summary>
-        private ObservableCollection<Category> _categories;
+		private string _currentTheme;
+		private bool _isDefaultTheme;
+		private bool _isBlueTheme;
+		private bool _isLightTheme;
+		private bool _isDarkTheme;
+
+		public bool IsDefaultTheme
+		{
+			get => _isDefaultTheme;
+			set => SetProperty(ref _isDefaultTheme, value);
+		}
+
+		public bool IsBlueTheme
+		{
+			get => _isBlueTheme;
+			set => SetProperty(ref _isBlueTheme, value);
+		}
+
+		public bool IsLightTheme
+		{
+			get => _isLightTheme;
+			set => SetProperty(ref _isLightTheme, value);
+		}
+
+		public bool IsDarkTheme
+		{
+			get => _isDarkTheme;
+			set => SetProperty(ref _isDarkTheme, value);
+		}
+
+		public string CurrentTheme
+		{
+			get => _currentTheme;
+			set => SetProperty(ref _currentTheme, value);
+		}
+
+		public ICommand SetThemeCommand { get; }
+
+		private async Task SetTheme(string theme)
+		{
+            Theme newTheme = (Theme)int.Parse(theme);
+
+			if (newTheme.ToString() == CurrentTheme) return;
+
+			CurrentTheme = newTheme.ToString();
+            // Preferences.Set("AppTheme", theme);
+
+            CurrentUser.UserTheme = newTheme;
+
+            await _databaseService.UpdateUserAsync(CurrentUser);
+
+            App.ApplyTheme(newTheme);
+
+            IsDefaultTheme = newTheme == Theme.Default;
+            IsBlueTheme = newTheme == Theme.Blue;
+            IsLightTheme = newTheme == Theme.Light;
+            IsDarkTheme = newTheme == Theme.Dark;
+        }
+
+		#endregion
+
+		#region Categories Section
+
+		/// <summary>
+		/// List of categories.
+		/// </summary>
+		private ObservableCollection<Category> _categories;
         public ObservableCollection<Category> Categories
         {
             get => _categories;
