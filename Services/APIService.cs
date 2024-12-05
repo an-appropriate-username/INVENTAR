@@ -264,7 +264,9 @@ namespace INVApp.Services
             }
         }
 
-        public async Task<HttpResponseMessage> SaveTransactionItemsAsync(int transactionId, List<TransactionItemDto> items)
+        public async Task<HttpResponseMessage> SaveTransactionItemsAsync(
+    int transactionId,
+    List<TransactionItemCreateDto> items)
         {
             try
             {
@@ -272,11 +274,9 @@ namespace INVApp.Services
                 var response = await _httpClient.PostAsJsonAsync(
                     $"{_baseUri}Maui/Transactions/{transactionId}/Items",
                     items);
-
                 var responseContent = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine($"Items save response status: {response.StatusCode}");
                 Debug.WriteLine($"Items save response content: {responseContent}");
-
                 return response;
             }
             catch (Exception ex)
