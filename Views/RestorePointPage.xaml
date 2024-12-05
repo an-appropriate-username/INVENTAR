@@ -4,13 +4,26 @@
             xmlns:local="clr-namespace:INVApp.ViewModels"
             x:Class="INVApp.Views.RestorePointPage"
             Title="RestorePointPage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             <Label Text="INVENTAR : RESTORE POINTS"
             FontSize="15" 
-            TextColor="{StaticResource TextColor}" 
+            TextColor="{DynamicResource TextColor}" 
             HorizontalOptions="Center"
             VerticalOptions="Center" />
         </Grid>
@@ -28,8 +41,8 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" 
-                               BorderColor="{StaticResource FrameBackgroundColor}" 
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
+                               BorderColor="{DynamicResource FrameBackgroundColor}" 
                                CornerRadius="10" 
                                Padding="10" 
                                Margin="5" 
@@ -55,7 +68,7 @@
                                         Grid.Row="1"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type local:RestorePointViewModel}}, Path=DeleteRestorePointCommand}"
                                         CommandParameter="{Binding FilePath}"
-                                        BackgroundColor="{StaticResource WarningColor}" 
+                                        BackgroundColor="{DynamicResource WarningColor}" 
                                         BorderColor="Transparent" 
                                         TextColor="White" 
                                         Margin="5,0" IsEnabled="True"/>

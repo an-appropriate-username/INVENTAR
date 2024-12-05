@@ -5,13 +5,26 @@
             xmlns:notify="clr-namespace:INVApp.ContentViews"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             x:Class="INVApp.Views.StockIntakePage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             <Label Text="INVENTAR : STOCK INTAKE"
                     FontSize="15" 
-                    TextColor="{StaticResource TextColor}" 
+                    TextColor="{DynamicResource TextColor}" 
                     HorizontalOptions="Center" 
                     VerticalOptions="Center" />
         </Grid>
@@ -22,8 +35,8 @@
         <StackLayout>
 
             <!-- Barcode Scanner Frame -->
-            <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
-                    BorderColor="{StaticResource FrameBackgroundColor}" 
+            <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" 
+                    BorderColor="{DynamicResource FrameBackgroundColor}" 
                     CornerRadius="10" Padding="5" Margin="0,0,0,5" 
                     IsVisible="{Binding IsCameraOn}"
                     MaximumWidthRequest="{OnIdiom Phone=315, Tablet=400, Desktop=600}">
@@ -36,7 +49,7 @@
 
             <!-- Control Panel Frame -->
             <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="CenterAndExpand">
-                <Button Text="Reset" Command="{Binding ResetCommand}" BackgroundColor="{StaticResource WarningColor}" />
+                <Button Text="Reset" Command="{Binding ResetCommand}" BackgroundColor="{DynamicResource WarningColor}" />
                 <Button Text="{Binding IsCameraOn, StringFormat='{0}'}" Command="{Binding ToggleCameraCommand}" />
             </StackLayout>
 
@@ -46,7 +59,7 @@
             <toolkit:MediaElement x:Name="AudioPlayer" IsVisible="False" />
 
 
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
+            <Frame BackgroundColor="{DynamicResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
                 <VerticalStackLayout>
                     <Grid ColumnDefinitions="Auto,*" RowDefinitions="40,40,40,40,40,40" RowSpacing="4" ColumnSpacing="10">
 
@@ -85,7 +98,7 @@
 
             <!-- Stock Quantity Frame -->
 
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
+            <Frame BackgroundColor="{DynamicResource PrimaryColor}" Margin="0,0,0,5" MaximumWidthRequest="600">
                 <VerticalStackLayout>
                     <Grid ColumnDefinitions="Auto,*" RowDefinitions="30,40" RowSpacing="2" ColumnSpacing="10">
                         <!-- Current Stock Level -->
