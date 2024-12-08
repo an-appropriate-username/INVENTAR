@@ -6,12 +6,25 @@
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             xmlns:local="clr-namespace:INVApp.ViewModels"
             x:Class="INVApp.Views.POSPage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <!-- Notify and Confirm Banners -->
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             <notify:NotificationBanner x:Name="NotificationBanner"/>
             <notify:ConfirmBanner x:Name="ConfirmBanner"/>
         </Grid>
@@ -37,8 +50,8 @@
                 <StackLayout Grid.Row="0" Padding="10">
 
                     <!-- Camera Barcode Scanner -->
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
-                    BorderColor="{StaticResource FrameBackgroundColor}" 
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" 
+                    BorderColor="{DynamicResource FrameBackgroundColor}" 
                     CornerRadius="10" Padding="5" Margin="0,0,0,5" 
                     MaximumWidthRequest="{OnIdiom Phone=315, Tablet=400, Desktop=600}"
                     IsVisible="{Binding IsCameraVisible}">
@@ -66,7 +79,7 @@
                     Grid.Column="1" HeightRequest="35"/>
                     </Grid>
 
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="Transparent" Padding="0" 
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" BorderColor="Transparent" Padding="0" 
                 MaximumWidthRequest="650">
 
                         <CollectionView x:Name="CartCollectionView"
@@ -81,7 +94,7 @@
 
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame Padding="5" Margin="5" BackgroundColor="{StaticResource EntryBackgroundColor}" BorderColor="Black"
+                                    <Frame Padding="5" Margin="5" BackgroundColor="{DynamicResource EntryBackgroundColor}" BorderColor="Black"
                                 CornerRadius="10" MaximumWidthRequest="{OnIdiom Phone=350, Tablet=350, Desktop=550}">
 
                                         <Grid ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto" Padding="10">
@@ -99,7 +112,7 @@
                                             HeightRequest="35"
                                             VerticalOptions="Center"
                                             HorizontalOptions="StartAndExpand"
-                                            BackgroundColor="{OnIdiom Phone=Transparent, Desktop={StaticResource PrimaryColor}}"
+                                            BackgroundColor="{OnIdiom Phone=Transparent, Desktop={DynamicResource PrimaryColor}}"
                                             Margin="25,0,0,0"/>
                                             </StackLayout>
 
@@ -126,8 +139,8 @@
 
                 <!-- Checkout Section -->
 
-                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
-                        BorderColor="{StaticResource FrameBackgroundColor}" 
+                <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" 
+                        BorderColor="{DynamicResource FrameBackgroundColor}" 
                         Margin="0,25,100,25" Padding="5" 
                         MaximumWidthRequest="{OnIdiom Phone=550, Tablet=400, Desktop=600}"
                         Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" 
@@ -135,7 +148,7 @@
                         HorizontalOptions="StartAndExpand">
                     <StackLayout Padding="10">
 
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,0,0,5"
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" Margin="0,0,0,5"
                             HeightRequest="{OnIdiom Phone=150, Tablet=150, Desktop=120}" 
                             WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
                             <Grid>
@@ -154,7 +167,7 @@
 
                         <!-- Select Customer -->
 
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
                                 MaximumWidthRequest="{OnIdiom Phone=150, Tablet=350, Desktop=600}"
                                 MaximumHeightRequest="300"
                                 Margin="0,0,0,5">
@@ -176,7 +189,7 @@
                         </Frame>
 
                         <!-- Discount Entry -->
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}">
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}">
                             <StackLayout>
                                 
                                 <Grid>
@@ -204,7 +217,7 @@
                         </Frame>
 
                         <!-- Final Amount -->
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="0,15,0,5">
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" Margin="0,15,0,5">
                             <StackLayout>
                                 <Grid>
                                     <Label Text="GST Amount:" FontSize="16" FontAttributes="Bold" Margin="0,5,5,0" />
@@ -221,7 +234,7 @@
                         </Frame>
 
                         <!-- Payment method label and picker -->
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
                             WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
                             <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
 
@@ -236,7 +249,7 @@
                         </Frame>
 
                         <!-- Cash given and change calculator -->
-                        <Frame MaximumWidthRequest="200" BackgroundColor="{StaticResource PrimaryColor}" IsVisible="{Binding IsCashGivenVisible}" Margin="0,5,0,0">
+                        <Frame MaximumWidthRequest="200" BackgroundColor="{DynamicResource PrimaryColor}" IsVisible="{Binding IsCashGivenVisible}" Margin="0,5,0,0">
                             <StackLayout>
                                 <Grid>
                                     <Label Text="Given:" FontSize="16" FontAttributes="Bold" Grid.Row="2" Grid.Column="0" VerticalOptions="Start" Margin="0,0,0,0"/>

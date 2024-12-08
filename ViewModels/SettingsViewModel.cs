@@ -54,7 +54,9 @@ namespace INVApp.ViewModels
                 IsGSTInclusive = !IsGSTInclusive; // Toggle the value
             });
 
-            _ = LoadDataAsync();
+			SetThemeCommand = new Command<string>(async (theme) => await SetTheme(theme));
+
+			_ = LoadDataAsync();
         }
 
         #endregion
@@ -456,21 +458,128 @@ namespace INVApp.ViewModels
         public ICommand SetRestorePointCommand { get; }
         public ICommand RestoreDatabaseCommand { get; }
 
-        #endregion
+		#endregion
 
-        #endregion
+		#endregion
 
-        #region Load All Data
+		#region Theme Section
 
-        /// <summary>
-        /// Calls all the methods related to loading data for the viewmodel. 
-        /// </summary>
-        private async Task LoadDataAsync()
+		private string _currentTheme;
+		private bool _isDefaultTheme;
+		private bool _isBlueTheme;
+		private bool _isLightTheme;
+		private bool _isDarkTheme;
+
+		public bool IsDefaultTheme
+		{
+			get => _isDefaultTheme;
+			set
+			{
+				if (_isDefaultTheme != value)
+				{
+					_isDefaultTheme = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		public bool IsBlueTheme
+		{
+			get => _isBlueTheme;
+			set
+			{
+				if (_isBlueTheme != value)
+				{
+					_isBlueTheme = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		public bool IsLightTheme
+		{
+			get => _isLightTheme;
+			set
+			{
+				if (_isLightTheme != value)
+				{
+					_isLightTheme = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		public bool IsDarkTheme
+		{
+			get => _isDarkTheme;
+			set
+			{
+				if (_isDarkTheme != value)
+				{
+					_isDarkTheme = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		public string CurrentTheme
+		{
+			get => _currentTheme;
+			set
+			{
+				if (_currentTheme != value)
+				{
+					_currentTheme = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+
+		public async Task LoadThemeSettingsAsync()
+		{
+			var themeSettings = await _databaseService.GetThemeSettingsAsync();
+			CurrentTheme = themeSettings.Theme.ToString() != "" ? themeSettings.Theme.ToString() : ThemeType.Default.ToString();
+		}
+
+		public ICommand SetThemeCommand { get; }
+
+		private async Task SetTheme(string theme)
+		{
+			ThemeType newTheme = (ThemeType)int.Parse(theme);
+
+			if (newTheme.ToString() == CurrentTheme) return;
+
+			CurrentTheme = newTheme.ToString();
+			// Preferences.Set("AppTheme", theme);
+
+			await _databaseService.SaveThemeSettingsAsync(new ThemeSettings()
+            {
+                Id = 1,
+                Theme = newTheme,
+            });
+
+			App.ApplyTheme(newTheme);
+
+			IsDefaultTheme = newTheme == ThemeType.Default;
+			IsBlueTheme = newTheme == ThemeType.Blue;
+			IsLightTheme = newTheme == ThemeType.Light;
+			IsDarkTheme = newTheme == ThemeType.Dark;
+		}
+
+		#endregion
+
+		#region Load All Data
+
+		/// <summary>
+		/// Calls all the methods related to loading data for the viewmodel. 
+		/// </summary>
+		private async Task LoadDataAsync()
         {
             await LoadCategories();
             await LoadDefaultCategory();
             await LoadAudioSettings();
             await LoadTaxSettingsAsync();
+            await LoadThemeSettingsAsync();
         }
 
         #endregion

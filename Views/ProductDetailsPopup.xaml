@@ -3,14 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:notify="clr-namespace:INVApp.ContentViews"
              x:Class="INVApp.Views.ProductDetailsPopup"
-             BackgroundColor="{StaticResource BackgroundColor}">
+             BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
 
         <!-- Notification banner -->
         <notify:NotificationBanner x:Name="NotificationBanner" Margin="0,5,0,5"/>
 
-        <Frame BackgroundColor="{StaticResource PrimaryColor}" Margin="10,0,10,5">
+        <Frame BackgroundColor="{DynamicResource PrimaryColor}" Margin="10,0,10,5">
             
             <StackLayout>
 
@@ -55,14 +68,14 @@
         </Frame>
 
         <!-- Add more product details as needed -->
-        <Frame Margin="10,0,10,0" BackgroundColor="{StaticResource FrameBackgroundColor}">
+        <Frame Margin="10,0,10,0" BackgroundColor="{DynamicResource FrameBackgroundColor}">
             <Grid ColumnDefinitions="*,*" RowDefinitions="*">
                 <Button Text="Update" Command="{Binding UpdateCommand}" Margin="5,5,5,5" Grid.Column="0"/>
 
-                <Button Text="Delete" Command="{Binding DeleteCommand}" BackgroundColor="{StaticResource WarningColor}" Margin="0,5,5,5" Grid.Column="1" />
+                <Button Text="Delete" Command="{Binding DeleteCommand}" BackgroundColor="{DynamicResource WarningColor}" Margin="0,5,5,5" Grid.Column="1" />
             </Grid>
         </Frame>
 
-        <Button Text="Close" Command="{Binding CloseCommand}" Margin="10,5,10,5" BorderColor="{StaticResource FrameBackgroundColor}"/>
+        <Button Text="Close" Command="{Binding CloseCommand}" Margin="10,5,10,5" BorderColor="{DynamicResource FrameBackgroundColor}"/>
     </StackLayout>
 </ContentPage>

@@ -5,10 +5,23 @@
              xmlns:notify="clr-namespace:INVApp.ContentViews"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             x:Class="INVApp.Views.CustomerPage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             
         </Grid>
     </Shell.TitleView>
@@ -37,7 +50,7 @@
                     <Button Text="New Customer" 
                             FontSize="Small"
                             FontAttributes="Bold"
-                            TextColor="{StaticResource TextColor}" 
+                            TextColor="{DynamicResource TextColor}" 
                             HorizontalOptions="Center" />
 
                 </toolkit:Expander.Header>
@@ -47,8 +60,8 @@
                         <Label Text="" />
 
                         <!-- Customer Details Frame -->
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" 
-                                BorderColor="{StaticResource FrameBackgroundColor}" 
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
+                                BorderColor="{DynamicResource FrameBackgroundColor}" 
                                 CornerRadius="10" 
                                 Padding="10" 
                                 Margin="0,10,0,10"
@@ -77,7 +90,7 @@
 
                         <Button Text="Add Customer" 
                                 Command="{Binding AddCustomerCommand}" 
-                                BackgroundColor="{StaticResource PrimaryColor}" 
+                                BackgroundColor="{DynamicResource PrimaryColor}" 
                                 TextColor="White" 
                                 CornerRadius="10" 
                                 Margin="0,10,0,10" 
@@ -94,24 +107,24 @@
                     Grid.Column="0"
                     FontSize="Small"
                     FontAttributes="Bold"
-                    TextColor="{StaticResource TextColor}" 
+                    TextColor="{DynamicResource TextColor}" 
                     HorizontalOptions="Start" />
                 <Label Text="Barcode" 
                     Grid.Column="1"
                     FontSize="Small"
                     FontAttributes="Bold"
-                    TextColor="{StaticResource TextColor}" 
+                    TextColor="{DynamicResource TextColor}" 
                     HorizontalOptions="Center" />
                 <Label Text="ID" 
                     Grid.Column="2"
                     FontSize="Small"
                     FontAttributes="Bold"
-                    TextColor="{StaticResource TextColor}" 
+                    TextColor="{DynamicResource TextColor}" 
                     HorizontalOptions="End" />
             </Grid>
 
             <!-- Customers List -->
-            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+            <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
                     CornerRadius="10" 
                     Padding="5" 
                     Margin="0,10,0,10"
@@ -128,19 +141,19 @@
                                 <Label Text="{Binding CustomerName}" Grid.Column="0"
                                 FontSize="Small" 
                                 FontAttributes="Bold" 
-                                TextColor="{StaticResource TextColor}" />
+                                TextColor="{DynamicResource TextColor}" />
                                 <Label Text="{Binding Surname}" Grid.Column="1"
                                 FontSize="Small" 
                                 FontAttributes="Bold" 
-                                TextColor="{StaticResource TextColor}" />
+                                TextColor="{DynamicResource TextColor}" />
                                 <Label Text="|" Grid.Column="2" HorizontalOptions="Center" />
                                 <Label Text="{Binding Barcode}" Grid.Column="3" 
                                 FontSize="Small" 
-                                TextColor="{StaticResource TextColor}" />
+                                TextColor="{DynamicResource TextColor}" />
                                 <Label Text="|" Grid.Column="4" HorizontalOptions="Center" />
                                 <Label Text="{Binding CustomerId}" Grid.Column="5"
                                 FontSize="Small" 
-                                TextColor="{StaticResource TextColor}" />
+                                TextColor="{DynamicResource TextColor}" />
                             </Grid>
 
                             </DataTemplate>
@@ -156,7 +169,7 @@
 
                 <Button Text="Show Customer Details" 
                     Command="{Binding ShowCustomerDetailsCommand}" 
-                    BackgroundColor="{StaticResource PrimaryColor}" 
+                    BackgroundColor="{DynamicResource PrimaryColor}" 
                     TextColor="White" 
                     CornerRadius="10" 
                     Margin="0,10,0,10" 
@@ -165,7 +178,7 @@
                 <!-- Delete Customer Button -->
             <Button Text="Delete Customer" 
                 Command="{Binding DeleteCustomerCommand}" 
-                BackgroundColor="{StaticResource WarningColor}" 
+                BackgroundColor="{DynamicResource WarningColor}" 
                 TextColor="White" 
                 CornerRadius="10" 
                 Margin="0,10,0,10" 

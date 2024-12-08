@@ -15,7 +15,10 @@
             <Color x:Key="BackgroundColor">#607d8b</Color>
             <Color x:Key="EntryBackgroundColor">#cfd8dc</Color>
             <Color x:Key="FrameBackgroundColor">#37474f</Color>
-            <Color x:Key="TextColor">#263238</Color> 
+            <Color x:Key="TextColor">#263238</Color>
+            <Color x:Key="BackgroundGradientStart">#607d8b</Color>
+            <Color x:Key="BackgroundGradientMiddle">#607d8b</Color>
+            <Color x:Key="BackgroundGradientEnd">#607d8b</Color>
 
             <!-- Define Styles -->
             <Style TargetType="Label">

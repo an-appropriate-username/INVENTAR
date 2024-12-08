@@ -36,7 +36,9 @@ namespace INVApp.Services
 
             _database.CreateTableAsync<ToDoItem>().Wait();
 
-        }
+			_database.CreateTableAsync<ThemeSettings>().Wait();
+
+		}
 
         #region Default Methods
         public async Task InitializeAsync()
@@ -473,6 +475,28 @@ namespace INVApp.Services
                 await _database.UpdateAsync(existingSettings);
             }
         }
-        #endregion
-    }
+		#endregion
+
+		#region Theme Methods
+		public async Task<ThemeSettings> GetThemeSettingsAsync()
+		{
+			var settings = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
+			return settings ?? new ThemeSettings(); // Return default settings if none exist
+		}
+
+		public async Task SaveThemeSettingsAsync(ThemeSettings settings)
+		{
+			var existingSettings = await _database.Table<ThemeSettings>().FirstOrDefaultAsync();
+			if (existingSettings == null)
+			{
+				await _database.InsertAsync(settings);
+			}
+			else
+			{
+				existingSettings.Theme = settings.Theme;
+				await _database.UpdateAsync(existingSettings);
+			}
+		}
+		#endregion
+	}
 }
