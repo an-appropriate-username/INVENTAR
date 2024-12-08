@@ -3,6 +3,7 @@ using INVApp.Models;
 using INVApp.NewFolder;
 using INVApp.Services;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 public class TransactionService
@@ -25,10 +26,10 @@ public class TransactionService
     }
 
     public async Task<bool> ProcessCheckout(
-        TransactionDto transactionDto,
-        List<TransactionItemDto> transactionItems,
-        Customer customer,
-        string paymentMethod)
+    TransactionDto transactionDto,
+    List<TransactionItemDto> transactionItems,
+    Customer customer,
+    string paymentMethod)
     {
         try
         {
@@ -42,10 +43,19 @@ public class TransactionService
             if (createdTransaction?.TransactionId == null)
                 return false;
 
-            // Send the transaction items
+            // Map to simplified DTOs with only the required fields
+            var simplifiedItems = transactionItems.Select(item => new TransactionItemCreateDto
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice,
+                TotalPrice = item.TotalPrice
+            }).ToList();
+
+            // Send the simplified transaction items
             var itemsResponse = await _apiService.SaveTransactionItemsAsync(
                 createdTransaction.TransactionId,
-                transactionItems);
+                simplifiedItems);
 
             return itemsResponse.IsSuccessStatusCode;
         }
