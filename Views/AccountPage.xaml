@@ -3,7 +3,20 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             x:Class="INVApp.Views.AccountPage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <ScrollView>
         <Grid Padding="10" ColumnSpacing="10" RowSpacing="10">
@@ -21,8 +34,8 @@
             <!-- Left Column: User Details -->
             <StackLayout Grid.Column="0" VerticalOptions="StartAndExpand">
                 <!-- User Details -->
-                <Frame BackgroundColor="{StaticResource PrimaryColor}" 
-                       BorderColor="{StaticResource PrimaryColor}" 
+                <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
+                       BorderColor="{DynamicResource PrimaryColor}" 
                        CornerRadius="10" 
                        Padding="15" 
                        Margin="0,25,0,10"
@@ -31,7 +44,7 @@
                         <Label Text="User Details" 
                                FontSize="Medium" 
                                FontAttributes="Bold" 
-                               TextColor="{StaticResource TextColor}" />
+                               TextColor="{DynamicResource TextColor}" />
 
 
                         <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="4" ColumnSpacing="10">
@@ -58,14 +71,14 @@
 
                 <!-- Actions -->
                 <Button Text="Edit Profile" 
-                        BackgroundColor="{StaticResource PrimaryColor}" 
-                        TextColor="{StaticResource TextColor}" 
+                        BackgroundColor="{DynamicResource PrimaryColor}" 
+                        TextColor="{DynamicResource TextColor}" 
                         CornerRadius="10" Margin="0,5,0,5" WidthRequest="600"
                         Command="{Binding EditProfileCommand}" />
 
                 <Button Text="Logout" 
-                        BackgroundColor="{StaticResource WarningColor}" 
-                        TextColor="{StaticResource TextColor}" 
+                        BackgroundColor="{DynamicResource WarningColor}" 
+                        TextColor="{DynamicResource TextColor}" 
                         CornerRadius="10" Margin="0,5,0,5" WidthRequest="600"
                         Command="{Binding LogoutCommand}" />
             </StackLayout>
@@ -75,22 +88,22 @@
             <!-- Basic Priv Actions -->
             <StackLayout Grid.Column="{OnIdiom Phone=0, Tablet=0, Desktop=1}" Grid.Row="{OnIdiom Phone=1, Tablet=1}" Padding="10" >
 
-                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" 
                        BorderColor="Transparent" IsVisible="{Binding IsColleague}"
                        CornerRadius="10" 
                        Padding="10" 
                        Margin="0,10,0,10"
                        MaximumWidthRequest="600">
                     <StackLayout>
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" WidthRequest="400" HeightRequest="80">
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" WidthRequest="400" HeightRequest="80">
                             <Label Text="Actions" 
                                FontSize="Medium" HorizontalOptions="Center"
                                FontAttributes="Bold" 
-                               TextColor="{StaticResource TextColor}" />
+                               TextColor="{DynamicResource TextColor}" />
                         </Frame>
                         <Button Text="Send A Note" 
-                            BackgroundColor="{StaticResource PrimaryColor}" 
-                            TextColor="{StaticResource TextColor}" 
+                            BackgroundColor="{DynamicResource PrimaryColor}" 
+                            TextColor="{DynamicResource TextColor}" 
                             CornerRadius="10" Margin="0,10,0,5"
                             Command="{Binding SendNoteCommand}"/>
                     </StackLayout>
@@ -98,23 +111,23 @@
 
                 <!-- Manager and Admin -->
 
-                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
+                <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" 
                        BorderColor="Transparent" IsVisible="{Binding CanViewUsers}"
                        CornerRadius="10" 
                        Padding="10" 
                        Margin="0,10,0,10"
                        MaximumWidthRequest="600">
                     <StackLayout>
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}" WidthRequest="400" HeightRequest="80" IsVisible="{Binding IsAdmin}">
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}" WidthRequest="400" HeightRequest="80" IsVisible="{Binding IsAdmin}">
                             <Label Text="Admin Actions" 
                                FontSize="Medium" HorizontalOptions="Center"
                                FontAttributes="Bold" 
-                               TextColor="{StaticResource TextColor}" />
+                               TextColor="{DynamicResource TextColor}" />
                         </Frame>
 
                         <Button Text="Create New User Account" 
-                                BackgroundColor="{StaticResource PrimaryColor}" 
-                                TextColor="{StaticResource TextColor}" 
+                                BackgroundColor="{DynamicResource PrimaryColor}" 
+                                TextColor="{DynamicResource TextColor}" 
                                 CornerRadius="10" Margin="0,10,0,5"
                                 Command="{Binding OpenCreateUserPageCommand}"
                                 IsVisible="{Binding IsAdmin}"/>
@@ -124,12 +137,12 @@
                             FontSize="Medium" 
                             FontAttributes="Bold" 
                             HorizontalOptions="Center"
-                            TextColor="{StaticResource PrimaryColor}"/>
+                            TextColor="{DynamicResource PrimaryColor}"/>
 
                             <!-- CollectionView -->
                             <CollectionView ItemsSource="{Binding Users}" IsVisible="{Binding CanViewUsers}" 
                                 SelectedItem="{Binding SelectedUser}"
-                                SelectionMode="Single" BackgroundColor="{StaticResource PrimaryColor}" HeightRequest="350">
+                                SelectionMode="Single" BackgroundColor="{DynamicResource PrimaryColor}" HeightRequest="350">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                     <Grid ColumnSpacing="5" RowDefinitions="Auto">
@@ -156,13 +169,13 @@
 
                         <!-- Selected User -->
                         <Label Text="{Binding SelectedUser.FirstName, StringFormat='Selected User: {0}'}"
-                           TextColor="{StaticResource PrimaryColor}" Margin="0,20,0,5"
+                           TextColor="{DynamicResource PrimaryColor}" Margin="0,20,0,5"
                            HorizontalOptions="Center" />
 
                         <!-- Delete Button -->
                         <Button Text="Delete Selected User" 
-                        BackgroundColor="{StaticResource WarningColor}" 
-                        TextColor="{StaticResource TextColor}" 
+                        BackgroundColor="{DynamicResource WarningColor}" 
+                        TextColor="{DynamicResource TextColor}" 
                         Command="{Binding DeleteUserCommand}" 
                         IsEnabled="{Binding SelectedUser}" IsVisible="{Binding IsAdmin}" />
                     </StackLayout>

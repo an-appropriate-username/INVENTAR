@@ -3,13 +3,26 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             x:Class="INVApp.Views.TransactionLogPage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}">
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}">
             <Label Text="INVENTAR : TRANSACTION LOGS"
                 FontSize="15"
-                TextColor="{StaticResource TextColor}"
+                TextColor="{DynamicResource TextColor}"
                 HorizontalOptions="Center"
                 VerticalOptions="Center" />
         </Grid>
@@ -23,10 +36,10 @@
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" MaximumWidthRequest="600">
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" MaximumWidthRequest="600">
                         <StackLayout Padding="10">
                             <!-- Date Range Filter -->
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}" Padding="10">
+                            <Frame BackgroundColor="{DynamicResource PrimaryColor}" Padding="10">
                                 <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
                                     <Label Text="Date From:" VerticalOptions="Center" />
                                     <DatePicker Date="{Binding DateFrom}" Grid.Column="1" />
@@ -64,7 +77,7 @@
                 <StackLayout>
                     <!-- Grid Header -->
                     <Grid ColumnDefinitions="*, *, *, *, *, *"
-                      BackgroundColor="{StaticResource FrameBackgroundColor}"
+                      BackgroundColor="{DynamicResource FrameBackgroundColor}"
                       Padding="10">
                         <Label Text="Date" FontAttributes="Bold" TextColor="White" />
                         <Label Text="Payment Method" FontAttributes="Bold" TextColor="White" Grid.Column="1" />
@@ -82,7 +95,7 @@
                                     <!-- Transaction Row -->
                                     <Grid ColumnDefinitions="*, *, *, *, *, *"
                                         Padding="10"
-                                        BackgroundColor="{StaticResource PrimaryColor}">
+                                        BackgroundColor="{DynamicResource PrimaryColor}">
                                         <Label Text="{Binding DateTime, StringFormat='{0:dd/MMM/yy HH:mm}'}" />
                                         <Label Text="{Binding PaymentMethod}" Grid.Column="1" />
                                         <Label Text="{Binding TotalAmount, StringFormat='{}{0:C}'}" Grid.Column="2" />

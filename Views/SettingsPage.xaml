@@ -5,10 +5,23 @@
             xmlns:notify="clr-namespace:INVApp.ContentViews"
             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
             x:Class="INVApp.Views.SettingsPage"
-            BackgroundColor="{StaticResource BackgroundColor}">
+            BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                     EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                  Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                  Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                  Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}" >
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}" >
             <notify:NotificationBanner x:Name="NotificationBanner"/>
             <notify:ConfirmBanner x:Name="ConfirmBanner"/>
         </Grid>
@@ -26,15 +39,15 @@
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
-               BorderColor="{StaticResource FrameBackgroundColor}" 
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" 
+               BorderColor="{DynamicResource FrameBackgroundColor}" 
                Margin="10" Padding="10"  
                         MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
 
                         <StackLayout Padding="20">
 
                             <!-- Categories List -->
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}" 
+                            <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
                                 Margin="0,0,0,10" 
                                 Padding="10"
                                 
@@ -49,7 +62,7 @@
                                                     CommandParameter="{Binding .}" 
                                                     HorizontalOptions="EndAndExpand" 
                                                     HeightRequest="35"
-                                                    BackgroundColor="{StaticResource WarningColor}" 
+                                                    BackgroundColor="{DynamicResource WarningColor}" 
                                                     Margin="0,0,20,0"/>
                                             </StackLayout>
                                         </DataTemplate>
@@ -69,7 +82,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Frame Margin="0,0,0,5" BackgroundColor="{StaticResource PrimaryColor}" Padding="10">
+                                <Frame Margin="0,0,0,5" BackgroundColor="{DynamicResource PrimaryColor}" Padding="10">
                                     <Label Text="Default Category" 
                                 HorizontalOptions="Center"
                                 FontSize="16"
@@ -103,11 +116,11 @@
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="{StaticResource FrameBackgroundColor}" 
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" BorderColor="{DynamicResource FrameBackgroundColor}" 
                             Margin="10" Padding="5"
                             MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
                     <StackLayout Padding="20">
-                        <Frame BackgroundColor="{StaticResource PrimaryColor}"
+                        <Frame BackgroundColor="{DynamicResource PrimaryColor}"
                                 HeightRequest="{OnIdiom Phone=180, Tablet=250, Desktop=300}" 
                                 WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
                             <Grid ColumnDefinitions="*" RowDefinitions="*,*,*,*,*">
@@ -138,11 +151,11 @@
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="{StaticResource FrameBackgroundColor}" 
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" BorderColor="{DynamicResource FrameBackgroundColor}" 
                 Margin="10" Padding="5"
                 MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
                         <StackLayout>
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}" MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=500}" Margin="0,10,0,0">
+                            <Frame BackgroundColor="{DynamicResource PrimaryColor}" MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=500}" Margin="0,10,0,0">
                                 <StackLayout>
                                     <Label Text="Set GST (%)" FontSize="Medium" HorizontalOptions="Center" Margin="0,0,0,10"/>
                                     <Entry Text="{Binding GST, Mode=TwoWay}" Keyboard="Numeric" WidthRequest="100"/>
@@ -167,11 +180,11 @@
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" BorderColor="{StaticResource FrameBackgroundColor}" Margin="10"
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" BorderColor="{DynamicResource FrameBackgroundColor}" Margin="10"
                             MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
                         <StackLayout Padding="5">
 
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}"
+                            <Frame BackgroundColor="{DynamicResource PrimaryColor}"
                                     WidthRequest="{OnIdiom Phone=280, Tablet=400, Desktop=500}">
                                 <Grid RowDefinitions="Auto, Auto, Auto, Auto" ColumnDefinitions="*, *">
 
@@ -201,7 +214,7 @@
 
                             <!-- Disclaimer -->
                             <Label Text="After a database reset or restore, please restart the app for changes to take effect."
-                                    TextColor="{StaticResource WarningColor}" FontSize="14" Margin="0,10,0,10" HorizontalOptions="Center"/>
+                                    TextColor="{DynamicResource WarningColor}" FontSize="14" Margin="0,10,0,10" HorizontalOptions="Center"/>
 
                             <Frame BackgroundColor="Transparent" Margin="0,5,0,0" BorderColor="Transparent">
                                 <Grid RowDefinitions="Auto, Auto, Auto">
@@ -229,11 +242,11 @@
 
                                     <toolkit:Expander.Content>
                                         <StackLayout Padding="20">
-                                            <Frame BackgroundColor="{StaticResource PrimaryColor}"
+                                            <Frame BackgroundColor="{DynamicResource PrimaryColor}"
                                                     WidthRequest="{OnIdiom Phone=250, Tablet=300, Desktop=250}" CornerRadius="20">
                                                 <!-- Reset Database -->
                                                 <Button Text="Reset Database" 
-                                                        BackgroundColor="{StaticResource WarningColor}" 
+                                                        BackgroundColor="{DynamicResource WarningColor}" 
                                                         BorderColor="Transparent"
                                                         WidthRequest="200" 
                                                         Command="{Binding ResetDatabaseCommand}"
@@ -248,8 +261,138 @@
                     </Frame>
                 </toolkit:Expander.Content>
             </toolkit:Expander>
-        
-        
-    </StackLayout>
+            <toolkit:Expander>
+                <toolkit:Expander.Header>
+                    <Button Text="Theme"
+                            FontSize="20"
+                            FontAttributes="Bold"
+                            Margin="0,0,0,10"
+                            MaximumWidthRequest="{OnIdiom Phone=320, Tablet=320, Desktop=400}">
+                    </Button>
+                </toolkit:Expander.Header>
+
+                <toolkit:Expander.Content>
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}"
+                           BorderColor="{DynamicResource FrameBackgroundColor}"
+                           Margin="10"
+                           Padding="5"
+                           MaximumWidthRequest="{OnIdiom Phone=350, Tablet=400, Desktop=600}">
+                        <StackLayout Padding="20">
+                            <Frame BackgroundColor="{DynamicResource PrimaryColor}" 
+                                   Margin="0,0,0,10" 
+                                   Padding="10"
+                                   HeightRequest="{OnIdiom Phone=150, Tablet=200, Desktop=200}">
+                                <StackLayout>
+                                    <Label Text="Select Theme"
+                                   FontSize="16"
+                                   FontAttributes="Bold"/>
+                                    <HorizontalStackLayout Spacing="20"
+                                       HorizontalOptions="Center"
+                                       Margin="0,15">
+                                        <!-- Default Theme Button -->
+                                        <Border StrokeShape="RoundRectangle 10"
+                                        Stroke="{DynamicResource TextColor}"
+                                        StrokeThickness="{Binding IsDefaultTheme, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter=3:1}"
+                                        HeightRequest="60"
+                                        WidthRequest="60">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SetThemeCommand}"
+                                                  CommandParameter="2"/>
+                                            </Border.GestureRecognizers>
+                                            <Grid BackgroundColor="{DynamicResource FrameBackgroundColor}">
+                                                <Label Text="🔲"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               FontSize="20"/>
+                                                <Grid.Shadow>
+                                                    <Shadow Brush="{Binding IsDefaultTheme, Converter={StaticResource BoolToColorConverter}, ConverterParameter=#4ECDC4:#00000000}"
+                                        Offset="0,0"
+                                        Radius="10"/>
+                                                </Grid.Shadow>
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Blue Theme Button -->
+                                        <Border StrokeShape="RoundRectangle 10"
+                                        Stroke="{DynamicResource TextColor}"
+                                        StrokeThickness="{Binding IsBlueTheme, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter=3:1}"
+                                        HeightRequest="60"
+                                        WidthRequest="60">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SetThemeCommand}"
+                                                  CommandParameter="3"/>
+                                            </Border.GestureRecognizers>
+                                            <Grid BackgroundColor="{DynamicResource FrameBackgroundColor}">
+                                                <Label Text="🔵"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               FontSize="20"/>
+                                                <Grid.Shadow>
+                                                    <Shadow Brush="{Binding IsBlueTheme, Converter={StaticResource BoolToColorConverter}, ConverterParameter=#4ECDC4:#00000000}"
+                                        Offset="0,0"
+                                        Radius="10"/>
+                                                </Grid.Shadow>
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Light Theme Button -->
+                                        <Border StrokeShape="RoundRectangle 10"
+                                        Stroke="{DynamicResource TextColor}"
+                                        StrokeThickness="{Binding IsLightTheme, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter=3:1}"
+                                        HeightRequest="60"
+                                        WidthRequest="60">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SetThemeCommand}"
+                                                  CommandParameter="0"/>
+                                            </Border.GestureRecognizers>
+                                            <Grid BackgroundColor="{DynamicResource FrameBackgroundColor}">
+                                                <Label Text="☀️"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               FontSize="20"/>
+                                                <Grid.Shadow>
+                                                    <Shadow Brush="{Binding IsLightTheme, Converter={StaticResource BoolToColorConverter}, ConverterParameter=#4ECDC4:#00000000}"
+                                        Offset="0,0"
+                                        Radius="10"/>
+                                                </Grid.Shadow>
+                                            </Grid>
+                                        </Border>
+
+
+                                        <!-- Dark Theme Button -->
+                                        <Border StrokeShape="RoundRectangle 10"
+                                        Stroke="{DynamicResource TextColor}"
+                                        StrokeThickness="{Binding IsDarkTheme, Converter={StaticResource BoolToThicknessConverter}, ConverterParameter=3:1}"
+                                        HeightRequest="60"
+                                        WidthRequest="60">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding SetThemeCommand}"
+                                                  CommandParameter="1"/>
+                                            </Border.GestureRecognizers>
+                                            <Grid BackgroundColor="{DynamicResource FrameBackgroundColor}">
+                                                <Label Text="🌙"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               FontSize="20"/>
+                                                <Grid.Shadow>
+                                                    <Shadow Brush="{Binding IsDarkTheme, Converter={StaticResource BoolToColorConverter}, ConverterParameter=#4ECDC4:#00000000}"
+                                        Offset="0,0"
+                                        Radius="10"/>
+                                                </Grid.Shadow>
+                                            </Grid>
+                                        </Border>
+                                    </HorizontalStackLayout>
+
+                                    <Label Text="{Binding CurrentTheme, StringFormat='Current Theme: {0}'}"
+                       HorizontalOptions="Center"
+                       Margin="0,10"/>
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </Frame>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+
+        </StackLayout>
     </ScrollView>
 </ContentPage>

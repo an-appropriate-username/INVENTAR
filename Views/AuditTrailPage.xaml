@@ -3,13 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="INVApp.Views.AuditTrailPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             BackgroundColor="{StaticResource BackgroundColor}">
+             BackgroundColor="{DynamicResource BackgroundColor}">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0"
+                         EndPoint="1,1">
+            <GradientStop Color="{DynamicResource BackgroundGradientStart}"
+                      Offset="0.0"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientMiddle}"
+                      Offset="0.5"/>
+            <GradientStop Color="{DynamicResource BackgroundGradientEnd}"
+                      Offset="1.0"/>
+        </LinearGradientBrush>
+
+    </ContentPage.Background>
 
     <Shell.TitleView>
-        <Grid BackgroundColor="{StaticResource BackgroundColor}" >
+        <Grid BackgroundColor="{DynamicResource BackgroundColor}" >
             <Label Text="INVENTAR : AUDIT TRAIL"
             FontSize="15" 
-            TextColor="{StaticResource TextColor}" 
+            TextColor="{DynamicResource TextColor}" 
             HorizontalOptions="Center"
             VerticalOptions="Center" />
         </Grid>
@@ -25,21 +38,21 @@
                     </toolkit:Expander.Header>
 
                     <toolkit:Expander.Content>
-                    <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" MaximumWidthRequest="600">
+                    <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" MaximumWidthRequest="600">
                         <StackLayout>
                             <!-- Date Range Filter -->
-                            <Frame BackgroundColor="{StaticResource PrimaryColor}">
+                            <Frame BackgroundColor="{DynamicResource PrimaryColor}">
                                 <Grid ColumnDefinitions="*, Auto" RowDefinitions="*, *, *, *">
                                     <Label Text="Date From:" VerticalOptions="Center" Grid.Row="0"/>
                                     <DatePicker x:Name="DateFromPicker" Date="{Binding DateFrom}"
                                                 Grid.Row="0" Grid.Column="1" 
-                                                Margin="0,0,10,0" BackgroundColor="{StaticResource EntryBackgroundColor}"
-                                                TextColor="{StaticResource TextColor}"/>
+                                                Margin="0,0,10,0" BackgroundColor="{DynamicResource EntryBackgroundColor}"
+                                                TextColor="{DynamicResource TextColor}"/>
                                     <Label Text="To:" VerticalOptions="Center" Grid.Row="1"/>
                                     <DatePicker x:Name="DateToPicker" Date="{Binding DateTo}" 
                                                 Grid.Row="1" Grid.Column="1"
-                                                Margin="0,0,10,0" BackgroundColor="{StaticResource EntryBackgroundColor}"
-                                                TextColor="{StaticResource TextColor}"/>
+                                                Margin="0,0,10,0" BackgroundColor="{DynamicResource EntryBackgroundColor}"
+                                                TextColor="{DynamicResource TextColor}"/>
 
                                     <!-- Change Type Filter -->
                                     <Label Text="Change Type:" Grid.Row="2"/>
@@ -95,7 +108,7 @@
                         <!-- Expander for each log entry -->
                             <toolkit:Expander>
                                 <toolkit:Expander.Header>
-                                    <Frame BackgroundColor="{StaticResource PrimaryColor}"  Margin="0,10,0,5"
+                                    <Frame BackgroundColor="{DynamicResource PrimaryColor}"  Margin="0,10,0,5"
                                            MaximumWidthRequest="450">
                                         <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto" Padding="0">
                                             <Label Text="{Binding ChangeTypeFormatted, StringFormat='{0}'}" FontSize="18" FontAttributes="Bold" 
@@ -107,10 +120,10 @@
                                 </toolkit:Expander.Header>
 
                                 <toolkit:Expander.Content>
-                                <Frame BackgroundColor="{StaticResource FrameBackgroundColor}" 
-                                       BorderColor="{StaticResource FrameBackgroundColor}" CornerRadius="10" Padding="5" Margin="0,0,0,0"
+                                <Frame BackgroundColor="{DynamicResource FrameBackgroundColor}" 
+                                       BorderColor="{DynamicResource FrameBackgroundColor}" CornerRadius="10" Padding="5" Margin="0,0,0,0"
                                        MaximumWidthRequest="450">
-                                    <Frame BackgroundColor="{StaticResource PrimaryColor}" BorderColor="Transparent" Margin="0,0,0,0">
+                                    <Frame BackgroundColor="{DynamicResource PrimaryColor}" BorderColor="Transparent" Margin="0,0,0,0">
                                         <Grid ColumnDefinitions="*, *, *, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto" RowSpacing="1" Padding="5">
                                             <Label Text="Stock:" FontAttributes="Bold" Grid.Row="0" Grid.Column="0"/>
                                             <Label Text="{Binding StockOldValue}" Grid.Row="0" Grid.Column="1"/>
