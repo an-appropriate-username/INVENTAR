@@ -83,17 +83,8 @@ INVENTAR is a comprehensive inventory management and point of sale (POS) solutio
 - **Can I use INVENTAR without an internet connection?**  
   Yes! INVENTAR’s Homebase app works fully offline. An internet connection is only required if you’re connecting to Outpost for additional multi-device support and analytics.
 
-- **How do I install and connect Outpost?**  
-  Please refer to our [Outpost Installation Guide](#) for detailed instructions on setup and configuration.
-
 - **Can I use INVENTAR on both desktop and mobile?**  
   Yes, INVENTAR adapts to desktop and mobile layouts, offering a user-friendly experience on both platforms.
-
----
-
-## Support
-
-- For general inquiries and support, please visit our [Wiki](#).
 
 ---
 
